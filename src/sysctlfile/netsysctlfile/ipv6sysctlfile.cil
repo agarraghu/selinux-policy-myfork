@@ -1,0 +1,27 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block ipv6
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "proc"
+        "/sys/net/ipv6"
+        sysctlfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_sysctlfile_dirs ((type ARG1))
+              (allow ARG1 sysctlfile (dir (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysctlfile.net.obj_template))

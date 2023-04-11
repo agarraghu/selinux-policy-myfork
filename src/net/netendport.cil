@@ -1,0 +1,101 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (call endport.managesubnet_all_netendports (unconfined.subj_typeattr))
+
+    (call .managesubnet_invalid_netendports (unconfined.subj_typeattr))
+
+    (block endport
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netendport_context
+                   (.u
+                    .r
+                    netendport
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netendport)
+
+                  (call .net.endport.obj_type (netendport)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro managesubnet_all_netendports ((type ARG1))
+                         (allow ARG1 obj_typeattr
+                                (infiniband_endport (manage_subnet))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute
+                   obj_typeattr))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro managesubnet_netendports ((type ARG1))
+                         (allow ARG1 netendport
+                                (infiniband_endport (manage_subnet))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.endport.obj_base_template)
+                  (blockinherit .net.endport.obj_macro_template))))

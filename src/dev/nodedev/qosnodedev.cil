@@ -1,0 +1,49 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .qos.obj_type_transition_nodedev (unconfined.subj_typeattr)))
+
+(block qos
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/cpu_dma_latency"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/memory_bandwidth"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/network_latency"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/network_throughput"
+        char
+        nodedev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_nodedev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "cpu_dma_latency"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "memory_bandwith"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "network_latency"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "network_throughput")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.node.obj_template))

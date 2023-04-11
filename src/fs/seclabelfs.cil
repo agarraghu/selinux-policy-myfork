@@ -1,0 +1,40 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .fs
+
+    (block seclabel
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (blockinherit .fs.obj_base_template)
+
+                  (call .fs.seclabel.obj_type (fs)))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .fs.obj_macro_template)
+                  (blockinherit .fs.seclabel.obj_base_template))))

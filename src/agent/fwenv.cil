@@ -1,0 +1,115 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .fwenv.subj_type_transition (subj)))
+
+(in .file
+    (call .fwenv.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .fwenv.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .fwenv.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block fwenv
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/fw_env\.config"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/fw_env\.config\..*"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/etc/fw_sys\.config"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/fw_sys\.config\..*"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/fw_printenv"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/fw_printsys"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/fw_setsys"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/uboot-envtools\.sh"
+        file
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile file "uboot-envtools.sh")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "fw_env.config"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "fw_sys.config")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fw_printenv"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fw_printsys"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fw_setsys")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.misc.obj_template)
+
+       (allow subj self (capability (sys_resource)))
+
+       (call execute_execfile_files (subj))
+
+       (call read_conffile_files (subj))
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .mtd.readwrite_stordev_chr_files (subj))
+
+       (call .netifd.writeinherited_fifo_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.manage_locktmpfile_files (subj))
+       (call .tmpfile.readwrite_locktmpfile_dirs (subj))
+
+       (call .xattr.associate_filesystems (miscfile))
+
+       (optional fwenv_opt_rcboot
+                 (call .rcboot.writeinherited_fifo_files (subj)))
+
+       (optional fwenv_opt_rcbootcount
+                 (call .rcbootcount.writeinherited_fifo_files (subj))))

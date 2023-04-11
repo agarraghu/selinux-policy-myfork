@@ -1,0 +1,29 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(category
+ c0)
+(categoryorder
+ (c0))
+
+(sensitivity
+ s0)
+(sensitivityorder
+ (s0))
+
+(sensitivitycategory
+ s0
+ (range
+  c0
+  c0))
+
+(level
+ systemlow
+ (s0))
+(level
+ systemhigh
+ (s0
+  (range
+   c0
+   c0)))

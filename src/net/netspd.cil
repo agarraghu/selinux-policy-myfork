@@ -1,0 +1,118 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .net.spd.subj_template)
+
+    (call spd.polmatchsetcontext_all_netspds (unconfined.subj_typeattr))
+
+    (call .polmatchsetcontext_invalid_netspds (unconfined.subj_typeattr))
+    (call .recvfromsendto_invalid_associations (unconfined.subj_typeattr))
+
+    (call .subj.recvfromsendto_all_associations (unconfined.subj_typeattr))
+
+    (block spd
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit subj_all_macro_template)
+
+           (call .sys.type (subj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block subj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netspd_context
+                   (.u
+                    .r
+                    netspd
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_base_template)
+
+                  (type
+                   netspd)
+
+                  (call .net.spd.subj_type (netspd)))
+
+           (block subj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro subj_type ((type ARG1))
+                         (typeattributeset subj_typeattr ARG1))
+
+                  (macro polmatch_all_netspds ((type ARG1))
+                         (allow ARG1 subj_typeattr (association (polmatch))))
+
+                  (macro polmatchsetcontext_all_netspds ((type ARG1))
+                         (allow ARG1 subj_typeattr
+                                (association (polmatch setcontext))))
+
+                  (macro setcontext_all_netspds ((type ARG1))
+                         (allow ARG1 subj_typeattr (association (setcontext))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_all_macro_template)
+
+                  (typeattribute
+                   subj_typeattr))
+
+           (block subj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro polmatch_netspds ((type ARG1))
+                         (allow ARG1 netspd (association (polmatch))))
+
+                  (macro polmatchsetcontext_netspds ((type ARG1))
+                         (allow ARG1 netspd
+                                (association (polmatch setcontext))))
+
+                  (macro setcontext_netspds ((type ARG1))
+                         (allow ARG1 netspd (association (setcontext))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_macro_template))
+
+           (block subj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_template)
+
+                  (blockinherit .net.spd.subj_base_template)
+                  (blockinherit .net.spd.subj_macro_template))))

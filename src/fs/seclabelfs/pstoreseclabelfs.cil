@@ -1,0 +1,23 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block pstore
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "pstore"
+        "/"
+        fs_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .fs.obj_file_macro_template)
+       (blockinherit .fs.seclabel.obj_template)
+
+       (allow fs self (filesystem (associate))))

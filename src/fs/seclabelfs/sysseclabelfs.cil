@@ -1,0 +1,47 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .fs
+    (call .sys.obj_type_transition_fs (unconfined.subj_typeattr)))
+
+(in .sys
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/sys"
+     dir
+     fs_context)
+    (filecon
+     "/sys/.*"
+     any
+     ())
+
+    (genfscon
+     "sysfs"
+     "/"
+     fs_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_fs ((type ARG1))
+           (call .sys.rootfile_obj_type_transition
+                 (ARG1 fs dir "sys")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .fs.obj_file_macro_template)
+    (blockinherit .fs.seclabel.obj_template)
+
+    (allow fs self (filesystem (associate)))
+
+    (call .sys.mountpoint.obj_type (fs))
+
+    (call .xattr.associate_filesystems (fs)))

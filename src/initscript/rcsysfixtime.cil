@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcsysfixtime.subj_type_transition (subj)))
+
+(in .file
+    (call .rcsysfixtime.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcsysfixtime
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/sysfixtime"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "sysfixtime")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (sys_time)))
+
+       (call .clock.readwrite_nodedev_chr_files (subj))
+
+       (call .file.getattr_all_files (subj))
+       (call .file.getattr_all_lnk_files (subj))
+       (call .file.list_all_dirs (subj))
+
+       (call .locale.read.subj_type (subj)))

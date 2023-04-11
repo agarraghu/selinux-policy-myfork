@@ -1,0 +1,128 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ netif)
+
+(sidcontext
+ netif
+ (.u
+  .r
+  .net.netif
+  (systemlow
+   systemlow)))
+
+(tunableif (or .recv_invalid_peers .recvfrom_sendto_invalid_associations)
+               (true
+                (call .net.netif.egressingress_all_netifs (.invalid))))
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .net.netif.obj_template)
+
+    (call netif.egressingress_all_netifs (unconfined.subj_typeattr))
+
+    (call .egressingress_invalid_netifs (unconfined.subj_typeattr))
+
+    (block netif
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netif_context
+                   (.u
+                    .r
+                    netif
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netif)
+
+                  (call .net.netif.obj_type (netif)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro egress_all_netifs ((type ARG1))
+                         (allow ARG1 obj_typeattr (netif (egress))))
+
+                  (macro egressingress_all_netifs ((type ARG1))
+                         (allow ARG1 obj_typeattr (netif (egress ingress))))
+
+                  (macro ingress_all_netifs ((type ARG1))
+                         (allow ARG1 obj_typeattr (netif (ingress))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute
+                   obj_typeattr))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro egress_netifs ((type ARG1))
+                         (allow ARG1 netif (netif (egress))))
+
+                  (macro egressingress_netifs ((type ARG1))
+                         (allow ARG1 netif (netif (egress ingress))))
+
+                  (macro ingress_netifs ((type ARG1))
+                         (allow ARG1 netif (netif (ingress))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.netif.obj_base_template)
+                  (blockinherit .net.netif.obj_macro_template))))

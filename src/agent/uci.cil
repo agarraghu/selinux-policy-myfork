@@ -1,0 +1,175 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .uci.subj_type_transition (subj)))
+
+(in .file
+    (call .uci.defaults.obj_type_transition_conffile
+          (unconfined.subj_typeattr))
+    (call .uci.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .uci.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .uci.obj_type_transition_statetmpfile (unconfined.subj_typeattr))
+    (call .uci.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block uci
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/config"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/config/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/\.uci"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/\.uci/.*"
+        dir
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/state/network"
+        file
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/state/wireless"
+        file
+        statetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/uci"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_conffile_files ((type ARG1))
+              (allow ARG1 conffile (file (getattr))))
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "config")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "uci")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile file "network"))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile file "wireless")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile dir ".uci")))
+
+       (macro setattr_tmpfile_dirs ((type ARG1))
+              (allow ARG1 tmpfile (dir (setattr)))) 
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (call manage_conffile_dirs (subj))
+       (call manage_conffile_files (subj))
+       (call obj_type_transition_conffile (subj))
+
+       (call manage_statetmpfile_files (subj))
+       (call obj_type_transition_statetmpfile (subj))
+
+       (call manage_tmpfile_dirs (subj))
+       (call manage_tmpfile_files (subj))
+       (call obj_type_transition_tmpfile (subj))
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+       (call .sys.dontaudit_readwrite_udp_sockets (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .configgenerate.readinherited_fifo_files (subj))
+
+       (call .hotplugcall.writeinherited_fifo_files (subj))
+
+       (call .ifup.writeinherited_fifo_files (subj))
+
+       (call .net.dontaudit_readinherited_procfile_files (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .reloadconfig.use_fds (subj))
+       (call .reloadconfig.writeinherited_runtimetmpfile_files (subj))
+
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .urandomseed.writeinherited_fifo_files (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (call .wifi.readwriteinherited_fifo_files (subj))
+
+       (optional uci_opt_cgiio
+                 (call .cgiio.use_fds (subj)))
+
+       (optional uci_opt_initscript
+                 (call .initscript.readwriteinherited_all_fifo_files (subj)))
+
+       (optional uci_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj))
+                 (call .luci.peeraddr.writeinherited_fifo_files (subj)))
+
+       (optional uci_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj)))
+
+       (block defaults
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/etc/uci-defaults(/.*)?"
+               any
+               conffile_file_context)
+
+              ;; mislabeled char files in /overlay/upper/etc/uci-defaults
+              (filecon
+               "/etc/uci-defaults/.*"
+               char
+               ())
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_conffile ((type ARG1))
+                     (call .file.conffile_obj_type_transition
+                           (ARG1 conffile dir "uci-defaults")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .file.conf.obj_template)))

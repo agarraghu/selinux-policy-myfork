@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .nvram.obj_type_transition_nodedev (unconfined.subj_typeattr)))
+
+(block nvram
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/nvram"
+        char
+        nodedev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_nodedev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "nvram")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.node.obj_template))

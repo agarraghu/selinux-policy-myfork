@@ -1,0 +1,462 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_logtmpfile (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/log"
+     dir
+     logtmpfile_file_context)
+    (filecon
+     "/tmp/log/.*"
+     any
+     logtmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_logtmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 logtmpfile dir "log")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit log.obj_template)
+
+    (block log
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   logtmpfile_file_context
+                   (.u
+                    .r
+                    logtmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   logtmpfile)
+
+                  (call .tmpfile.log.obj_type (logtmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile addname_dir))
+
+                  (macro append_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile append_blk_file))
+
+                  (macro append_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile append_chr_file))
+
+                  (macro append_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile append_fifo_file))
+
+                  (macro append_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile append_file))
+
+                  (macro appendinherited_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile appendinherited_file))
+
+                  (macro create_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (create))))
+
+                  (macro create_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_blk_file))
+
+                  (macro create_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_chr_file))
+
+                  (macro create_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile create_dir))
+
+                  (macro create_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_fifo_file))
+
+                  (macro create_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_file))
+
+                  (macro create_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_lnk_file))
+
+                  (macro create_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile create_sock_file))
+
+                  (macro deletename_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile deletename_dir))
+
+                  (macro delete_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (delete))))
+
+                  (macro delete_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_blk_file))
+
+                  (macro delete_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_chr_file))
+
+                  (macro delete_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile delete_dir))
+
+                  (macro delete_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_fifo_file))
+
+                  (macro delete_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_file))
+
+                  (macro delete_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_lnk_file))
+
+                  (macro delete_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile delete_sock_file))
+
+                  (macro execute_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile execute_file))
+
+                  (macro list_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile list_dir))
+
+                  (macro listinherited_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile listinherited_dir))
+
+                  (macro logtmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 logtmpfile ARG3 ARG4 ARG2)
+                         (call addname_logtmpfile_dirs (ARG1)))
+
+                  (macro manage_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (manage))))
+
+                  (macro manage_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_blk_file))
+
+                  (macro manage_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_chr_file))
+
+                  (macro manage_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile manage_dir))
+
+                  (macro manage_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_fifo_file))
+
+                  (macro manage_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_file))
+
+                  (macro manage_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_lnk_file))
+
+                  (macro manage_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile manage_sock_file))
+
+                  (macro mapexecute_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile mapexecute_file))
+
+                  (macro mounton_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (mounton))))
+
+                  (macro mounton_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_blk_file))
+
+                  (macro mounton_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_chr_file))
+
+                  (macro mounton_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_dir))
+
+                  (macro mounton_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_fifo_file))
+
+                  (macro mounton_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_file))
+
+                  (macro mounton_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_lnk_file))
+
+                  (macro mounton_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile mounton_sock_file))
+
+                  (macro read_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (read))))
+
+                  (macro read_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_blk_file))
+
+                  (macro read_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_chr_file))
+
+                  (macro read_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_fifo_file))
+
+                  (macro read_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_file))
+
+                  (macro readinherited_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile readinherited_blk_file))
+
+                  (macro readinherited_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile readinherited_chr_file))
+
+                  (macro readinherited_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile readinherited_fifo_file))
+
+                  (macro readinherited_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile readinherited_file))
+
+                  (macro readinherited_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile readinherited_sock_file))
+
+                  (macro read_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_lnk_file))
+
+                  (macro read_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile read_sock_file))
+
+                  (macro readwrite_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_blk_file))
+
+                  (macro readwrite_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_chr_file))
+
+                  (macro readwrite_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_dir))
+
+                  (macro readwrite_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_fifo_file))
+
+                  (macro readwrite_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_file))
+
+                  (macro readwriteinherited_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_lnk_file))
+
+                  (macro readwrite_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile readwrite_sock_file))
+
+                  (macro relabel_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (relabel))))
+
+                  (macro relabel_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_blk_file))
+
+                  (macro relabel_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_chr_file))
+
+                  (macro relabel_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_dir))
+
+                  (macro relabel_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_fifo_file))
+
+                  (macro relabel_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_file))
+
+                  (macro relabel_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_lnk_file))
+
+                  (macro relabel_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabel_sock_file))
+
+                  (macro relabelfrom_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_file))
+
+                  (macro relabelfrom_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_blk_file))
+
+                  (macro relabelto_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_chr_file))
+
+                  (macro relabelto_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_dir))
+
+                  (macro relabelto_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_fifo_file))
+
+                  (macro relabelto_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_file))
+
+                  (macro relabelto_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_lnk_file))
+
+                  (macro relabelto_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile relabelto_sock_file))
+
+                  (macro rename_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (rename))))
+
+                  (macro rename_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_blk_file))
+
+                  (macro rename_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_chr_file))
+
+                  (macro rename_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile rename_dir))
+
+                  (macro rename_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_fifo_file))
+
+                  (macro rename_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_file))
+
+                  (macro rename_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_lnk_file))
+
+                  (macro rename_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile rename_sock_file))
+
+                  (macro search_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile search_dir))
+
+                  (macro write_logtmpfile ((type ARG1))
+                         (allow ARG1 logtmpfile (allfiles (write))))
+
+                  (macro write_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_blk_file))
+
+                  (macro write_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_chr_file))
+
+                  (macro write_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile write_dir))
+
+                  (macro write_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_fifo_file))
+
+                  (macro write_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_file))
+
+                  (macro writeinherited_logtmpfile_blk_files ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_logtmpfile_chr_files ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_logtmpfile_dirs ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_dir))
+
+                  (macro writeinherited_logtmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_logtmpfile_files ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_file))
+
+                  (macro writeinherited_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile writeinherited_sock_file))
+
+                  (macro write_logtmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_lnk_file))
+
+                  (macro write_logtmpfile_sock_files ((type ARG1))
+                         (allow ARG1 logtmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.log.obj_base_template)
+                  (blockinherit .tmpfile.log.obj_macro_template))))

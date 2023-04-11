@@ -1,0 +1,41 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcirqbalance.subj_type_transition (subj)))
+
+(in .file
+    (call .rcirqbalance.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcirqbalance
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/irqbalance"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "irqbalance")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .irqbalance.create_runtimetmpfile_dirs (subj))
+       (call .irqbalance.obj_type_transition_runtimetmpfile (subj))
+
+       (call .tmpfile.create_runtimetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_runtimetmpfile (subj)))

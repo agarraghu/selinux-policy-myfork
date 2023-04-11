@@ -1,0 +1,39 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcsysntpd.subj_type_transition (subj)))
+
+(in .file
+    (call .rcsysntpd.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcsysntpd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/sysntpd"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "sysntpd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .ntpdhotplug.subj_type_transition (subj))
+
+       (call .tmp.list_fs_dirs (subj)))

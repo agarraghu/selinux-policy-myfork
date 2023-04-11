@@ -1,0 +1,32 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block ubdnscontrol
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (portcon
+        "dccp"
+        8953
+        netport_context)
+       (portcon
+        "sctp"
+        8953
+        netport_context)
+       (portcon
+        "tcp"
+        8953
+        netport_context)
+       (portcon
+        "udp"
+        8953
+        netport_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .net.port.unreserved.obj_template))

@@ -1,0 +1,48 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcwpad.subj_type_transition (subj)))
+
+(in .file
+    (call .rcwpad.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcwpad
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/wpad"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "wpad")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (chown)))
+
+       (call .wpad.getattr_execfile_files (subj))
+
+       (call .wpad.create_runtimetmpfile_dirs (subj))
+       (call .wpad.obj_type_transition_runtimetmpfile (subj dir "hostapd"))
+       (call .wpad.obj_type_transition_runtimetmpfile
+             (subj dir "wpa_supplicant"))
+       (call .wpad.setattr_runtimetmpfile_dirs (subj))
+
+       (call .tmpfile.create_runtimetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_runtimetmpfile (subj)))

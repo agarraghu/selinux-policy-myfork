@@ -1,0 +1,166 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .sqm.subj_type_transition (subj)))
+
+(in .file
+    (call .sqm.libfile_obj_type_transition_execfile
+          (unconfined.subj_typeattr))
+    (call .sqm.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .sqm.obj_type_transition_runtimetmpfile (unconfined.subj_typeattr)))
+
+(in .hotplugcall
+    (call .sqm.subj_type_transition (subj)))
+
+(in .ip
+    (call .sqm.writeinherited_fifo_files (subj)))
+
+(in .kmodloader
+    (call .sqm.use_fds (subj)))
+
+(in .uci
+    (call .sqm.writeinherited_fifo_files (subj)))
+
+(block sqm
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/sqm"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/sqm/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/run/sqm"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/sqm/.*"
+        any
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/lib/sqm/run\.sh"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/lib/sqm/start-sqm"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/lib/sqm/stop-sqm"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/lib/sqm/update-available-qdiscs"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro getattr_runtimetmpfile_files ((type ARG1))
+              (allow ARG1 runtimetmpfile (file (getattr))))
+
+       (macro libfile_obj_type_transition_execfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 execfile file "run.sh"))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 execfile file "start-sqm"))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 execfile file "stop-sqm"))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 execfile file "update-available-qdiscs")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "sqm")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "sqm")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (net_admin)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read nlmsg_write)))
+
+       (call read_conffile_files (subj))
+       (call search_conffile_dirs (subj))
+
+       (call execute_execfile_files (subj))
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .file.read_conffile_lnk_files (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .hotplugcall.use_fds (subj))
+
+       (call .ip.subj_type_transition (subj))
+
+       (call .kmodloader.subj_type_transition (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .module.search_sysfile_dirs (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+
+       (call .netifd.readinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .uci.subj_type_transition (subj))
+
+       (optional sqm_opt_rcsqm
+                 (call .rcsqm.use_fds (subj)))
+
+       (optional sqm_opt_xtables
+                 (call .xtables.subj_type_transition (subj))))

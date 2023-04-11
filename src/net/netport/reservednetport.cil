@@ -1,0 +1,125 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block reserved
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (portcon
+        "dccp"
+        (1 1023)
+        netport_context)
+       (portcon
+        "sctp"
+        (1 1023)
+        netport_context)
+       (portcon
+        "tcp"
+        (1 1023)
+        netport_context)
+       (portcon
+        "udp"
+        (1 1023)
+        netport_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .net.port.reserved.obj_template))
+
+(in .net.port
+
+    (block reserved
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit port.obj_all_macro_template)
+
+           (call port.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (blockinherit .net.port.obj_base_template)
+
+                  (call .net.port.reserved.obj_type (netport)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_dccp_stream_socket)
+                         (allow ARG1 netport (dccp_socket (name_bind))))
+
+                  (macro dccp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_socket)
+                         (allow ARG1 netport (dccp_socket (name_connect))))
+
+                  (macro icmp_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_icmp_socket)
+                         (allow ARG1 netport (icmp_socket (name_bind))))
+
+                  (macro rawip_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_rawip_socket)
+                         (allow ARG1 netport (rawip_socket (name_bind))))
+
+                  (macro sctp_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_sctp_stream_socket)
+                         (allow ARG1 netport (sctp_socket (name_bind))))
+
+                  (macro sctp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_socket)
+                         (allow ARG1 netport (sctp_socket (name_connect))))
+
+                  (macro tcp_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_tcp_stream_socket)
+                         (allow ARG1 netport (tcp_socket (name_bind))))
+
+                  (macro tcp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_socket)
+                         (allow ARG1 netport (tcp_socket (name_connect))))
+
+                  (macro udp_bind_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_udp_socket)
+                         (allow ARG1 netport (udp_socket (name_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.port.reserved.obj_base_template)
+                  (blockinherit .net.port.reserved.obj_macro_template))))

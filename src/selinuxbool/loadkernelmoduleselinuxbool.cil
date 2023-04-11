@@ -1,0 +1,33 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable
+ load_kernel_module
+ true)
+
+(tunableif .load_kernel_module
+           (true
+            (allow .sys.loadkernelmodule.subj_typeattr self
+                   (capability (sys_module)))
+
+            ;; it uses init_module() even though the modules are not compressed?
+            (allow .sys.loadkernelmodule.subj_typeattr self
+                   (system (module_load)))))
+
+(block load_kernel_module
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/load_kernel_module"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))

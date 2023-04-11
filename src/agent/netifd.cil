@@ -1,0 +1,233 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .netifd.subj_type_transition (subj)))
+
+(in .file
+    (call .netifd.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .netifd.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .netifd.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block netifd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/udhcpc\.user"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/udhcpc\.user\..*"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/udhcpc\.user\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/udhcpc\.user\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/run/hostapd-.*\.conf"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/hostapd-.*\.psk"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/hostapd-.*\.vlan"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/wifi-.*\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/udhcpc-.*\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/netifd"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/netifd"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/netifd/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macro
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "netifd")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "udhcpc.user.d"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "udhcpc.user")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "netifd")))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       (macro dontaudit_readwrite_netlink_kobject_uevent_sockets ((type ARG1))
+              (dontaudit ARG1 subj
+                         (netlink_kobject_uevent_socket (read write))))
+
+       (macro dontaudit_readwrite_netlink_route_sockets ((type ARG1))
+              (dontaudit ARG1 subj (netlink_route_socket (read write))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (net_admin net_raw sys_ptrace)))
+       (allow subj self create_netlink_kobject_uevent_socket)
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_packet_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read nlmsg_write)))
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call execute_miscfile_files (subj))
+       (call list_miscfile_dirs (subj))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj file "*"))
+
+       (call .sys.list_rootfile_dirs (subj))
+       (call .sys.loadkernelmodule.subj_type (subj))
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .board.read_miscfile_files (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+       (call .devices.readwrite_sysfile_files (subj))
+
+       (call .dhcp.udp_bind_netports (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .hotplugcall.subj_type_transition (subj))
+
+       (call .ipcalc.subj_type_transition (subj))
+
+       (call .ipv4.search_sysctlfile_dirs (subj))
+       (call .ipv4.readwrite_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+       (call .ipv6.readwrite_sysctlfile_files (subj))
+
+       (call .iw.subj_type_transition (subj))
+
+       (call .iwinfo.subj_type_transition (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .jsonfilter.subj_type_transition (subj))
+
+       (call .kernel.read_sysctlfile_files (subj))
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .kmodloader.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.search_sysctlfile_dirs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .odhcp6c.signal (subj))
+       (call .odhcp6c.subj_type_transition (subj))
+
+       (call .pppd.list_miscfile_dirs (subj))
+       (call .pppd.read_miscfile_files (subj))
+       (call .pppd.sigkill (subj))
+       (call .pppd.signal (subj))
+       (call .pppd.subj_type_transition (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .resolv.manage_tmpfile_dirs (subj))
+       (call .resolv.manage_tmpfile_files (subj))
+       (call .resolv.obj_type_transition_tmpfile (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .subj.read_state_all (subj))
+
+       (call .sysfile.class.search_all_dirs (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .wpad.search_runtimetmpfile_dirs (subj))
+       (call .wpad.signal (subj))
+       (call .wpad.subj_type_transition (subj))
+
+       (call .xattr.associate_filesystems (miscfile))
+
+       (optional netifd_opt_dhcpnetpacket
+                 (call .dhcp.server.recvsend_netpackets (subj)))
+
+       (optional netifd_opt_fwenv
+                 ;; local customisation, should not be needed
+                 (call .fwenv.subj_type_transition (subj))))

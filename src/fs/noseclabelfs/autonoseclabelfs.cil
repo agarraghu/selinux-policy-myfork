@@ -1,0 +1,22 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block auto
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "autofs"
+        "/"
+        fs_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .fs.noseclabel.obj_template)
+
+       (call .sys.mountpoint.obj_type (fs)))

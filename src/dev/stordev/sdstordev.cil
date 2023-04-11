@@ -1,0 +1,94 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .sd.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .sd.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block sd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/sd[^/]+"
+        block
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sda128"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdb9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "sdc9")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

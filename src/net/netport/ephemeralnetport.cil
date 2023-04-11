@@ -1,0 +1,174 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block ephemeral
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (portcon
+        "dccp"
+        (32768 60999)
+        netport_context)
+       (portcon
+        "sctp"
+        (32768 60999)
+        netport_context)
+       (portcon
+        "tcp"
+        (32768 60999)
+        netport_context)
+       (portcon
+        "udp"
+        (32768 60999)
+        netport_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .net.port.ephemeral.obj_template))
+
+(in .net.port
+
+    (block ephemeral
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call port.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_stream_socket)
+                         (allow ARG1 obj_typeattr (dccp_socket (name_bind))))
+
+                  (macro dccp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_socket)
+                         (allow ARG1 obj_typeattr
+                                (dccp_socket (name_connect))))
+
+                  (macro icmp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_icmp_socket)
+                         (allow ARG1 obj_typeattr (icmp_socket (name_bind))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  (macro rawip_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_rawip_socket)
+                         (allow ARG1 obj_typeattr (rawip_socket (name_bind))))
+
+                  (macro sctp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_stream_socket)
+                         (allow ARG1 obj_typeattr (sctp_socket (name_bind))))
+
+                  (macro sctp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_socket)
+                         (allow ARG1 obj_typeattr
+                                (sctp_socket (name_connect))))
+
+                  (macro tcp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_stream_socket)
+                         (allow ARG1 obj_typeattr (tcp_socket (name_bind))))
+
+                  (macro tcp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_socket)
+                         (allow ARG1 obj_typeattr (tcp_socket (name_connect))))
+
+                  (macro udp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self create_udp_socket)
+                         (allow ARG1 obj_typeattr (udp_socket (name_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute obj_typeattr))
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (blockinherit .net.port.obj_base_template)
+
+                  (call .net.port.ephemeral.obj_type (netport)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_stream_socket)
+                         (allow ARG1 netport (dccp_socket (name_bind))))
+
+                  (macro dccp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_socket)
+                         (allow ARG1 netport (dccp_socket (name_connect))))
+
+                  (macro icmp_bind_netports ((type ARG1))
+                         (allow ARG1 self create_icmp_socket)
+                         (allow ARG1 netport (icmp_socket (name_bind))))
+
+                  (macro rawip_bind_netports ((type ARG1))
+                         (allow ARG1 self create_rawip_socket)
+                         (allow ARG1 netport (rawip_socket (name_bind))))
+
+                  (macro sctp_bind_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_stream_socket)
+                         (allow ARG1 netport (sctp_socket (name_bind))))
+
+                  (macro sctp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_socket)
+                         (allow ARG1 netport (sctp_socket (name_connect))))
+
+                  (macro tcp_bind_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_stream_socket)
+                         (allow ARG1 netport (tcp_socket (name_bind))))
+
+                  (macro tcp_connect_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_socket)
+                         (allow ARG1 netport (tcp_socket (name_connect))))
+
+                  (macro udp_bind_netports ((type ARG1))
+                         (allow ARG1 self create_udp_socket)
+                         (allow ARG1 netport (udp_socket (name_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.port.ephemeral.obj_base_template)
+                  (blockinherit .net.port.ephemeral.obj_macro_template))))

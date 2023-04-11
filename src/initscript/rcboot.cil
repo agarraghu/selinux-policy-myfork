@@ -1,0 +1,160 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcboot.subj_type_transition (subj)))
+
+(in .file
+    (call .rcboot.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcboot
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/boot"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "boot")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (sys_admin)))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       ;;bpf_preload
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .board.read_miscfile_files (subj))
+
+       (call .bpf.mount_filesystems (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .cmdline.read_procfile_files (subj))
+
+       (call .configgenerate.subj_type_transition (subj))
+
+       (call .debug.mount_filesystems (subj))
+
+       (call .dev.stor.read.subj_type (subj))
+       (call .dev.stor.read_all_blk_files (subj))
+       (call .dev.stor.read_all_chr_files (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .failsafe.manage_tmpfile_files (subj))
+       (call .failsafe.obj_type_transition_tmpfile (subj))
+
+       (call .filesystems.read_procfile_files (subj))
+
+       (call .fs.mounton_sysfile_dirs (subj))
+
+       (call .fwenv.create_conffile_files (subj))
+       (call .fwenv.obj_type_transition_conffile (subj))
+       (call .fwenv.readwrite_conffile_files (subj))
+       (call .fwenv.read_miscfile_files (subj))
+       (call .fwenv.subj_type_transition (subj))
+
+       (call .ipv6.read_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .jffs2bbc.write_procfile_files (subj))
+
+       (call .kernel.mounton_sysfile_dirs (subj))
+       (call .kernel.search_sysfile_dirs (subj))
+
+       (call .kmodloader.subj_type_transition (subj))
+
+       (call .lastlog.create_logtmpfile_files (subj))
+       (call .lastlog.obj_type_transition_logtmpfile (subj))
+       (call .lastlog.readwrite_logtmpfile_files (subj))
+
+       (call .mountroot.subj_type_transition (subj))
+
+       (call .mtd.read_procfile_files (subj))
+
+       (call .net.search_sysctlfile_dirs (subj))
+
+       (call .opkg.list_miscfile_dirs (subj))
+       (call .opkg.read_conffile_files (subj))
+       (call .opkg.read_miscfile_files (subj))
+
+       (call .osrelease.read_miscfile_files (subj))
+
+       (call .preinit.read_tmpfile_files (subj))
+       (call .preinit.search_tmpfile_dirs (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .reloadconfig.subj_type_transition (subj))
+
+       (call .resolv.addname_tmpfile_dirs (subj))
+       (call .resolv.create_tmpfile_dirs (subj))
+       (call .resolv.create_tmpfile_files (subj))
+       (call .resolv.obj_type_transition_tmpfile (subj))
+       (call .resolv.readwrite_tmpfile_files (subj))
+
+       (call .shadow.read_authfile_files (subj))
+       (call .shadow.read.subj_type (subj))
+
+       (call .uci.create_conffile_files (subj))
+       (call .uci.create_tmpfile_dirs (subj))
+       (call .uci.defaults.delete_conffile_files (subj))
+       (call .uci.defaults.deletename_conffile_dirs (subj))
+       (call .uci.defaults.read_conffile_files (subj))
+       (call .uci.obj_type_transition_tmpfile (subj))
+       (call .uci.readwrite_conffile_files (subj))
+       (call .uci.addname_conffile_dirs (subj))
+       (call .uci.setattr_tmpfile_dirs (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .upgrade.read_miscfile_files (subj))
+       (call .upgrade.search_miscfile_dirs (subj))
+
+       (call .tmp.create_fs_dirs (subj))
+       (call .tmp.create_fs_lnk_files (subj))
+       (call .tmp.rootfile_obj_type_transition_fs (subj))
+
+       (call .tmpfile.manage_locktmpfile_dirs (subj))
+       (call .tmpfile.create_logtmpfile_dirs (subj))
+       (call .tmpfile.create_runtimetmpfile_dirs (subj))
+       (call .tmpfile.create_statetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_locktmpfile (subj))
+       (call .tmpfile.obj_type_transition_logtmpfile (subj))
+       (call .tmpfile.obj_type_transition_runtimetmpfile (subj))
+       (call .tmpfile.obj_type_transition_statetmpfile (subj))
+
+       (call .wtmp.create_logtmpfile_files (subj))
+       (call .wtmp.obj_type_transition_logtmpfile (subj))
+       (call .wtmp.readwrite_logtmpfile_files (subj))
+
+       (optional rcboot_opt_blockmount
+                 (call .blockmount.subj_type_transition (subj)))
+
+       (optional rcboot_opt_dnsmasq
+                 (call .dnsmasq.getattr_execfile_files (subj)))
+
+       (optional rcboot_opt_pstoreseclabelfs
+                 ;; pstore is optional (/etc/init.d/boot references it)
+                 (call .pstore.mount_filesystems (subj))))

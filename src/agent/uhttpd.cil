@@ -1,0 +1,137 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .uhttpd.subj_type_transition (subj)))
+
+(in .file
+    (call .uhttpd.conffile_obj_type_transition_certfile
+          (unconfined.subj_typeattr))
+    (call .uhttpd.obj_type_transition_conftmpfile (unconfined.subj_typeattr))
+    (call .uhttpd.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block uhttpd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/uhttpd\.crt"
+        file
+        certfile_file_context)
+       (filecon
+        "/etc/uhttpd\.crt\..*"
+        file
+        certfile_file_context)
+       (filecon
+        "/etc/uhttpd\.key"
+        file
+        certfile_file_context)
+       (filecon
+        "/etc/uhttpd\.key\..*"
+        file
+        certfile_file_context)
+
+       (filecon
+        "/tmp/etc/uhttpd"
+        dir
+        conftmpfile_file_context)
+       (filecon
+        "/tmp/etc/uhttpd/.*"
+        any
+        conftmpfile_file_context)
+
+       (filecon
+        "/usr/bin/uhttpd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (execute getattr))))
+
+       (macro conffile_obj_type_transition_certfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile file "uhttpd.crt"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile file "uhttpd.crt.new"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile file "uhttpd.key"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile file "uhttpd.key.new")))
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile dir "uhttpd")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "uhttpd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.cert.obj_template)
+       (blockinherit .tmpfile.conf.obj_template)
+
+       (allow subj self create_unix_stream_socket)
+
+       (call read_certfile_files (subj))
+
+       (call manage_conftmpfile_dirs (subj))
+       (call obj_type_transition_conftmpfile (subj))
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .cgiio.subj_type_transition (subj))
+
+       (call .file.read_cgiscriptfile_lnk_files (subj))
+       (call .file.search_cgiscriptfile_dirs (subj))
+       (call .file.search_conffile_dirs (subj))
+
+       (call .http.tcp_bind_netports (subj))
+
+       (call .lua.execute_execfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.port.unreserved.tcp_bind_all_netports (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .shell.mapexecute_execfile_files (subj))
+       (call .shell.read_execfile_files (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .www.list_miscfile_dirs (subj))
+       (call .www.read_miscfile_files (subj))
+       (call .www.read_miscfile_lnk_files (subj))
+
+       (optional uhttpd_opt_acme
+                 (call .acme.read_conffile_files (subj))
+                 (call .acme.read_conffile_lnk_files (subj))
+                 (call .acme.search_conffile_dirs (subj)))
+
+       (optional uhttpd_opt_httpnetpacket
+                 (call .http.server.recvsend_netpackets (subj)))
+
+       (optional uhttpd_opt_luci
+                 (call .luci.cgi.sigkill (subj)))
+
+       (optional uhttpd_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj))))

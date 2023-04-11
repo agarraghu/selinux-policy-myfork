@@ -1,0 +1,133 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunableif (or .recv_invalid_peers .recvfrom_sendto_invalid_associations)
+               (true
+                (call .forward_invalid_netpackets (.invalid))
+                (call .net.packet.forward_all_netpackets (.invalid))))
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (call packet.forward_all_netpackets (unconfined.subj_typeattr))
+    (call packet.recvsend_all_netpackets (unconfined.subj_typeattr))
+    (call packet.relabelto_all_netpackets (unconfined.subj_typeattr))
+
+    (call .forward_invalid_netpackets (unconfined.subj_typeattr))
+    (call .recvsend_invalid_netpackets (unconfined.subj_typeattr))
+
+    (block packet
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netpacket)
+
+                  (call .net.packet.obj_type (netpacket)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro forward_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr
+                                (packet (forward_in forward_out))))
+
+                  (macro forwardin_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (forward_in))))
+
+                  (macro forwardout_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (forward_out))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  (macro recv_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (recv))))
+
+                  (macro recvsend_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (recv send))))
+
+                  (macro relabelto_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (relabelto))))
+
+                  (macro send_all_netpackets ((type ARG1))
+                         (allow ARG1 obj_typeattr (packet (send))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute
+                   obj_typeattr))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro forward_netpackets ((type ARG1))
+                         (allow ARG1 netpacket
+                                (packet (forward_in forward_out))))
+
+                  (macro forwardin_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (forward_in))))
+
+                  (macro forwardout_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (forward_out))))
+
+                  (macro recv_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (recv))))
+
+                  (macro recvsend_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (recv send))))
+
+                  (macro relabelto_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (relabelto))))
+
+                  (macro send_netpackets ((type ARG1))
+                         (allow ARG1 netpacket (packet (send))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.packet.obj_base_template)
+                  (blockinherit .net.packet.obj_macro_template))))

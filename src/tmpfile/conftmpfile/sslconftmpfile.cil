@@ -1,0 +1,40 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .ssl.obj_type_transition_conftmpfile (unconfined.subj_typeattr)))
+
+(in .ssl
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/etc/ssl"
+     dir
+     conftmpfile_file_context)
+    (filecon
+     "/tmp/etc/ssl/.*"
+     any
+     conftmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_conftmpfile ((type ARG1))
+           (call .tmpfile.conftmpfile_obj_type_transition
+                 (ARG1 conftmpfile dir "ssl")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .tmpfile.conf.obj_template))
+
+(in .ssl.read
+
+    (call .ssl.read_conftmpfile_files (subj_typeattr))
+    (call .ssl.search_conftmpfile_dirs (subj_typeattr)))

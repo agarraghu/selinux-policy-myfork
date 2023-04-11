@@ -1,0 +1,254 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .dnsmasq.subj_type_transition (subj)))
+
+(in .file
+    (call .dnsmasq.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_conftmpfile (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_miscfile (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_statetmpfile
+          (unconfined.subj_typeattr))
+    (call .dnsmasq.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr file "dhcp.leases"))
+    (call .dnsmasq.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr file "dhcp6.leases"))
+    (call .dnsmasq.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr dir "dnsmasq.d")))
+
+(block dnsmasq
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/dnsmasq\.conf"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/tmp/etc/dnsmasq\.conf"
+        file
+        conftmpfile_file_context)
+
+       (filecon
+        "/tmp/dhcp\.leases"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/dhcp6\.leases"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/dnsmasq\.d"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/dnsmasq\.d/.*"
+        any
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/run/dnsmasq"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/dnsmasq/.*"
+        any
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/tmp/state/dnsmasqsec"
+        file
+        statetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/dnsmasq"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/dnsmasq"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/dnsmasq/.*"
+        any
+        miscfile_file_context)
+
+       (filecon
+        "/usr/share/dnsmasq"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/dnsmasq/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (execute getattr))))
+
+       (macro getattr_conffile_files ((type ARG1))
+              (allow ARG1 conffile (file (getattr))))
+
+       (macro getattr_datafile_files ((type ARG1))
+              (allow ARG1 datafile (file (getattr))))
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "dnsmasq.conf")))
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile file "dnsmasq.conf")))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "dnsmasq")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "dnsmasq")))
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "dnsmasq")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "dnsmasq")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile file "dnsmasqsec")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       (macro setattr_runtimetmpfile_dirs ((type ARG1))
+              (allow ARG1 runtimetmpfile (dir (setattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.data.obj_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.conf.obj_template)
+       (blockinherit .tmpfile.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (allow subj self (process (getcap setcap)))
+       (allow subj self
+              (capability (chown dac_override net_admin net_raw setgid
+                                 setuid)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call read_conffile_files (subj))
+
+       (call read_datafile_files (subj))
+       (call search_datafile_dirs (subj))
+
+       (call execute_miscfile_files (subj))
+       (call search_miscfile_dirs (subj))
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call manage_tmpfile_dirs (subj))
+       (call manage_tmpfile_files (subj))
+       (call obj_type_transition_tmpfile (subj file "*"))
+       (call obj_type_transition_tmpfile (subj dir "dnsmasq.d"))
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .dhcp.udp_bind_netports (subj))
+
+       (call .dns.tcp_bind_netports (subj))
+       (call .dns.udp_bind_netports (subj))
+
+       (call .dnsstub.tcp_connect_netports (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.port.unreserved.udp_bind_all_netports (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .resolv.list_tmpfile_dirs (subj))
+       (call .resolv.read.subj_type (subj))
+       (call .resolv.watch_tmpfile_dirs (subj))
+
+       (call .shell.mapexecute_execfile_files (subj))
+       (call .shell.read_execfile_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.hosts.read_all_files (subj))
+       (call .tmpfile.list_hoststmpfile_dirs (subj))
+       (call .tmpfile.read_conftmpfile_files (subj))
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .xattr.associate_filesystems (miscfile))
+
+       (optional dnsmasq_opt_dnsnetpacket
+                 (call .dns.packet.recvsend_all_netpackets (subj)))
+
+       (optional dnsmasq_opt_dnsstubnetpacket
+                 (call .dnsstub.client.recvsend_netpackets (subj)))
+
+       (optional dnsmasq_opt_dhcpnetpacket
+                 (call .dhcp.client.recvsend_netpackets (subj))
+                 (call .dhcp.server.recvsend_netpackets (subj)))
+
+       (optional dnsmasq_opt_icmpnetpacket
+                 (call .icmp.client.recvsend_netpackets (subj))
+                 (call .icmp.server.dontaudit_recv_netpackets (subj)))
+
+       (optional dnsmasq_opt_rcdnsmasq
+                 (call .rcdnsmasq.writeinherited_fifo_files (subj))))

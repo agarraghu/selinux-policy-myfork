@@ -1,0 +1,142 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ port)
+
+(sidcontext
+ port
+ (.u
+  .r
+  .net.netport
+  (systemlow
+   systemlow)))
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .net.port.obj_base_template)
+
+    (call port.dccp_bind_all_netports (unconfined.subj_typeattr))
+    (call port.dccp_connect_all_netports (unconfined.subj_typeattr))
+    (call port.icmp_bind_all_netports (unconfined.subj_typeattr))
+    (call port.rawip_bind_all_netports (unconfined.subj_typeattr))
+    (call port.sctp_bind_all_netports (unconfined.subj_typeattr))
+    (call port.sctp_connect_all_netports (unconfined.subj_typeattr))
+    (call port.tcp_bind_all_netports (unconfined.subj_typeattr))
+    (call port.tcp_connect_all_netports (unconfined.subj_typeattr))
+    (call port.udp_bind_all_netports (unconfined.subj_typeattr))
+
+    (call .dccp_bind_invalid_netports (unconfined.subj_typeattr))
+    (call .dccp_connect_invalid_netports (unconfined.subj_typeattr))
+    (call .icmp_bind_invalid_netports (unconfined.subj_typeattr))
+    (call .rawip_bind_invalid_netports (unconfined.subj_typeattr))
+    (call .sctp_bind_invalid_netports (unconfined.subj_typeattr))
+    (call .sctp_connect_invalid_netports (unconfined.subj_typeattr))
+    (call .tcp_bind_invalid_netports (unconfined.subj_typeattr))
+    (call .tcp_connect_invalid_netports (unconfined.subj_typeattr))
+    (call .udp_bind_invalid_netports (unconfined.subj_typeattr))
+
+    (block port
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netport_context
+                   (.u
+                    .r
+                    netport
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netport)
+
+                  (call .net.port.obj_type (netport)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_dccp_stream_socket)
+                         (allow ARG1 obj_typeattr (dccp_socket (name_bind))))
+
+                  (macro dccp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_dccp_socket)
+                         (allow ARG1 obj_typeattr
+                                (dccp_socket (name_connect))))
+
+                  (macro icmp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_icmp_socket)
+                         (allow ARG1 obj_typeattr (icmp_socket (name_bind))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  (macro rawip_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_rawip_socket)
+                         (allow ARG1 obj_typeattr (rawip_socket (name_bind))))
+
+                  (macro sctp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_sctp_stream_socket)
+                         (allow ARG1 obj_typeattr (sctp_socket (name_bind))))
+
+                  (macro sctp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_sctp_socket)
+                         (allow ARG1 obj_typeattr
+                                (sctp_socket (name_connect))))
+
+                  (macro tcp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_tcp_stream_socket)
+                         (allow ARG1 obj_typeattr (tcp_socket (name_bind))))
+
+                  (macro tcp_connect_all_netports ((type ARG1))
+                         (allow ARG1 self create_tcp_socket)
+                         (allow ARG1 obj_typeattr (tcp_socket (name_connect))))
+
+                  (macro udp_bind_all_netports ((type ARG1))
+                         (allow ARG1 self (capability (net_bind_service)))
+                         (allow ARG1 self create_udp_socket)
+                         (allow ARG1 obj_typeattr (udp_socket (name_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute obj_typeattr))))

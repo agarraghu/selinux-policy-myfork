@@ -1,0 +1,47 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcstubby.subj_type_transition (subj)))
+
+(in .file
+    (call .rcstubby.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcstubby
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/stubby"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "stubby")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self
+              (capability (chown dac_override dac_read_search fowner fsetid)))
+
+       (call execute_initscriptfile_files (subj))
+
+       (call .stubby.list_conffile_dirs (subj))
+       (call .stubby.read_conffile_files (subj))
+
+       (call .stubby.manage_conftmpfile_dirs (subj))
+       (call .stubby.manage_conftmpfile_files (subj))
+       (call .stubby.obj_type_transition_conftmpfile (subj)))

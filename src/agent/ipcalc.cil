@@ -1,0 +1,50 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ipcalc.subj_type_transition (subj)))
+
+(in .file
+    (call .ipcalc.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block ipcalc
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ipcalc\.sh"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ipcalc.sh")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .devstatus.use_fds (subj))
+
+       (call .netifd.search_miscfile_dirs (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (optional ipcalc_opt_rcdnsmasq
+                 (call .rcdnsmasq.writeinherited_fifo_files (subj))))

@@ -1,0 +1,58 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .osrelease.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .osrelease.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block osrelease
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/device_info"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/etc/openwrt_release"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/openwrt_version"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/usr/lib/os-release"
+        file
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro conffile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "device_info"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "openwrt_release"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "openwrt_version")))
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile file "os-release")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

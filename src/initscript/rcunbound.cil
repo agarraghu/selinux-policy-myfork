@@ -1,0 +1,96 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcunbound.subj_type_transition (subj)))
+
+(in .file
+    (call .rcunbound.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcunbound
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/unbound"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "unbound")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self
+              (capability (chown dac_override dac_read_search fowner fsetid
+                                 sys_ptrace)))
+       (allow subj self create_udp_socket)
+
+       (call .file.list_initscriptfile_dirs (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .resolv.manage_tmpfile_files (subj))
+       (call .resolv.obj_type_transition_tmpfile (subj))
+       (call .resolv.search_tmpfile_dirs (subj))
+
+       (call .ssl.getattr_certfile_files (subj))
+       (call .ssl.search_certfile_dirs (subj))
+
+       (call .subj.read_state_all (subj))
+
+       (call .tmp.manage_fs_lnk_files (subj))
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.create_statetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_statetmpfile (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .unbound.list_conffile_dirs (subj))
+       (call .unbound.manage_statetmpfile_dirs (subj))
+       (call .unbound.manage_statetmpfile_files (subj))
+       (call .unbound.obj_type_transition_statetmpfile (subj))
+       (call .unbound.read_conffile_files (subj))
+       (call .unbound.read_miscfile_files (subj))
+       (call .unbound.search_miscfile_dirs (subj))
+       (call .unbound.subj_type_transition (subj))
+
+       (call .www.list_miscfile_dirs (subj))
+
+       (optional rcunbound_opt_dnsmasq
+                 (call .dnsmasq.getattr_execfile_files (subj)))
+
+       (optional rcunbound_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+       (optional rcunbound_opt_odhcpd
+                 (call .odhcpd.getattr_execfile_files (subj))
+                 (call .odhcpd.getattr_statetmpfile_dirs (subj)))
+
+       (optional rcunbound_opt_rcdnsmasq
+                 (call .rcdnsmasq.execute_initscriptfile_files (subj)))
+
+       (optional rcunbound_opt_rcodhcpd
+                 (call .rcodhcpd.execute_initscriptfile_files (subj)))
+
+       (optional rcunbound_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

@@ -1,0 +1,65 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block xattr
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (fsuse
+        task
+        "pipefs"
+        fs_context)
+       (fsuse
+        task
+        "sockfs"
+        fs_context)
+
+       (fsuse
+        xattr
+        "btrfs"
+        fs_context)
+       (fsuse
+        xattr
+        "ext2"
+        fs_context)
+       (fsuse
+        xattr
+        "ext3"
+        fs_context)
+       (fsuse
+        xattr
+        "ext4"
+        fs_context)
+       (fsuse
+        xattr
+        "f2fs"
+        fs_context)
+       (fsuse
+        xattr
+        "jffs2"
+        fs_context)
+       (fsuse
+        xattr
+        "overlay"
+        fs_context)
+       (fsuse
+        xattr
+        "squashfs"
+        fs_context)
+       (fsuse
+        xattr
+        "ubifs"
+        fs_context)
+       (fsuse
+        xattr
+        "xfs"
+        fs_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .fs.seclabel.obj_template))

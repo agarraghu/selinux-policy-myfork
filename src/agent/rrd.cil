@@ -1,0 +1,63 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rrd.rrdtool.subj_type_transition (subj)))
+
+(in .file
+    (call .rrd.obj_type_transition_tmpfile (unconfined.subj_typeattr))
+    (call .rrd.rrdtool.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block rrd
+
+    (filecon
+     "/tmp/rrd"
+     dir
+     tmpfile_file_context)
+    (filecon
+     "/tmp/rrd/.*"
+     any
+     tmpfile_file_context)
+
+
+    (macro obj_type_transition_tmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 tmpfile dir "rrd")))
+
+    (blockinherit .tmpfile.obj_template)
+
+    (block rrdtool
+
+           ;;
+           ;; Contexts
+           ;;
+
+           (filecon
+            "/usr/bin/rrdtool"
+            file
+            execfile_file_context)
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro obj_type_transition_execfile ((type ARG1))
+                  (call .file.execfile_obj_type_transition
+                        (ARG1 execfile file "rrdtool")))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .agent.base_template)
+
+           (call list_tmpfile_dirs (subj))
+           (call read_tmpfile_files (subj))
+           (call read_tmpfile_lnk_files (subj))
+
+           (call .locale.read.subj_type (subj))
+
+           (optional rrd_opt_cgiio
+                     (call .cgiio.writeinherited_fifo_files (subj)))))

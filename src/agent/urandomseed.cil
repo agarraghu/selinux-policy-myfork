@@ -1,0 +1,119 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .urandomseed.subj_type_transition (subj)))
+
+(in .file
+    (call .urandomseed.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr dir "seedrng"))
+    (call .urandomseed.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr file "urandom.seed"))
+    (call .urandomseed.obj_type_transition_execfile
+          (unconfined.subj_typeattr))
+    (call .urandomseed.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(block urandomseed
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/seedrng"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/etc/seedrng/.*"
+        any
+        miscfile_file_context)
+
+       (filecon
+        "/etc/urandom\.seed"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/run/seedrng\.lock"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/seedrng"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/urandom_seed"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro conffile_obj_type_transition_miscfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile ARG2 ARG3)))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "seedrng"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "urandom_seed")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "seedrng.lock")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       ;; bad permissions on /etc/seedrng/seed.credit
+       (allow subj self (capability (dac_override sys_admin)))
+
+       (call manage_miscfile_dirs (subj))
+       (call manage_miscfile_files (subj))
+       (call conffile_obj_type_transition_miscfile (subj dir "seedrng"))
+       (call conffile_obj_type_transition_miscfile (subj file "*"))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call .sys.list_rootfile_dirs (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .file.deletename_conffile_dirs (subj))
+
+       (call .getrandom.subj_type_transition (subj))
+
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .random.readwrite_nodedev_chr_files (subj))
+
+       (call .random.read_sysctlfile_files (subj))
+       (call .random.search_sysctlfile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmp.list_fs_dirs (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .uci.subj_type_transition (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (call .xattr.associate_filesystems (miscfile)))

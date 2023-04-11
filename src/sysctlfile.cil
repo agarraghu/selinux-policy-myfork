@@ -1,0 +1,447 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (genfscon
+     "proc"
+     "/sys"
+     sysctlfile_file_context)
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .sysctlfile.obj_template))
+
+(block sysctlfile
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.obj_all_macro_template)
+
+       (call .procfile.obj_type (obj_typeattr))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block obj_base_template
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (context
+               sysctlfile_file_context
+               (.u
+                .r
+                sysctlfile
+                (systemlow
+                 systemlow)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_base_template)
+
+              (type
+               sysctlfile)
+
+              (call .sysctlfile.obj_type (sysctlfile)))
+
+       (block obj_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile addname_dir))
+
+              (macro append_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile append_blk_file))
+
+              (macro append_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile append_chr_file))
+
+              (macro append_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile append_fifo_file))
+
+              (macro append_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile append_file))
+
+              (macro appendinherited_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile appendinherited_blk_file))
+
+              (macro appendinherited_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile appendinherited_chr_file))
+
+              (macro appendinherited_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile appendinherited_fifo_file))
+
+              (macro appendinherited_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile appendinherited_file))
+
+              (macro create_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (create))))
+
+              (macro create_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_blk_file))
+
+              (macro create_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_chr_file))
+
+              (macro create_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile create_dir))
+
+              (macro create_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_fifo_file))
+
+              (macro create_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_file))
+
+              (macro create_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_lnk_file))
+
+              (macro create_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile create_sock_file))
+
+              (macro deletename_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile deletename_dir))
+
+              (macro delete_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (delete))))
+
+              (macro delete_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_blk_file))
+
+              (macro delete_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_chr_file))
+
+              (macro delete_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile delete_dir))
+
+              (macro delete_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_fifo_file))
+
+              (macro delete_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_file))
+
+              (macro delete_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_lnk_file))
+
+              (macro delete_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile delete_sock_file))
+
+              (macro execute_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile execute_file))
+
+              (macro list_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile list_dir))
+
+              (macro listinherited_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile listinherited_dir))
+
+              (macro manage_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (manage))))
+
+              (macro manage_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_blk_file))
+
+              (macro manage_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_chr_file))
+
+              (macro manage_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile manage_dir))
+
+              (macro manage_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_fifo_file))
+
+              (macro manage_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_file))
+
+              (macro manage_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_lnk_file))
+
+              (macro manage_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile manage_sock_file))
+
+              (macro mapexecute_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile mapexecute_chr_file))
+
+              (macro mapexecute_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile mapexecute_file))
+
+              (macro mounton_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (mounton))))
+
+              (macro mounton_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_blk_file))
+
+              (macro mounton_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_chr_file))
+
+              (macro mounton_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_dir))
+
+              (macro mounton_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_fifo_file))
+
+              (macro mounton_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_file))
+
+              (macro mounton_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_lnk_file))
+
+              (macro mounton_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile mounton_sock_file))
+
+              (macro read_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (read))))
+
+              (macro read_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_blk_file))
+
+              (macro read_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_chr_file))
+
+              (macro read_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_fifo_file))
+
+              (macro read_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_file))
+
+              (macro readinherited_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile readinherited_blk_file))
+
+              (macro readinherited_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile readinherited_chr_file))
+
+              (macro readinherited_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile readinherited_fifo_file))
+
+              (macro readinherited_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile readinherited_file))
+
+              (macro readinherited_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile readinherited_sock_file))
+
+              (macro read_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_lnk_file))
+
+              (macro read_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile read_sock_file))
+
+              (macro readwrite_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (readwrite))))
+
+              (macro readwrite_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_blk_file))
+
+              (macro readwrite_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_chr_file))
+
+              (macro readwrite_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_dir))
+
+              (macro readwrite_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_fifo_file))
+
+              (macro readwrite_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_file))
+
+              (macro readwriteinherited_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_blk_file))
+
+              (macro readwriteinherited_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_chr_file))
+
+              (macro readwriteinherited_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_dir))
+
+              (macro readwriteinherited_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_file))
+
+              (macro readwriteinherited_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwriteinherited_sock_file))
+
+              (macro readwrite_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_lnk_file))
+
+              (macro readwrite_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile readwrite_sock_file))
+
+              (macro relabel_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (relabel))))
+
+              (macro relabel_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_blk_file))
+
+              (macro relabel_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_chr_file))
+
+              (macro relabel_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_dir))
+
+              (macro relabel_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_fifo_file))
+
+              (macro relabel_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_file))
+
+              (macro relabel_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_lnk_file))
+
+              (macro relabel_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabel_sock_file))
+
+              (macro relabelfrom_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (relabelfrom))))
+
+              (macro relabelfrom_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_blk_file))
+
+              (macro relabelfrom_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_chr_file))
+
+              (macro relabelfrom_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_dir))
+
+              (macro relabelfrom_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_fifo_file))
+
+              (macro relabelfrom_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_file))
+
+              (macro relabelfrom_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_lnk_file))
+
+              (macro relabelfrom_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelfrom_sock_file))
+
+              (macro relabelto_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (relabelto))))
+
+              (macro relabelto_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_blk_file))
+
+              (macro relabelto_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_chr_file))
+
+              (macro relabelto_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_dir))
+
+              (macro relabelto_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_fifo_file))
+
+              (macro relabelto_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_file))
+
+              (macro relabelto_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_lnk_file))
+
+              (macro relabelto_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile relabelto_sock_file))
+
+              (macro rename_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (rename))))
+
+              (macro rename_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_blk_file))
+
+              (macro rename_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_chr_file))
+
+              (macro rename_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile rename_dir))
+
+              (macro rename_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_fifo_file))
+
+              (macro rename_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_file))
+
+              (macro rename_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_lnk_file))
+
+              (macro rename_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile rename_sock_file))
+
+              (macro search_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile search_dir))
+
+              (macro sysctlfile_obj_type_transition
+                     ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                     (typetransition ARG1 sysctlfile ARG3 ARG4 ARG2)
+                     (call addname_sysctlfile_dirs (ARG1)))
+
+              (macro write_sysctlfile ((type ARG1))
+                     (allow ARG1 sysctlfile (allfiles (write))))
+
+              (macro write_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_blk_file))
+
+              (macro write_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_chr_file))
+
+              (macro write_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile write_dir))
+
+              (macro write_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_fifo_file))
+
+              (macro write_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_file))
+
+              (macro writeinherited_sysctlfile_blk_files ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_blk_file))
+
+              (macro writeinherited_sysctlfile_chr_files ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_chr_file))
+
+              (macro writeinherited_sysctlfile_dirs ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_dir))
+
+              (macro writeinherited_sysctlfile_fifo_files ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_fifo_file))
+
+              (macro writeinherited_sysctlfile_files ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_file))
+
+              (macro writeinherited_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile writeinherited_sock_file))
+
+              (macro write_sysctlfile_lnk_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_lnk_file))
+
+              (macro write_sysctlfile_sock_files ((type ARG1))
+                     (allow ARG1 sysctlfile write_sock_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_macro_template))
+
+       (block obj_template
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_template)
+
+              (blockinherit .sysctlfile.obj_base_template)
+              (blockinherit .sysctlfile.obj_macro_template)))

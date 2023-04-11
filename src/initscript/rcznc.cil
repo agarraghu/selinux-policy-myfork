@@ -1,0 +1,49 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcznc.subj_type_transition (subj)))
+
+(in .file
+    (call .rcznc.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcznc
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/znc"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "znc")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (chown dac_override dac_read_search)))
+
+       (call .znc.getattr_certfile_files (subj))
+
+       (call .znc.manage_conftmpfile_dirs (subj))
+       (call .znc.manage_conftmpfile_files (subj))
+       (call .znc.manage_conftmpfile_lnk_files (subj))
+       (call .znc.obj_type_transition_conftmpfile (subj))
+
+       (optional rcznc_opt_acme
+              (call .acme.getattr_conffile_files (subj))
+              (call .acme.read_conffile_lnk_files (subj))
+              (call .acme.search_conffile_dirs (subj))))

@@ -1,0 +1,160 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcucitrack.subj_type_transition (subj)))
+
+(in .file
+    (call .rcucitrack.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcucitrack
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/ucitrack"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "ucitrack")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .file.execute_initscriptfile_files (subj))
+
+       (optional rcucitrack_opt_rcacme
+                 (call .rcacme.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcblockd
+                 (call .rcblockd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcboot
+                 (call .rcboot.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcbootcount
+                 (call .rcbootcount.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcchronyd
+                 (call .rcchronyd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rccron
+                 (call .rccron.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcdnsmasq
+                 (call .rcdnsmasq.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcdropbear
+                 (call .rcdropbear.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcfirewall
+                 (call .rcfirewall.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcfstab
+                 (call .rcfstab.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcgpioswitch
+                 (call .rcgpioswitch.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcigmpproxy
+                 (call .rcigmpproxy.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcirqbalance
+                 (call .rcirqbalance.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcled
+                 (call .rcled.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rclog
+                 (call .rclog.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcmurmur
+                 (call .rcmurmur.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcnetwork
+                 (call .rcnetwork.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcnftqos
+                 (call .rcnftqos.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcngircd
+                 (call .rcngircd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcodhcpd
+                 (call .rcodhcpd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcrpcd
+                 (call .rcrpcd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsocat
+                 (call .rcsocat.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsqm
+                 (call .rcsqm.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsquid
+                 (call .rcsquid.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcstubby
+                 (call .rcstubby.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsysctl
+                 (call .rcsysctl.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsysfixtime
+                 (call .rcsysfixtime.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsysntpd
+                 (call .rcsysntpd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcsystem
+                 (call .rcsystem.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rctinyproxy
+                 (call .rctinyproxy.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rctor
+                 (call .rctor.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcttyd
+                 (call .rcttyd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcucitrack
+                 (call .rcucitrack.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcuhttpd
+                 (call .rcuhttpd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcumount
+                 (call .rcumount.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcunbound
+                 (call .rcunbound.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcurandomseed
+                 (call .rcurandomseed.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcurngd
+                 (call .rcurngd.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcwpad
+                 (call .rcwpad.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rcznc
+                 (call .rcznc.subj_type_transition (subj)))
+
+       (optional rcucitrack_opt_rczram
+                 (call .rczram.subj_type_transition (subj))))

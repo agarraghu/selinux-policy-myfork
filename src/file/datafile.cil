@@ -1,0 +1,463 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/usr"
+     dir
+     datafile_file_context)
+    (filecon
+     "/usr/.*"
+     any
+     datafile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_datafile ((type ARG1))
+           (call .sys.rootfile_obj_type_transition
+                 (ARG1 datafile dir "usr")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit data.obj_template)
+
+    (call obj_type_transition_datafile (unconfined.subj_typeattr))
+
+    (block data
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call file.obj_type (obj_typeattr))
+
+           (call .xattr.associate_filesystems (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   datafile_file_context
+                   (.u
+                    .r
+                    datafile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   datafile)
+
+                  (call .file.data.obj_type (datafile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile addname_dir))
+
+                  (macro append_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile append_blk_file))
+
+                  (macro append_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile append_chr_file))
+
+                  (macro append_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile append_fifo_file))
+
+                  (macro append_datafile_files ((type ARG1))
+                         (allow ARG1 datafile append_file))
+
+                  (macro appendinherited_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile appendinherited_blk_file))
+
+                  (macro appendinherited_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile appendinherited_chr_file))
+
+                  (macro appendinherited_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile appendinherited_fifo_file))
+
+                  (macro appendinherited_datafile_files ((type ARG1))
+                         (allow ARG1 datafile appendinherited_file))
+
+                  (macro create_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (create))))
+
+                  (macro create_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile create_blk_file))
+
+                  (macro create_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile create_chr_file))
+
+                  (macro create_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile create_dir))
+
+                  (macro create_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile create_fifo_file))
+
+                  (macro create_datafile_files ((type ARG1))
+                         (allow ARG1 datafile create_file))
+
+                  (macro create_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile create_lnk_file))
+
+                  (macro create_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile create_sock_file))
+
+                  (macro datafile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 datafile ARG3 ARG4 ARG2)
+                         (call addname_datafile_dirs (ARG1)))
+
+                  (macro deletename_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile deletename_dir))
+
+                  (macro delete_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (delete))))
+
+                  (macro delete_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile delete_blk_file))
+
+                  (macro delete_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile delete_chr_file))
+
+                  (macro delete_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile delete_dir))
+
+                  (macro delete_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile delete_fifo_file))
+
+                  (macro delete_datafile_files ((type ARG1))
+                         (allow ARG1 datafile delete_file))
+
+                  (macro delete_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile delete_lnk_file))
+
+                  (macro delete_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile delete_sock_file))
+
+                  (macro execute_datafile_files ((type ARG1))
+                         (allow ARG1 datafile execute_file))
+
+                  (macro list_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile list_dir))
+
+                  (macro listinherited_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile listinherited_dir))
+
+                  (macro manage_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (manage))))
+
+                  (macro manage_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile manage_blk_file))
+
+                  (macro manage_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile manage_chr_file))
+
+                  (macro manage_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile manage_dir))
+
+                  (macro manage_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile manage_fifo_file))
+
+                  (macro manage_datafile_files ((type ARG1))
+                         (allow ARG1 datafile manage_file))
+
+                  (macro manage_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile manage_lnk_file))
+
+                  (macro manage_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile manage_sock_file))
+
+                  (macro mapexecute_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile mapexecute_chr_file))
+
+                  (macro mapexecute_datafile_files ((type ARG1))
+                         (allow ARG1 datafile mapexecute_file))
+
+                  (macro mounton_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (mounton))))
+
+                  (macro mounton_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile mounton_blk_file))
+
+                  (macro mounton_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile mounton_chr_file))
+
+                  (macro mounton_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile mounton_dir))
+
+                  (macro mounton_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile mounton_fifo_file))
+
+                  (macro mounton_datafile_files ((type ARG1))
+                         (allow ARG1 datafile mounton_file))
+
+                  (macro mounton_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile mounton_lnk_file))
+
+                  (macro mounton_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile mounton_sock_file))
+
+                  (macro read_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (read))))
+
+                  (macro read_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile read_blk_file))
+
+                  (macro read_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile read_chr_file))
+
+                  (macro read_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile read_fifo_file))
+
+                  (macro read_datafile_files ((type ARG1))
+                         (allow ARG1 datafile read_file))
+
+                  (macro readinherited_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile readinherited_blk_file))
+
+                  (macro readinherited_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile readinherited_chr_file))
+
+                  (macro readinherited_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile readinherited_fifo_file))
+
+                  (macro readinherited_datafile_files ((type ARG1))
+                         (allow ARG1 datafile readinherited_file))
+
+                  (macro readinherited_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile readinherited_sock_file))
+
+                  (macro read_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile read_lnk_file))
+
+                  (macro read_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile read_sock_file))
+
+                  (macro readwrite_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (readwrite))))
+
+                  (macro readwrite_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_blk_file))
+
+                  (macro readwrite_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_chr_file))
+
+                  (macro readwrite_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile readwrite_dir))
+
+                  (macro readwrite_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_fifo_file))
+
+                  (macro readwrite_datafile_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_file))
+
+                  (macro readwriteinherited_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_dir))
+
+                  (macro readwriteinherited_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_datafile_files ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_file))
+
+                  (macro readwriteinherited_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile readwriteinherited_sock_file))
+
+                  (macro readwrite_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_lnk_file))
+
+                  (macro readwrite_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile readwrite_sock_file))
+
+                  (macro relabel_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (relabel))))
+
+                  (macro relabel_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile relabel_blk_file))
+
+                  (macro relabel_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile relabel_chr_file))
+
+                  (macro relabel_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile relabel_dir))
+
+                  (macro relabel_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile relabel_fifo_file))
+
+                  (macro relabel_datafile_files ((type ARG1))
+                         (allow ARG1 datafile relabel_file))
+
+                  (macro relabel_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile relabel_lnk_file))
+
+                  (macro relabel_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile relabel_sock_file))
+
+                  (macro relabelfrom_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_blk_file))
+
+                  (macro relabelfrom_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_chr_file))
+
+                  (macro relabelfrom_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_dir))
+
+                  (macro relabelfrom_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_datafile_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_file))
+
+                  (macro relabelfrom_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile relabelfrom_sock_file))
+
+                  (macro relabelto_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (relabelto))))
+
+                  (macro relabelto_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_blk_file))
+
+                  (macro relabelto_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_chr_file))
+
+                  (macro relabelto_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile relabelto_dir))
+
+                  (macro relabelto_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_fifo_file))
+
+                  (macro relabelto_datafile_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_file))
+
+                  (macro relabelto_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_lnk_file))
+
+                  (macro relabelto_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile relabelto_sock_file))
+
+                  (macro rename_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (rename))))
+
+                  (macro rename_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile rename_blk_file))
+
+                  (macro rename_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile rename_chr_file))
+
+                  (macro rename_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile rename_dir))
+
+                  (macro rename_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile rename_fifo_file))
+
+                  (macro rename_datafile_files ((type ARG1))
+                         (allow ARG1 datafile rename_file))
+
+                  (macro rename_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile rename_lnk_file))
+
+                  (macro rename_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile rename_sock_file))
+
+                  (macro search_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile search_dir))
+
+                  (macro write_datafile ((type ARG1))
+                         (allow ARG1 datafile (allfiles (write))))
+
+                  (macro write_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile write_blk_file))
+
+                  (macro write_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile write_chr_file))
+
+                  (macro write_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile write_dir))
+
+                  (macro write_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile write_fifo_file))
+
+                  (macro write_datafile_files ((type ARG1))
+                         (allow ARG1 datafile write_file))
+
+                  (macro writeinherited_datafile_blk_files ((type ARG1))
+                         (allow ARG1 datafile writeinherited_blk_file))
+
+                  (macro writeinherited_datafile_chr_files ((type ARG1))
+                         (allow ARG1 datafile writeinherited_chr_file))
+
+                  (macro writeinherited_datafile_dirs ((type ARG1))
+                         (allow ARG1 datafile writeinherited_dir))
+
+                  (macro writeinherited_datafile_fifo_files ((type ARG1))
+                         (allow ARG1 datafile writeinherited_fifo_file))
+
+                  (macro writeinherited_datafile_files ((type ARG1))
+                         (allow ARG1 datafile writeinherited_file))
+
+                  (macro writeinherited_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile writeinherited_sock_file))
+
+                  (macro write_datafile_lnk_files ((type ARG1))
+                         (allow ARG1 datafile write_lnk_file))
+
+                  (macro write_datafile_sock_files ((type ARG1))
+                         (allow ARG1 datafile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.data.obj_base_template)
+                  (blockinherit .file.data.obj_macro_template))))

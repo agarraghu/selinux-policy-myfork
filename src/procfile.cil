@@ -1,0 +1,823 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block procfile
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_all_dirs ((type ARG1))
+              (allow ARG1 obj_typeattr (dir (getattr))))
+
+       (macro getattr_all_files ((type ARG1))
+              (allow ARG1 obj_typeattr (file (getattr))))
+
+       (macro getattr_all_lnk_files ((type ARG1))
+              (allow ARG1 obj_typeattr (lnk_file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.obj_all_macro_template)
+
+       (call .file.obj_type (obj_typeattr))
+
+       (call .proc.associate_filesystems (obj_typeattr))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block obj_all_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr addname_dir))
+
+              (macro append_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_blk_file))
+
+              (macro append_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_chr_file))
+
+              (macro append_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_fifo_file))
+
+              (macro append_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_file))
+
+              (macro appendinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_blk_file))
+
+              (macro appendinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_chr_file))
+
+              (macro appendinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_fifo_file))
+
+              (macro appendinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_file))
+
+              (macro create_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (create))))
+
+              (macro create_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typattr create_blk_file))
+
+              (macro create_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_chr_file))
+
+              (macro create_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr create_dir))
+
+              (macro create_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_fifo_file))
+
+              (macro create_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_file))
+
+              (macro create_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_lnk_file))
+
+              (macro create_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_sock_file))
+
+              (macro deletename_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr deletename_dir))
+
+              (macro delete_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (delete))))
+
+              (macro delete_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_blk_file))
+
+              (macro delete_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_chr_file))
+
+              (macro delete_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_dir))
+
+              (macro delete_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_fifo_file))
+
+              (macro delete_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_file))
+
+              (macro delete_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_lnk_file))
+
+              (macro delete_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_sock_file))
+
+              (macro execute_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr execute_file))
+
+              (macro list_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr list_dir))
+
+              (macro listinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr listinherited_dir))
+
+              (macro manage_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (manage))))
+
+              (macro manage_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_blk_file))
+
+              (macro manage_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_chr_file))
+
+              (macro manage_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_dir))
+
+              (macro manage_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_fifo_file))
+
+              (macro manage_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_file))
+
+              (macro manage_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_lnk_file))
+
+              (macro manage_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_sock_file))
+
+              (macro mapexecute_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mapexecute_chr_file))
+
+              (macro mapexecute_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mapexecute_file))
+
+              (macro mounton_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (mounton))))
+
+              (macro mounton_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_blk_file))
+
+              (macro mounton_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_chr_file))
+
+              (macro mounton_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_dir))
+
+              (macro mounton_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_fifo_file))
+
+              (macro mounton_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_file))
+
+              (macro mounton_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_lnk_file))
+
+              (macro mounton_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_sock_file))
+
+              (macro obj_type ((type ARG1))
+                     (typeattributeset obj_typeattr ARG1))
+
+              (macro read_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (read))))
+
+              (macro read_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_blk_file))
+
+              (macro read_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_chr_file))
+
+              (macro read_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_fifo_file))
+
+              (macro read_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_file))
+
+              (macro readinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_blk_file))
+
+              (macro readinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_chr_file))
+
+              (macro readinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_fifo_file))
+
+              (macro readinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_file))
+
+              (macro readinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_sock_file))
+
+              (macro read_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_lnk_file))
+
+              (macro read_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_sock_file))
+
+              (macro readwrite_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (readwrite))))
+
+              (macro readwrite_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_blk_file))
+
+              (macro readwrite_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_chr_file))
+
+              (macro readwrite_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_dir))
+
+              (macro readwrite_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_fifo_file))
+
+              (macro readwrite_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_file))
+
+              (macro readwriteinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_blk_file))
+
+              (macro readwriteinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_chr_file))
+
+              (macro readwriteinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_dir))
+
+              (macro readwriteinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_file))
+
+              (macro readwriteinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_sock_file))
+
+              (macro readwrite_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_lnk_file))
+
+              (macro readwrite_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_sock_file))
+
+              (macro relabel_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabel))))
+
+              (macro relabel_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_blk_file))
+
+              (macro relabel_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_chr_file))
+
+              (macro relabel_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_dir))
+
+              (macro relabel_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_fifo_file))
+
+              (macro relabel_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_file))
+
+              (macro relabel_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_lnk_file))
+
+              (macro relabel_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_sock_file))
+
+              (macro relabelfrom_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabelfrom))))
+
+              (macro relabelfrom_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_blk_file))
+
+              (macro relabelfrom_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_chr_file))
+
+              (macro relabelfrom_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_dir))
+
+              (macro relabelfrom_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_fifo_file))
+
+              (macro relabelfrom_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_file))
+
+              (macro relabelfrom_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_lnk_file))
+
+              (macro relabelfrom_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_sock_file))
+
+              (macro relabelto_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabelto))))
+
+              (macro relabelto_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_blk_file))
+
+              (macro relabelto_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_chr_file))
+
+              (macro relabelto_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_dir))
+
+              (macro relabelto_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_fifo_file))
+
+              (macro relabelto_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_file))
+
+              (macro relabelto_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_lnk_file))
+
+              (macro relabelto_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_sock_file))
+
+              (macro rename_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (rename))))
+
+              (macro rename_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_blk_file))
+
+              (macro rename_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_chr_file))
+
+              (macro rename_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_dir))
+
+              (macro rename_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_fifo_file))
+
+              (macro rename_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_file))
+
+              (macro rename_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_lnk_file))
+
+              (macro rename_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_sock_file))
+
+              (macro search_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr search_dir))
+
+              (macro write_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (write))))
+
+              (macro write_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_blk_file))
+
+              (macro write_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_chr_file))
+
+              (macro write_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr write_dir))
+
+              (macro write_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_fifo_file))
+
+              (macro write_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_file))
+
+              (macro writeinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_blk_file))
+
+              (macro writeinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_chr_file))
+
+              (macro writeinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_dir))
+
+              (macro writeinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_fifo_file))
+
+              (macro writeinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_file))
+
+              (macro writeinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_sock_file))
+
+              (macro write_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_lnk_file))
+
+              (macro write_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_sock_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_all_macro_template)
+
+              (typeattribute
+               obj_typeattr))
+
+       (block obj_base_template
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (context
+               procfile_file_context
+               (.u
+                .r
+                procfile
+                (systemlow
+                 systemlow)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_base_template)
+
+              (type
+               procfile)
+
+              (call .procfile.obj_type (procfile)))
+
+       (block obj_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile addname_dir))
+
+              (macro append_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile append_blk_file))
+
+              (macro append_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile append_chr_file))
+
+              (macro append_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile append_fifo_file))
+
+              (macro append_procfile_files ((type ARG1))
+                     (allow ARG1 procfile append_file))
+
+              (macro appendinherited_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile appendinherited_blk_file))
+
+              (macro appendinherited_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile appendinherited_chr_file))
+
+              (macro appendinherited_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile appendinherited_fifo_file))
+
+              (macro appendinherited_procfile_files ((type ARG1))
+                     (allow ARG1 procfile appendinherited_file))
+
+              (macro create_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (create))))
+
+              (macro create_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile create_blk_file))
+
+              (macro create_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile create_chr_file))
+
+              (macro create_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile create_dir))
+
+              (macro create_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile create_fifo_file))
+
+              (macro create_procfile_files ((type ARG1))
+                     (allow ARG1 procfile create_file))
+
+              (macro create_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile create_lnk_file))
+
+              (macro create_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile create_sock_file))
+
+              (macro deletename_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile deletename_dir))
+
+              (macro delete_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (delete))))
+
+              (macro delete_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile delete_blk_file))
+
+              (macro delete_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile delete_chr_file))
+
+              (macro delete_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile delete_dir))
+
+              (macro delete_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile delete_fifo_file))
+
+              (macro delete_procfile_files ((type ARG1))
+                     (allow ARG1 procfile delete_file))
+
+              (macro delete_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile delete_lnk_file))
+
+              (macro delete_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile delete_sock_file))
+
+              (macro execute_procfile_files ((type ARG1))
+                     (allow ARG1 procfile execute_file))
+
+              (macro list_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile list_dir))
+
+              (macro listinherited_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile listinherited_dir))
+
+              (macro manage_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (manage))))
+
+              (macro manage_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile manage_blk_file))
+
+              (macro manage_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile manage_chr_file))
+
+              (macro manage_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile manage_dir))
+
+              (macro manage_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile manage_fifo_file))
+
+              (macro manage_procfile_files ((type ARG1))
+                     (allow ARG1 procfile manage_file))
+
+              (macro manage_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile manage_lnk_file))
+
+              (macro manage_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile manage_sock_file))
+
+              (macro mapexecute_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile mapexecute_chr_file))
+
+              (macro mapexecute_procfile_files ((type ARG1))
+                     (allow ARG1 procfile mapexecute_file))
+
+              (macro mounton_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (mounton))))
+
+              (macro mounton_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile mounton_blk_file))
+
+              (macro mounton_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile mounton_chr_file))
+
+              (macro mounton_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile mounton_dir))
+
+              (macro mounton_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile mounton_fifo_file))
+
+              (macro mounton_procfile_files ((type ARG1))
+                     (allow ARG1 procfile mounton_file))
+
+              (macro mounton_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile mounton_lnk_file))
+
+              (macro mounton_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile mounton_sock_file))
+
+              (macro procfile_obj_type_transition
+                     ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                     (typetransition ARG1 procfile ARG3 ARG4 ARG2)
+                     (call addname_procfile_dirs (ARG1)))
+
+              (macro read_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (read))))
+
+              (macro read_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile read_blk_file))
+
+              (macro read_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile read_chr_file))
+
+              (macro read_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile read_fifo_file))
+
+              (macro read_procfile_files ((type ARG1))
+                     (allow ARG1 procfile read_file))
+
+              (macro readinherited_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile readinherited_blk_file))
+
+              (macro readinherited_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile readinherited_chr_file))
+
+              (macro readinherited_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile readinherited_fifo_file))
+
+              (macro readinherited_procfile_files ((type ARG1))
+                     (allow ARG1 procfile readinherited_file))
+
+              (macro readinherited_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile readinherited_sock_file))
+
+              (macro read_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile read_lnk_file))
+
+              (macro read_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile read_sock_file))
+
+              (macro readwrite_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (readwrite))))
+
+              (macro readwrite_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_blk_file))
+
+              (macro readwrite_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_chr_file))
+
+              (macro readwrite_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile readwrite_dir))
+
+              (macro readwrite_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_fifo_file))
+
+              (macro readwrite_procfile_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_file))
+
+              (macro readwriteinherited_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_blk_file))
+
+              (macro readwriteinherited_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_chr_file))
+
+              (macro readwriteinherited_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_dir))
+
+              (macro readwriteinherited_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_procfile_files ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_file))
+
+              (macro readwriteinherited_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile readwriteinherited_sock_file))
+
+              (macro readwrite_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_lnk_file))
+
+              (macro readwrite_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile readwrite_sock_file))
+
+              (macro relabel_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (relabel))))
+
+              (macro relabel_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile relabel_blk_file))
+
+              (macro relabel_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile relabel_chr_file))
+
+              (macro relabel_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile relabel_dir))
+
+              (macro relabel_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile relabel_fifo_file))
+
+              (macro relabel_procfile_files ((type ARG1))
+                     (allow ARG1 procfile relabel_file))
+
+              (macro relabel_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile relabel_lnk_file))
+
+              (macro relabel_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile relabel_sock_file))
+
+              (macro relabelfrom_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (relabelfrom))))
+
+              (macro relabelfrom_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_blk_file))
+
+              (macro relabelfrom_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_chr_file))
+
+              (macro relabelfrom_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_dir))
+
+              (macro relabelfrom_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_fifo_file))
+
+              (macro relabelfrom_procfile_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_file))
+
+              (macro relabelfrom_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_lnk_file))
+
+              (macro relabelfrom_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile relabelfrom_sock_file))
+
+              (macro relabelto_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (relabelto))))
+
+              (macro relabelto_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_blk_file))
+
+              (macro relabelto_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_chr_file))
+
+              (macro relabelto_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile relabelto_dir))
+
+              (macro relabelto_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_fifo_file))
+
+              (macro relabelto_procfile_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_file))
+
+              (macro relabelto_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_lnk_file))
+
+              (macro relabelto_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile relabelto_sock_file))
+
+              (macro rename_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (rename))))
+
+              (macro rename_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile rename_blk_file))
+
+              (macro rename_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile rename_chr_file))
+
+              (macro rename_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile rename_dir))
+
+              (macro rename_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile rename_fifo_file))
+
+              (macro rename_procfile_files ((type ARG1))
+                     (allow ARG1 procfile rename_file))
+
+              (macro rename_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile rename_lnk_file))
+
+              (macro rename_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile rename_sock_file))
+
+              (macro search_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile search_dir))
+
+              (macro write_procfile ((type ARG1))
+                     (allow ARG1 procfile (allfiles (write))))
+
+              (macro write_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile write_blk_file))
+
+              (macro write_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile write_chr_file))
+
+              (macro write_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile write_dir))
+
+              (macro write_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile write_fifo_file))
+
+              (macro write_procfile_files ((type ARG1))
+                     (allow ARG1 procfile write_file))
+
+              (macro writeinherited_procfile_blk_files ((type ARG1))
+                     (allow ARG1 procfile writeinherited_blk_file))
+
+              (macro writeinherited_procfile_chr_files ((type ARG1))
+                     (allow ARG1 procfile writeinherited_chr_file))
+
+              (macro writeinherited_procfile_dirs ((type ARG1))
+                     (allow ARG1 procfile writeinherited_dir))
+
+              (macro writeinherited_procfile_fifo_files ((type ARG1))
+                     (allow ARG1 procfile writeinherited_fifo_file))
+
+              (macro writeinherited_procfile_files ((type ARG1))
+                     (allow ARG1 procfile writeinherited_file))
+
+              (macro writeinherited_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile writeinherited_sock_file))
+
+              (macro write_procfile_lnk_files ((type ARG1))
+                     (allow ARG1 procfile write_lnk_file))
+
+              (macro write_procfile_sock_files ((type ARG1))
+                     (allow ARG1 procfile write_sock_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_macro_template))
+
+       (block obj_template
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_template)
+
+              (blockinherit .procfile.obj_base_template)
+              (blockinherit .procfile.obj_macro_template)))

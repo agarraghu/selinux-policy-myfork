@@ -1,0 +1,66 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .configgenerate.subj_type_transition (subj)))
+
+(in .file
+    (call .configgenerate.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block configgenerate
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/config_generate"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "config_generate")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .board.read_miscfile_files (subj))
+
+       (call .boarddetect.subj_type_transition (subj))
+
+       (call .ipv6.read_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .net.search_sysctlfile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .sys.list_rootfile_dirs (subj))
+
+       (call .uci.manage_conffile_dirs (subj))
+       (call .uci.manage_conffile_files (subj))
+       (call .uci.obj_type_transition_conffile (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (optional configgenerate_opt_rcboot
+                 (call .rcboot.use_fds (subj))))

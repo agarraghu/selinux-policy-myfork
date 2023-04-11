@@ -1,0 +1,343 @@
+I added experimental support for label-based packet filtering.
+
+The kernel should be built with the following:
+
+CONFIG_NETFILTER_XT_TARGET_CONNSECMARK=m
+CONFIG_NETFILTER_XT_TARGET_SECMARK=m
+CONFIG_NETWORK_SECMARK=y
+CONFIG_NF_CONNTRACK_SECMARK=y
+
+The policy should be built with the following:
+
+sed -i 's/tunable/boolean/g' $(PKG_BUILD_DIR)/src/selinuxbool/invalidpacketselinuxbool.cil
+
+The modules in src/net/netpacket need to be included (they are excluded by default)
+There is a "policypackets" make target that builds the policy with packet labels
+
+This configuration is only tested with fw4/nftables.
+
+DO NOTE THE CUSTOM NODE ADDRESSES
+LOOPBACK TRAFFIC REQUIRES SPECIAL ATTENTION
+
+cat > /etc/nftables.d/10-secmark.nft <<EOF
+secmark chronycmd_client {
+	"u:r:chronycmd.client.netpacket"
+}
+secmark chronycmd_server {
+	"u:r:chronycmd.server.netpacket"
+}
+secmark dhcp_client {
+	"u:r:dhcp.client.netpacket"
+}
+secmark dhcp_server {
+	"u:r:dhcp.server.netpacket"
+}
+secmark dns_client {
+	"u:r:dns.client.netpacket"
+}
+secmark dns_server {
+	"u:r:dns.server.netpacket"
+}
+secmark dnsstub_client {
+	"u:r:dnsstub.client.netpacket"
+}
+secmark dnsstub_server {
+	"u:r:dnsstub.server.netpacket"
+}
+secmark dns_local_client {
+	"u:r:dns.local.client.netpacket"
+}
+secmark dns_local_server {
+	"u:r:dns.local.server.netpacket"
+}
+secmark http_client {
+	"u:r:http.client.netpacket"
+}
+secmark http_server {
+	"u:r:http.server.netpacket"
+}
+secmark httpproxy_client {
+	"u:r:httpproxy.client.netpacket"
+}
+secmark httpproxy_server {
+	"u:r:httpproxy.server.netpacket"
+}
+secmark icmp_client {
+	"u:r:icmp.client.netpacket"
+}
+secmark icmp_server {
+	"u:r:icmp.server.netpacket"
+}
+secmark igmp_client {
+	"u:r:igmp.client.netpacket"
+}
+secmark igmp_server {
+	"u:r:igmp.server.netpacket"
+}
+secmark ipsecnatt_client {
+	"u:r:ipsecnatt.client.netpacket"
+}
+secmark ipsecnatt_server {
+	"u:r:ipsecnatt.server.netpacket"
+}
+secmark irc_client {
+	"u:r:irc.client.netpacket"
+}
+secmark irc_server {
+	"u:r:irc.server.netpacket"
+}
+secmark isakmp_client {
+	"u:r:isakmp.client.netpacket"
+}
+secmark isakmp_server {
+	"u:r:isakmp.server.netpacket"
+}
+secmark murmur_client {
+	"u:r:murmur.client.netpacket"
+}
+secmark murmur_server {
+	"u:r:murmur.server.netpacket"
+}
+secmark ntp_client {
+	"u:r:ntp.client.netpacket"
+}
+secmark ntp_server {
+	"u:r:ntp.server.netpacket"
+}
+secmark ntpnts_client {
+	"u:r:ntpnts.client.netpacket"
+}
+secmark ntpnts_server {
+	"u:r:ntpnts.server.netpacket"
+}
+secmark radius_client {
+	"u:r:radius.client.netpacket"
+}
+secmark radius_server {
+	"u:r:radius.server.netpacket"
+}
+secmark sandboxnet_client {
+	"u:r:sandbox.net.client.netpacket"
+}
+secmark sandboxnet_server {
+	"u:r:sandbox.net.server.netpacket"
+}
+secmark ssh_client {
+	"u:r:ssh.client.netpacket"
+}
+secmark ssh_server {
+	"u:r:ssh.server.netpacket"
+}
+secmark syslog_client {
+	"u:r:syslog.client.netpacket"
+}
+secmark syslog_server {
+	"u:r:syslog.server.netpacket"
+}
+secmark ttyd_client {
+	"u:r:ttyd.client.netpacket"
+}
+secmark ttyd_server {
+	"u:r:ttyd.server.netpacket"
+}
+secmark ubdnscontrol_client {
+	"u:r:ubdnscontrol.client.netpacket"
+}
+secmark ubdnscontrol_server {
+	"u:r:ubdnscontrol.server.netpacket"
+}
+secmark wireguard_client {
+	"u:r:wireguard.client.netpacket"
+}
+secmark wireguard_server {
+	"u:r:wireguard.server.netpacket"
+}
+secmark znc_client {
+	"u:r:znc.client.netpacket"
+}
+secmark znc_server {
+	"u:r:znc.server.netpacket"
+}
+
+map secmapping_in {
+	type inet_service : secmark
+	elements = {\
+		546 : "dhcp_server",\
+		547 : "dhcp_server",\
+		67 : "dhcp_server",\
+		68 : "dhcp_server",\
+		443 : "http_server",\
+		80 : "http_server",\
+		3128 : "httpproxy_server",\
+		8080 : "httpproxy_server",\
+		8888 : "httpproxy_server",\
+		4500 : "ipsecnatt_server",\
+		6667 : "irc_server",\
+		6668 : "irc_server",\
+		6669 : "irc_server",\
+		6697 : "irc_server",\
+		500 : "isakmp_server",\
+		64738 : "murmur_server",\
+		123 : "ntp_server",\
+		1812 : "radius_server",\
+		514 : "syslog_server",\
+		51820 : "wireguard_server",\
+		1234 : "znc_server"\
+	}
+}
+
+map secmapping_out {
+	type inet_service : secmark
+	elements = {\
+		546 : "dhcp_client",\
+		547 : "dhcp_client",\
+		67 : "dhcp_client",\
+		68 : "dhcp_client",\
+		443 : "http_client",\
+		80 : "http_client",\
+		3128 : "httpproxy_client",\
+		8080 : "httpproxy_client",\
+		8888 : "httpproxy_client",\
+		4500 : "ipsecnatt_client",\
+		6667 : "irc_client",\
+		6668 : "irc_client",\
+		6669 : "irc_client",\
+		6697 : "irc_client",\
+		500 : "isakmp_client",\
+		64738 : "murmur_client",\
+		123 : "ntp_client",\
+		1812 : "radius_client",\
+		22 : "ssh_client",\
+		514 : "syslog_client",\
+		7681 : "ttyd_client",\
+		51820 : "wireguard_client"\
+	}
+}
+
+chain secmarkin {
+      type filter hook input priority -225;
+      ct state established,related meta secmark set ct secmark
+      ct state new meta secmark set tcp dport map @secmapping_in
+      ct state new meta secmark set udp dport map @secmapping_in
+      ct state new tcp dport 22 ip6 saddr fd60:e40d:32e8::/48 ip6 daddr fd60:e40d:32e8::1 meta secmark set "ssh_server"
+      ct state new tcp dport 22 ip6 saddr 2a10:3781:2099::/48 ip6 daddr 2a10:3781:2099::1 meta secmark set "ssh_server"
+      ct state new tcp dport 22 ip saddr 192.168.1.0/24 ip daddr 192.168.1.1 meta secmark set "ssh_server"
+      ct state new tcp dport 7681 ip6 saddr fd60:e40d:32e8::/48 ip6 daddr fd60:e40d:32e8::1 meta secmark set "ttyd_server"
+      ct state new tcp dport 7681 ip6 saddr 2a10:3781:2099::/48 ip6 daddr 2a10:3781:2099::1 meta secmark set "ttyd_server"
+      ct state new tcp dport 7681 ip saddr 192.168.1.0/24 ip daddr { 192.168.1.1, 45.80.168.93 } meta secmark set "ttyd_server"
+      ct state new udp dport 53 ip6 saddr fd60:e40d:32e8::/48 meta secmark set "dns_server"
+      ct state new tcp dport 53 ip6 saddr fd60:e40d:32e8::/48 meta secmark set "dns_server"
+      ct state new udp dport 53 ip6 saddr fe80::/16 meta secmark set "dns_server"
+      ct state new tcp dport 53 ip6 saddr fe80::/16 meta secmark set "dns_server"
+      ct state new udp dport 53 ip saddr { 192.168.1.0/24, 192.168.2.0/24 } meta secmark set "dns_server"
+      ct state new tcp dport 53 ip saddr { 192.168.1.0/24, 192.168.2.0/24 } meta secmark set "dns_server"
+      ct state new ip protocol igmp meta secmark set "igmp_server"
+      ct state new ip protocol icmp meta secmark set "icmp_server"
+      ct state new ip6 nexthdr icmpv6 meta secmark set "icmp_server"
+      iif lo tcp dport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_server"
+      iif lo udp dport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_server"
+      iif lo tcp dport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_server"
+      iif lo udp dport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_server"
+      iif lo tcp dport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_server"
+      iif lo udp dport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_server"
+      iif lo tcp dport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_server"
+      iif lo udp dport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_server"
+      iif lo tcp dport 8953 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "ubdnscontrol_server"
+      iif lo tcp dport 8953 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "ubdnscontrol_server"
+      iif lo udp dport 323 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "chronycmd_server"
+      iif lo udp dport 323 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "chronycmd_server"
+      iif lo tcp dport 6697 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "irc_server"
+      iif lo tcp dport 1234 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "znc_server"
+      iif lo tcp sport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_client"
+      iif lo udp sport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_client"
+      iif lo tcp sport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_client"
+      iif lo udp sport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_client"
+      iif lo tcp sport 8953 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "ubdnscontrol_client"
+      iif lo tcp sport 8953 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "ubdnscontrol_client"
+      iif lo udp sport 323 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "chronycmd_client"
+      iif lo udp sport 323 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "chronycmd_client"
+      iif lo udp sport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_client"
+      iif lo tcp sport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_client"
+      iif lo udp sport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_client"
+      iif lo tcp sport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_client"
+      iif lo tcp sport 6697 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "irc_client"
+      iif lo tcp sport 1234 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "sandboxnet_client"
+      iif lo tcp sport 8888 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "httpproxy_client"
+      iif lo tcp sport 8888 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "httpproxy_client"
+      ct state new ct secmark set meta secmark
+}
+
+chain secmarkout {
+      type filter hook output priority 225;
+      ct state established,related meta secmark set ct secmark
+      ct state new meta secmark set tcp dport map @secmapping_out
+      ct state new meta secmark set udp dport map @secmapping_out
+      ct state new udp dport { 53, 853 } ip6 saddr { 2a10:3781:2099::1, 2a10:3781:2099:2::1 } ip6 daddr { 2606:4700:4700::1001, 2606:4700:4700::1111 } meta secmark set "dns_client"
+      ct state new tcp dport { 53, 853 } ip6 saddr { 2a10:3781:2099::1, 2a10:3781:2099:2::1 } ip6 daddr { 2606:4700:4700::1001, 2606:4700:4700::1111 } meta secmark set "dns_client"
+      ct state new tcp dport { 53, 853 } ip saddr 45.80.168.93 ip daddr { 1.0.0.1, 1.1.1.1 } meta secmark set "dns_client"
+      ct state new udp dport { 53, 853 } ip saddr 45.80.168.93 ip daddr { 1.0.0.1, 1.1.1.1 } meta secmark set "dns_client"
+      ct state new ip protocol igmp meta secmark set "igmp_client"
+      ct state new ip protocol icmp meta secmark set "icmp_client"
+      ct state new ip6 nexthdr icmpv6 meta secmark set "icmp_client"
+      oif lo tcp dport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_client"
+      oif lo udp dport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_client"
+      oif lo tcp dport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_client"
+      oif lo udp dport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_client"
+      oif lo tcp dport 8953 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "ubdnscontrol_client"
+      oif lo tcp dport 8953 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "ubdnscontrol_client"
+      oif lo udp dport 323 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "chronycmd_client"
+      oif lo udp dport 323 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "chronycmd_client"
+      oif lo udp dport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_client"
+      oif lo tcp dport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_client"
+      oif lo udp dport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_client"
+      oif lo tcp dport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_client"
+      oif lo tcp dport 8888 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "httpproxy_client"
+      oif lo tcp dport 8888 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "httpproxy_client"
+      oif lo tcp dport 6697 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "irc_client"
+      oif lo tcp dport 1234 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "sandboxnet_client"
+      oif lo tcp sport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_server"
+      oif lo udp sport 53 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dns_local_server"
+      oif lo tcp sport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_server"
+      oif lo udp sport 53 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dns_local_server"
+      oif lo tcp sport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_server"
+      oif lo udp sport 5453 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "dnsstub_server"
+      oif lo tcp sport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_server"
+      oif lo udp sport 5453 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "dnsstub_server"
+      oif lo tcp sport 8953 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "ubdnscontrol_server"
+      oif lo tcp sport 8953 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "ubdnscontrol_server"
+      oif lo udp sport 323 ip6 saddr ::1 ip6 daddr ::1 meta secmark set "chronycmd_server"
+      oif lo udp sport 323 ip saddr 127.0.0.1 ip daddr 127.0.0.1 meta secmark set "chronycmd_server"
+      oif lo tcp sport 6697 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "irc_server"
+      oif lo tcp sport 1234 ip6 saddr 2a10:3781:2099::1 ip6 daddr 2a10:3781:2099::1 meta secmark set "znc_server"
+      ct state new ct secmark set meta secmark
+}
+EOF
+
+cat > /etc/init.d/selinux <<EOF
+#!/bin/sh /etc/rc.common
+
+# THIS CAN BLOCK ALL NETWORK TRAFFIC IF NOT USED PROPERLY
+# FAILSAFE MODE WORKS IF THINGS GO WRONG
+
+START=11
+
+start()
+{
+	echo 0 > /sys/fs/selinux/booleans/recv_send_invalid_packets
+	echo 1 > /sys/fs/selinux/commit_pending_bools
+}
+
+stop()
+{
+	echo 1 > /sys/fs/selinux/booleans/recv_send_invalid_packets
+	echo 1 > /sys/fs/selinux/commit_pending_bools
+}
+EOF
+
+chmod +x /etc/init.d/selinux
+/etc/init.d/selinux enable
+reboot
+
+odhcpd and odhcp6c unfortunately use rawip sockets. rawip packets cannot
+currently be labeled and so these components need access to send and receive
+unlabeled (invalid) packets for DHCPv6.

@@ -1,0 +1,123 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ubiutil.subj_type_transition (subj)))
+
+(in .file
+    (call .ubiutil.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block ubiutil
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ubiattach"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubiblock"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubicrc32"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubidetach"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubiformat"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubimkvol"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubinfo"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubinize"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubirename"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubirmvol"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubirsvol"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ubiupdatevol"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubiattach"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubiblock"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubicrc32"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubidetach"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubiformat"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubimkvol"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubinfo"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubinize"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubirename"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubirmvol"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubirsvol"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubiupdatevol")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (sys_resource)))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_fs_dirs (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_files (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .dev.stor.read.subj_type (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .mtd.read_stordev_chr_files (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj)))

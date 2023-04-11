@@ -1,0 +1,38 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .bsg.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .bsg.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block bsg
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/bsg/.+"
+        char
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "0:0:0:0"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "1:0:0:0"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "2:0:0:0")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

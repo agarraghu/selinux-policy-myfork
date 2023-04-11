@@ -1,0 +1,450 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rpcd.subj_type_transition (subj)))
+
+(in .file
+    (call .rpcd.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .rpcd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .rpcd.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr dir "rpcd")))
+
+(block rpcd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/iwinfo.*"
+        socket
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/rpcd"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/rpcd/.*"
+        any
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/rpcd"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/share/rpcd"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/rpcd/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro dontaudit_readinherited_datafile_files ((type ARG1))
+              (dontaudit ARG1 datafile (file (read))))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "rpcd")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "rpcd")))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       (macro unix_dgram_send ((type ARG1))
+              (call sendto_unix_dgram_sockets (ARG1))
+              (call write_runtimetmpfile_sock_files (ARG1)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.data.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (kill net_admin net_raw setgid setuid)))
+       (allow subj self (process (setrlimit)))
+       (allow subj self create_netlink_generic_socket)
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call list_datafile_dirs (subj))
+       (call read_datafile_files (subj))
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call manage_runtimetmpfile_files (subj))
+       (call manage_runtimetmpfile_sock_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj dir "rpcd"))
+       (call obj_type_transition_runtimetmpfile (subj sock_file "*"))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.transition (subj))
+       (call .sys.dontaudit_noatsecure (subj))
+       (call .sys.dontaudit_rlimitinh (subj))
+       (call .sys.dontaudit_siginh (subj))
+
+       (call .board.read_miscfile_files (subj))
+
+       (call .cgiio.delete_tmpfile_files (subj))
+       (call .cgiio.read_tmpfile_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.list_sysfile_dirs (subj))
+
+       (call .cron.create_miscfile_files (subj))
+       (call .cron.readwrite_miscfile_files (subj))
+       (call .cron.addname_miscfile_dirs (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .dropbear.addname_certfile_dirs (subj))
+       (call .dropbear.create_certfile_files (subj))
+       (call .dropbear.readwrite_certfile_files (subj))
+
+       (call .file.initscript.read_all_files (subj))
+       (call .file.initscriptfile_subj_type_transition (subj .sys.subj))
+       (call .file.mapexecute_initscriptfile_files (subj))
+
+       (call .file.auth.write.subj_type (subj))
+       (call .file.manage_conffile_lnk_files (subj))
+       (call .file.readwrite_conffile_dirs (subj))
+       (call .file.list_execfile_dirs (subj))
+       (call .file.list_initscriptfile_dirs (subj))
+
+       (call .filesystems.read_procfile_files (subj))
+
+       (call .firewall.readwrite_conffile_files (subj))
+
+       (call .firmware.read_sysfile_files (subj))
+       (call .firmware.search_sysfile_dirs (subj))
+
+       (call .firstboot.subj_type_transition (subj))
+
+       (call .fs.getattr_all_filesystems (subj))
+
+       (call .fsck.subj_type_transition (subj))
+
+       (call .fw3.read_datafile_files (subj))
+       (call .fw3.search_datafile_dirs (subj))
+
+       (call .ifup.subj_type_transition (subj))
+
+       (call .ipv4.read_sysctlfile_files (subj))
+       (call .ipv4.search_sysctlfile_dirs (subj))
+
+       (call .ipv6.read_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .iproute2.read_conffile_files (subj))
+       (call .iproute2.search_conffile_dirs (subj))
+
+       (call .kernel.read_sysctlfile_files (subj))
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .kernel.search_sysfile_dirs (subj))
+
+       (call .leds.read_sysfile_lnk_files (subj))
+       (call .leds.list_sysfile_dirs (subj))
+
+       (call .libiwinfo.read_datafile_files (subj))
+       (call .libiwinfo.search_datafile_dirs (subj))
+
+       (call .loadavg.read_procfile_files (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .logread.subj_type_transition (subj))
+
+       (call .lua.execute_execfile_files (subj))
+
+       (call .luci.list_datafile_dirs (subj))
+       (call .luci.read_datafile_files (subj))
+       (call .luci.subj_type_transition (subj))
+
+       (call .luci.bwc.subj_type_transition (subj))
+
+       (call .meminfo.read_procfile_files (subj))
+
+       (call .mnt.search_miscfile_dirs (subj))
+
+       (call .module.search_sysfile_dirs (subj))
+
+       (call .mtd.read_procfile_files (subj))
+
+       (call .nameservice.manage_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.search_sysctlfile_dirs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.rawip_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .netfilter.read_sysctlfile_files (subj))
+       (call .netfilter.search_sysctlfile_dirs (subj))
+
+       (call .netifd.read_runtimetmpfile_files (subj))
+
+       (call .odhcpd.read_hoststmpfile_files (subj))
+       (call .odhcpd.read_statetmpfile_files (subj))
+       (call .odhcpd.search_statetmpfile_dirs (subj))
+
+       (call .opkg.list_conffile_dirs (subj))
+       (call .opkg.readwrite_conffile_files (subj))
+
+       (call .opkg.read_miscfile_files (subj))
+       (call .opkg.search_miscfile_dirs (subj))
+
+       (call .partitions.read_procfile_files (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .rclocal.readwrite_conffile_files (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .selinux.computeav (subj))
+       (call .selinux.linked.subj_type (subj))
+       (call .selinux.setfscreate.subj_type (subj))
+
+       (call .shadow.manage_authfile_files (subj))
+       (call .shadow.read.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .stat.read_procfile_files (subj))
+
+       (call .subj.passwd_all (subj))
+       (call .subj.read_state_all (subj))
+       (call .subj.signal_all (subj))
+       (call .subj.sigkill_all (subj))
+
+       (call .sysupgrade.execfile_subj_type_transition (subj .sys.subj))
+       (call .sysupgrade.mapexecute_execfile_files (subj))
+       (call .sysupgrade.readwrite_conffile_files (subj))
+       (call .sysupgrade.read_execfile_files (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+       (call .tmpfile.search_hoststmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.readwrite_conffile_dirs (subj))
+       (call .uci.list_tmpfile_dirs (subj))
+       (call .uci.manage_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+
+       (call .ucode.read_datafile_files (subj))
+       (call .ucode.search_datafile_dirs (subj))
+
+       (call .uhttpd.getattr_execfile_files (subj))
+
+       (call .upgrade.read_miscfile_files (subj))
+       (call .upgrade.search_miscfile_dirs (subj))
+
+       (call .wifi.subj_type_transition (subj))
+
+       (call .wpad.subj_type_transition (subj))
+       (call .wpad.unix_dgram_send_runtimetmpfile (subj))
+
+       (call .www.list_miscfile_dirs (subj))
+       (call .www.read_miscfile_files (subj))
+
+       (call .xattr.unmount_filesystems (subj))
+
+       (optional rpcd_opt_blockmount
+                 (call .blockmount.subj_type_transition (subj)))
+
+       (optional rpcd_opt_dnsmasq
+                 (call .dnsmasq.read_tmpfile_files (subj))
+                 (call .dnsmasq.subj_type_transition (subj)))
+
+       (optional rpcd_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional rpcd_opt_icmpnetpacket
+                 (call .icmp.client.recvsend_netpackets (subj)))
+
+       (optional rpcd_opt_ip
+                 (call .ip.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcacme
+                 (call .rcacme.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcblockd
+                 (call .rcblockd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcboot
+                 (call .rcboot.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcbootcount
+                 (call .rcbootcount.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcchronyd
+                 (call .rcchronyd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rccron
+                 (call .rccron.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcdnsmasq
+                 (call .rcdnsmasq.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcdropbear
+                 (call .rcdropbear.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcfirewall
+                 (call .rcfirewall.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcfstab
+                 (call .rcfstab.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcgpioswitch
+                 (call .rcgpioswitch.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcigmpproxy
+                 (call .rcigmpproxy.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcirqbalance
+                 (call .rcirqbalance.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcled
+                 (call .rcled.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rclog
+                 (call .rclog.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcmurmur
+                 (call .rcmurmur.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcnetwork
+                 (call .rcnetwork.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcnftqos
+                 (call .rcnftqos.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcngircd
+                 (call .rcngircd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcodhcpd
+                 (call .rcodhcpd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcrpcd
+                 (call .rcrpcd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsocat
+                 (call .rcsocat.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsqm
+                 (call .rcsqm.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsquid
+                 (call .rcsquid.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcstubby
+                 (call .rcstubby.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsysctl
+                 (call .rcsysctl.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsysfixtime
+                 (call .rcsysfixtime.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsysntpd
+                 (call .rcsysntpd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcsystem
+                 (call .rcsystem.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rctinyproxy
+                 (call .rctinyproxy.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rctor
+                 (call .rctor.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcttyd
+                 (call .rcttyd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcucitrack
+                 (call .rcucitrack.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcuhttpd
+                 (call .rcuhttpd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcumount
+                 (call .rcumount.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcunbound
+                 (call .rcunbound.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcurandomseed
+                 (call .rcurandomseed.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcurngd
+                 (call .rcurngd.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcwpad
+                 (call .rcwpad.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rcznc
+                 (call .rcznc.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rczram
+                 (call .rczram.subj_type_transition (subj)))
+
+       (optional rpcd_opt_rrd
+                 (call .rrd.list_tmpfile_dirs (subj))
+                 (call .rrd.read_tmpfile_files (subj))
+                 (call .rrd.read_tmpfile_lnk_files (subj)))
+
+       (optional rpcd_opt_sqm
+                 (call .sqm.getattr_execfile_files (subj))
+                 (call .sqm.getattr_runtimetmpfile_files (subj))
+                 (call .sqm.list_runtimetmpfile_dirs (subj)))
+
+       (optional rpcd_opt_sslcertfile
+                 (call .ssl.search_certfile_dirs (subj)))
+
+       (optional rpcd_opt_tinyproxy
+                 (call .tinyproxy.getattr_conffile_files (subj))
+                 (call .tinyproxy.list_conffile_dirs (subj)))
+
+       (optional rpcd_opt_wireguard
+                 (call .wireguard.subj_type_transition (subj)))
+
+       (optional rpcd_opt_xtables
+                 (call .xtables.subj_type_transition (subj))))

@@ -1,0 +1,69 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .preinit.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .preinit.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .preinit.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block preinit
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/sysinfo"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/sysinfo/.*"
+        any
+        tmpfile_file_context)
+
+       (filecon
+        "/etc/preinit"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/etc/diag\.sh"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/usr/lib/preinit"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/preinit/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "preinit")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 execfile file "preinit")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile dir "sysinfo")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

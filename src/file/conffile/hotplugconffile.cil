@@ -1,0 +1,50 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .hotplug.obj_type_transition_conffile (unconfined.subj_typeattr)))
+
+(block hotplug
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/hotplug-preinit\.json"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/hotplug\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/hotplug\.d/.*"
+        any
+        conffile_file_context)
+       (filecon
+        "/etc/hotplug\.json"
+        file
+        conffile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_conffile_files ((type ARG1))
+              (allow ARG1 conffile (file (getattr))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "hotplug-preinit.json"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "hotplug.d"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "hotplug.json")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.conf.obj_template))

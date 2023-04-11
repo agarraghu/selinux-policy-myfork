@@ -1,0 +1,72 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .nameservice.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block nameservice
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/ethers"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/group"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/group~"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/hosts"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/passwd"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/passwd~"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/protocols"
+        file
+        miscfile_file_context)
+       (filecon
+        "/etc/services"
+        file
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro conffile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "ethers"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "group"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "hosts"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "passwd"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "protocols"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "services")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

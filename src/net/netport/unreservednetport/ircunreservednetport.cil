@@ -1,0 +1,48 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block irc
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (portcon
+        "dccp"
+        6697
+        netport_context)
+       (portcon
+        "dccp"
+        (6667 6669)
+        netport_context)
+       (portcon
+        "sctp"
+        6697
+        netport_context)
+       (portcon
+        "sctp"
+        (6667 6669)
+        netport_context)
+       (portcon
+        "tcp"
+        6697
+        netport_context)
+       (portcon
+        "tcp"
+        (6667 6669)
+        netport_context)
+       (portcon
+        "udp"
+        6697
+        netport_context)
+       (portcon
+        "udp"
+        (6667 6669)
+        netport_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .net.port.unreserved.obj_template))

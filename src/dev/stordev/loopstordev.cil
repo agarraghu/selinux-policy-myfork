@@ -1,0 +1,192 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .loop.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .loop.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block loop
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/loop.+"
+        block
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop0p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop1p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop2p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop3p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop4p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop5p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop6p9"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "loop7p9")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

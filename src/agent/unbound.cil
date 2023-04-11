@@ -1,0 +1,255 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .unbound.subj_type_transition (subj)))
+
+(in .file
+    (call .unbound.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .unbound.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .unbound.obj_type_transition_miscfile (unconfined.subj_typeattr))
+    (call .unbound.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr))
+    (call .unbound.obj_type_transition_statetmpfile
+          (unconfined.subj_typeattr))
+    (call .unbound.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr file "unbound_odhcpd.lock"))
+    (call .unbound.odhcpd.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(in .uci
+    (call .unbound.odhcpd.use_fds (subj))
+    (call .unbound.odhcpd.writeinherited_fifo_files (subj)))
+
+(block unbound
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/unbound"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/unbound/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/unbound_odhcpd\.lock"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/unbound_odhcpd\.lock\..*"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/lib/unbound"
+        dir
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/lib/unbound/.*"
+        any
+        statetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/unbound\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/unbound"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/unbound"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/unbound/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "unbound")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "unbound")))
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "unbound")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "unbound.pid")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile dir "unbound")))
+
+       (macro setattr_statetmpfile_dirs ((type ARG1))
+              (allow ARG1 statetmpfile (dir (setattr))))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (allow subj self
+              (capability (net_admin setgid setuid sys_chroot sys_resource)))
+       (allow subj self (process (setrlimit)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call manage_statetmpfile_dirs (subj))
+       (call manage_statetmpfile_files (subj))
+       (call obj_type_transition_statetmpfile (subj))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dns.tcp_bind_netports (subj))
+       (call .dns.tcp_connect_netports (subj))
+       (call .dns.udp_bind_netports (subj))
+
+       (call .file.read_conffile_lnk_files (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.port.unreserved.udp_bind_all_netports (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .tmp.associate_filesystems (miscfile))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+
+       (call .ubdnscontrol.tcp_bind_netports (subj))
+
+       (optional unbound_opt_dnsnetpacket
+                 (call .dns.packet.recvsend_all_netpackets (subj)))
+
+       (optional unbound_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+       (optional unbound_opt_rcunbound
+                 (call .rcunbound.use_fds (subj))
+                 (call .rcunbound.writeinherited_fifo_files (subj)))
+
+       (optional unbound_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj)))
+
+       (optional unbound_opt_ubdnscontrolnetpacket
+                 (call .ubdnscontrol.server.recvsend_netpackets (subj)))
+
+       (optional unbound_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj)))
+
+       (block odhcpd
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/lib/unbound/odhcpd\.sh"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .unbound.miscfile_obj_type_transition
+                           (ARG1 execfile file "odhcpd.sh")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+
+              (allow subj self (capability (dac_override net_admin)))
+              (allow subj self (process (getsched)))
+              (allow subj self create_netlink_route_socket)
+              (allow subj self create_unix_dgram_socket)
+              (allow subj self (netlink_route_socket (nlmsg_read)))
+
+              (call manage_statetmpfile_files (subj))
+              (call manage_tmpfile_files (subj))
+              (call obj_type_transition_tmpfile
+                    (subj file "unbound_odhcpd.lock"))
+              (call obj_type_transition_statetmpfile (subj))
+              (call read_miscfile_files (subj))
+              (call readwrite_statetmpfile_dirs (subj))
+              (call search_miscfile_dirs (subj))
+
+              (call .sys.list_rootfile_dirs (subj))
+              ;; busybox ip builtin: netdev-br-lan
+              (call .sys.loadkernelmodule.subj_type (subj))
+              (call .sys.requestmodule (subj))
+
+              (call .file.read_conffile_lnk_files (subj))
+
+              (call .functions.read_miscfile_files (subj))
+              (call .functions.search_miscfile_dirs (subj))
+
+              (call .ip.subj_type_transition (subj))
+
+              (call .locale.read.subj_type (subj))
+
+              (call .net.read_procfile_files (subj))
+              (call .net.read_procfile_lnk_files (subj))
+
+              (call .selinux.linked.subj_type (subj))
+
+              (call .shell.execute_execfile_files (subj))
+
+              (call .tmp.deletename_fs_dirs (subj))
+
+              (call .uci.subj_type_transition (subj))
+
+              (optional unbound_odhcpd_opt_odhcpd
+                        (call .odhcpd.read_statetmpfile_files (subj))
+                        (call .odhcpd.search_statetmpfile_dirs (subj))
+                        (call .odhcpd.use_fds (subj))
+                        (call .odhcpd.dontaudit_readwrite_netlink_route_sockets
+                              (subj)))
+
+              (optional unbound_odhcpd_opt_unboundcontrol
+                        (call .unbound.control.subj_type_transition (subj)))))

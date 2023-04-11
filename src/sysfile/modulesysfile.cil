@@ -1,0 +1,57 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block module
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "sysfs"
+        "/module"
+        sysfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysfile.module.obj_template))
+
+(in .sysfile
+
+    (block module
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (blockinherit .sysfile.obj_base_template)
+
+                  (call .sysfile.module.obj_type (sysfile)))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .sysfile.module.obj_base_template)
+                  (blockinherit .sysfile.obj_macro_template))))

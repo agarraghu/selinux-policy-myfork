@@ -1,0 +1,19 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block unconfined
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template)
+
+       (call .sys.unconfined.subj_type (subj_typeattr))
+       (call .dev.unconfined.subj_type (subj_typeattr))
+       (call .file.unconfined.subj_type (subj_typeattr))
+       (call .fs.unconfined.subj_type (subj_typeattr))
+       (call .net.unconfined.subj_type (subj_typeattr))
+       (call .selinux.unconfined.subj_type (subj_typeattr))
+       (call .subj.unconfined.subj_type (subj_typeattr)))

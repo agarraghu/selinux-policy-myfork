@@ -1,0 +1,49 @@
+SELinux security policy for OpenWrt
+
+Homepage:
+    https://git.defensec.nl/?p=selinux-policy.git;a=summary
+
+Wiki:
+    https://openwrt.org/docs/guide-developer/selinux_policy_development
+
+Requirements:
+    SELinux CIL compiler (secilc) and optionally policycoreutils (setfiles) for the check Makefile target (make check)
+
+Introduction:
+
+    This repository contains a basic modern SELinux security policy
+    designed specifically for OpenWrt. It uses the Type-Enforcement
+    security model to implement a targeted policy model that covers a
+    moderate selection of basic components with the goal of enhancing
+    integrity to help ensure continuity of systems operations.
+    Security-Enhanced Linux (SELinux) is a flexible framework that
+    allows for fine-grained mandatory access control.
+
+    The SELinux policy is written in modern Common Intermediate
+    Language that is native to SELinux and can easily be extended to
+    address a wide variety of access control challenges. The
+    permissive license allows for creation of custom policy models
+    based off of this basic SELinux policy to be enclosed -for
+    example using the Image Builder that supports SELinux- as a
+    replacement.
+
+Installation:
+
+    Please see support/selinux-policy-XXXX for an example package
+    manifest for OpenWrt.
+
+Notes:
+
+    Some chips might lack support for CONFIG_STRICT_KERNEL_RWX and in
+    that scenario you will see unexplained "execute", "execmem" and
+    possibly "execstack" events. These events can be suppressed with:
+    echo 1 > /sys/fs/selinux/checkreqprot.
+
+Wish list:
+
+    A list of things I would like to target in the future (help needed).
+
+    * udpxy, luci-app-udpxy
+    * arp tables and ipset
+    * mwan
+    * qrencode (executed by luci.subj for wireguard)

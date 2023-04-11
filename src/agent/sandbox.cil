@@ -1,0 +1,352 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+
+    (block sandboxexcept
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and .dev.obj_typeattr
+                 (not
+                  (.dev.pty.obj_typeattr
+                   .dev.stor.obj_typeattr
+                   .dev.tty.obj_typeattr
+                   .random.nodedev
+                   .mem.nodedev)))))
+
+    (block sandboxopen
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro open_all_chr_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (chr_file (open))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (.null.nodedev
+             .ptmx.nodedev
+             .tty.nodedev
+             .zero.nodedev))))
+
+(in .dev.pty
+
+    (block sandboxexcept
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro readwriteinherited_all_chr_files ((type ARG1))
+                  (allowx ARG1 obj_typeattr (ioctl chr_file (not (0x5412))))
+                  (allow ARG1 obj_typeattr readwriteinherited_chr_file))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and .dev.pty.obj_typeattr
+                 (not
+                  (.sandbox.ptydev))))))
+
+(in .file
+
+    (block sandboxexcept
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro watch_all_dirs ((type ARG1))
+                  (allow ARG1 obj_typeattr (dir (watch))))
+
+           (macro watch_all_fifo_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (fifo_file (watch))))
+
+           (macro watch_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (watch))))
+
+           (macro watch_all_lnk_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (lnk_file (watch))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and .file.except.obj_typeattr
+                 (not
+                  (.kcore.procfile sandboxexception.obj_typeattr)))))
+
+    (block sandboxexception
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro getattr_all_dirs ((type ARG1))
+                  (allow ARG1 obj_typeattr (dir (getattr))))
+
+           (macro getattr_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (getattr))))
+
+           (macro getattr_all_lnk_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (lnk_file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)))
+
+(in .fs
+
+    (block sandboxexcept
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and .fs.obj_typeattr
+                 (not
+                  (sandboxexception.obj_typeattr)))))
+
+    (block sandboxexception
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro getattr_all_dirs ((type ARG1))
+                  (allow ARG1 obj_typeattr (dir (getattr))))
+
+           (macro getattr_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (getattr))))
+
+           (macro getattr_lnk_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (lnk_file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)))
+
+(block sandbox
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getpgid_all ((type ARG1))
+              (allow ARG1 subj_typeattr (process (getpgid))))
+
+       (macro obj_type_transition_homefile ((type ARG1)(class ARG2)(name ARG3))
+              (call .file.homefile_obj_type_transition
+                    (ARG1 homefile ARG2 ARG3)))
+
+       (macro obj_type_transition_ptydev ((type ARG1))
+              (call .pts.fs_obj_type_transition
+                    (ARG1 ptydev chr_file "*")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       (macro signal_all ((type ARG1))
+              (allow ARG1 subj_typeattr (process (signal))))
+
+       (macro subj_type ((type ARG1))
+              (typeattributeset subj_typeattr ARG1))
+
+       (macro transition_all ((type ARG1))
+              (allow ARG1 subj_typeattr (process (transition))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (typeattribute subj_typeattr)
+
+       (blockinherit subj_template)
+
+       (blockinherit .dev.pty.obj_template)
+       (blockinherit .file.home.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (allow subj_typeattr self
+              (process (not (dyntransition execheap execstack getcap setcap
+                                           setcurrent setexec share
+                                           transition))))
+       (allow subj_typeattr self
+              (process2 (not (nnp_transition nosuid_transition))))
+       (allow subj_typeattr self (allsockets (common)))
+       (allow subj_typeattr self (fd (use)))
+       (allow subj_typeattr self (key (all)))
+       (allow subj_typeattr self (msg (all)))
+       (allow subj_typeattr self (msgq (all)))
+       (allow subj_typeattr self (sem (all)))
+       (allow subj_typeattr self (shm (all)))
+       (allow subj_typeattr self (netlink_route_socket (nlmsg_read)))
+       (allow subj_typeattr self (packet_socket (map)))
+       (allow subj_typeattr self (unix_dgram_socket (sendto)))
+       (allow subj_typeattr self
+              (unix_stream_socket (accept connectto listen)))
+
+       (allow subj_typeattr self list_dir)
+       (allow subj_typeattr self read_lnk_file)
+       (allow subj_typeattr self readwrite_fifo_file)
+       (allow subj_typeattr self readwrite_file)
+
+       (call manage_homefile (subj_typeattr))
+       (call obj_type_transition_homefile (subj_typeattr allfiles "*"))
+
+       (call obj_type_transition_ptydev (subj_typeattr))
+       (call readwrite_ptydev_chr_files (subj_typeattr))
+
+       (call manage_tmpfile (subj_typeattr))
+       (call obj_type_transition_tmpfile (subj_typeattr allfiles "*"))
+
+       (call .recvfromsendtoassoc.subj_type (subj_typeattr))
+       (call .recvpeer.subj_type (subj_typeattr))
+       (call .recvsendpacket.subj_type (subj_typeattr))
+
+       (call .sys.readwriteinherited_fifo_files (subj_typeattr))
+       (call .sys.sigchld (subj_typeattr))
+
+       (call .dev.pty.sandboxexcept.readwriteinherited_all_chr_files
+             (subj_typeattr))
+
+       (call .dev.sandboxexcept.mapexecute_all_chr_files (subj_typeattr))
+       (call .dev.sandboxexcept.readwriteinherited_all_chr_files
+             (subj_typeattr))
+       (call .dev.sandboxopen.open_all_chr_files (subj_typeattr))
+       (call .dev.stor.getattr_all_blk_files (subj_typeattr))
+       (call .dev.stor.getattr_all_chr_files (subj_typeattr))
+
+       (call .dev.tty.readwriteinherited_all.subj_type (subj_typeattr))
+
+       (call .file.deletename_homefile_dirs (subj_typeattr))
+       (call .file.getattr_all_sock_files (subj_typeattr))
+       (call .file.exec.entrypoint_all_files (subj_typeattr))
+       (call .file.exec.execute_all_files (subj_typeattr))
+       (call .file.sandboxexcept.list_all_dirs (subj_typeattr))
+       (call .file.sandboxexcept.mapexecute_all_files (subj_typeattr))
+       (call .file.sandboxexcept.read_all_fifo_files (subj_typeattr))
+       (call .file.sandboxexcept.read_all_files (subj_typeattr))
+       (call .file.sandboxexcept.read_all_lnk_files (subj_typeattr))
+       (call .file.sandboxexcept.watch_all_dirs (subj_typeattr))
+       (call .file.sandboxexcept.watch_all_fifo_files (subj_typeattr))
+       (call .file.sandboxexcept.watch_all_files (subj_typeattr))
+       (call .file.sandboxexcept.watch_all_lnk_files (subj_typeattr))
+       (call .file.sandboxexception.getattr_all_dirs (subj_typeattr))
+       (call .file.sandboxexception.getattr_all_files (subj_typeattr))
+       (call .file.sandboxexception.getattr_all_lnk_files (subj_typeattr))
+
+       (call .fs.getattr_all_filesystems (subj_typeattr))
+       (call .fs.sandboxexcept.list_all_dirs (subj_typeattr))
+       (call .fs.sandboxexcept.read_all_fifo_files (subj_typeattr))
+       (call .fs.sandboxexcept.read_all_files (subj_typeattr))
+       (call .fs.sandboxexcept.read_all_lnk_files (subj_typeattr))
+       (call .fs.sandboxexception.getattr_all_dirs (subj_typeattr))
+       (call .fs.sandboxexception.getattr_all_files (subj_typeattr))
+       (call .fs.sandboxexception.getattr_all_lnk_files (subj_typeattr))
+
+       (call .kcore.getattr_procfile_files (subj_typeattr))
+
+       (call .mem.getattr_nodedev_chr_files (subj_typeattr))
+
+       ;; RELRO protection
+       (call .mountroot.use_fds (subj_typeattr))
+
+       (call .random.read_nodedev_chr_files (subj_typeattr))
+
+       (call .shadow.getattr_authfile_files (subj_typeattr))
+
+       (call .subj.useinteractivefd.subj_type (subj_typeattr))
+       (call .subj.dontaudit_getattr_all_sockets (subj_typeattr))
+       (call .subj.dontaudit_ps_all (subj_typeattr))
+
+       (call .tmp.deletename_fs_dirs (subj_typeattr))
+
+       (optional sandbox_opt_ttyd
+                 (call .ttyd.dontaudit_readwrite_netlink_route_sockets
+                       (subj_typeattr)))
+
+       (optional sandbox_opt_dropbear
+                 ;; could this a leak?
+                 (call .dropbear.readwriteinherited_fifo_files (subj_typeattr)))
+
+       (block subj_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro getpgid ((type ARG1))
+                     (allow ARG1 subj (process (getpgid))))
+
+              (macro signal ((type ARG1))
+                     (allow ARG1 subj (process (signal))))
+
+              (macro transition ((type ARG1))
+                     (allow ARG1 subj (process (transition))))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract subj_template)
+
+              (blockinherit .subj.subj_base_template)
+
+              (call .sandbox.subj_type (subj)))
+
+       (block net
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .sandbox.subj_template)
+
+              (call .net.egress_netifs (subj))
+              (call .net.port.tcp_connect_all_netports (subj))
+              (call .net.port.unreserved.tcp_bind_all_netports (subj))
+              (call .net.port.unreserved.udp_bind_all_netports (subj))
+              (call .net.sendto_netnodes (subj))
+              (call .net.tcp_bind_netnodes (subj))
+              (call .net.udp_bind_netnodes (subj))
+
+              (optional sandbox_net_opt_dnsnetpacket
+                        (call .dns.local.client.recvsend_netpackets (subj)))
+
+              (optional sandbox_net_opt_sandboxnetpacket
+                        (call .sandbox.net.client.recvsend_netpackets (subj))
+                        (call .sandbox.net.server.recvsend_netpackets (subj)))))

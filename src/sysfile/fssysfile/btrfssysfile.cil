@@ -1,0 +1,20 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block btrfs
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "sysfs"
+        "/fs/btrfs"
+        sysfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysfile.fs.obj_template))

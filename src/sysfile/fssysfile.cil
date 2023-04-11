@@ -1,0 +1,66 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .fs
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (genfscon
+     "sysfs"
+     "/fs"
+     sysfile_file_context)
+
+    ;;
+    ;; Macro
+    ;;
+
+    (macro mounton_sysfile_dirs ((type ARG1))
+           (allow ARG1 sysfile (dir (getattr mounton))))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .sysfile.fs.obj_template)
+
+    (call .sys.mountpoint.obj_type (sysfile)))
+
+(in .sysfile
+
+    (block fs
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (blockinherit .sysfile.obj_base_template)
+
+                  (call .sysfile.fs.obj_type (sysfile)))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .sysfile.fs.obj_base_template)
+                  (blockinherit .sysfile.obj_macro_template))))

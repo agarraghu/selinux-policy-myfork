@@ -1,0 +1,113 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .nftables.subj_type_transition (subj)))
+
+(in .file
+    (call .nftables.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .nftables.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block nftables
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/nftables\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/nftables\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/nft"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (execute getattr))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "nftables.d")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "nft")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+
+       (allow subj self (capability (net_admin)))
+       (allow subj self create_netlink_netfilter_socket)
+       (allow subj self create_netlink_route_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+       (allow subj self create_udp_socket)
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call .sys.requestmodule (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .iproute2.list_conffile_dirs (subj))
+       (call .iproute2.read_conffile_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.packet.relabelto_all_netpackets (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .netifd.use_fds (subj))
+       (call .netifd.readinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .ucode.readinherited_datafile_files (subj))
+       (call .ucode.use_fds (subj))
+       (call .ucode.writeinherited_fifo_files (subj))
+
+       (optional nftables_opt_cgiio
+                 (call .cgiio.use_fds (subj))
+                 (call .cgiio.writeinherited_fifo_files (subj)))
+
+       (optional nftables_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional nftables_opt_fw3
+                 (call .fw3.readwrite_fifo_files (subj))
+                 (call .fw3.readinherited_datafile_files (subj))
+                 (call .fw3.use_fds (subj))
+                 ;; /tmp/run/fw4.lock
+                 (call .fw3.dontaudit_writeinherited_runtimetmpfile_files
+                       (subj)))
+
+       (optional nftables_opt_nftqostmpfile
+                 (call .nftqos.read_tmpfile_files (subj)))
+
+       (optional nftables_opt_rcfirewall
+                 (call .rcfirewall.use_fds (subj)))
+
+       (optional nftables_opt_rcnftqos
+                 (call .rcnftqos.use_fds (subj))))

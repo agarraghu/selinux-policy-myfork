@@ -1,0 +1,41 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .zram.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .zram.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block zram
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/zram[0-9]+"
+        block
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_stordev_blk_files ((type ARG1))
+              (allow ARG1 stordev (blk_file (getattr))))
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "zram0"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "zram1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "zram2")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

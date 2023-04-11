@@ -1,0 +1,35 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .libiwinfo.obj_type_transition_datafile (unconfined.subj_typeattr)))
+
+(block libiwinfo
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/share/libiwinfo"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/libiwinfo/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "libiwinfo")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.data.obj_template))

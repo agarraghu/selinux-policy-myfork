@@ -1,0 +1,52 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .validatedata.subj_type_transition (subj)))
+
+(in .file
+    (call .validatedata.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block validatedata
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/validate_data"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "validate_data")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (optional validatedata_opt_acme
+                 (call .acme.getattr_conffile_files (subj))
+                 (call .acme.read_conffile_lnk_files (subj))
+                 (call .acme.search_conffile_dirs (subj)))
+
+       (optional validatedata_opt_initscript
+                 (call .initscript.writeinherited_all_fifo_files (subj))))

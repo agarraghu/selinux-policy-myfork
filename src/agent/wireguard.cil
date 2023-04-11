@@ -1,0 +1,110 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .wireguard.subj_type_transition (subj)))
+
+(in .file
+    (call .wireguard.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .wireguard.obj_type_transition_tmpfile (unconfined.subj_typeattr))
+    (call .wireguard.watchdog.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(in .netifd
+    (call .wireguard.manage_tmpfile_dirs (subj))
+    (call .wireguard.manage_tmpfile_files (subj))
+    (call .wireguard.obj_type_transition_tmpfile (subj))
+    (call .wireguard.subj_type_transition (subj)))
+
+(in wireguard
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/wireguard"
+     dir
+     tmpfile_file_context)
+    (filecon
+     "/tmp/wireguard/.*"
+     any
+     tmpfile_file_context)
+
+    (filecon
+     "/usr/bin/wg"
+     file
+     execfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_execfile ((type ARG1))
+           (call .file.execfile_obj_type_transition
+                 (ARG1 execfile file "wg")))
+
+    (macro obj_type_transition_tmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 tmpfile dir "wireguard")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .agent.base_template)
+    (blockinherit .tmpfile.obj_template)
+
+    (allow subj self (capability (net_admin)))
+    (allow subj self create_netlink_generic_socket)
+    (allow subj self create_netlink_route_socket)
+    (allow subj self create_udp_socket)
+    (allow subj self (netlink_route_socket (nlmsg_read)))
+
+    (call read_tmpfile_files (subj))
+    (call search_tmpfile_dirs (subj))
+
+    (call .sys.readwriteinherited_fifo_files (subj))
+
+    ;; wg genkey|pubkey >
+    (call .file.writeinherited_homefile_files (subj))
+    (call .file.search_conffile_dirs (subj))
+
+    (call .netifd.readwriteinherited_fifo_files (subj))
+    (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+    (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+    (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+    (optional wireguard_opt_luci
+              (call .luci.readinherited_fifo_files (subj))
+              (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+    (optional wireguard_opt_uhttpd
+              (call .uhttpd.readinherited_fifo_files (subj)))
+
+    (block watchdog
+
+           ;;
+           ;; Contexts
+           ;;
+
+           (filecon
+            "/usr/bin/wireguard_watchdog"
+            file
+            execfile_file_context)
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro obj_type_transition_execfile ((type ARG1))
+                  (call .file.execfile_obj_type_transition
+                        (ARG1 execfile file "wireguard_watchdog")))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.exec.obj_template)))

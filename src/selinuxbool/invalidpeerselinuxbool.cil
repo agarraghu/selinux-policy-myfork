@@ -1,0 +1,37 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable
+ recv_invalid_peers
+ true)
+
+(tunableif .recv_invalid_peers
+           (true
+            (call .associate_invalid_sctp_sockets (.recvpeer.subj_typeattr))
+            (call .recv_invalid_netpeers (.recvpeer.subj_typeattr))))
+
+(block recv_invalid_peers
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/recv_invalid_peers"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))
+
+(block recvpeer
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template))

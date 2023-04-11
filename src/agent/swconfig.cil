@@ -1,0 +1,54 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .swconfig.subj_type_transition (subj)))
+
+(in .file
+    (call .swconfig.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block swconfig
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/swconfig"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr execute))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "swconfig")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (net_admin)))
+       (allow subj self create_netlink_generic_socket)
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (optional swconfig_opt_rcnetwork
+                 (call .rcnetwork.use_fds (subj))))

@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcsysctl.subj_type_transition (subj)))
+
+(in .file
+    (call .rcsysctl.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcsysctl
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/sysctl"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "sysctl")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (net_admin sys_admin)))
+
+       (call .sysctl.list_conffile_dirs (subj))
+       (call .sysctl.read_conffile_files (subj))
+
+       (call .sysctlfile.list_all_dirs (subj))
+       (call .sysctlfile.readwrite_all_files (subj))
+
+       (call .meminfo.read_procfile_files (subj)))

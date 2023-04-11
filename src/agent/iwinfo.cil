@@ -1,0 +1,79 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .iwinfo.subj_type_transition (subj)))
+
+(in .file
+    (call .iwinfo.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block iwinfo
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/iwinfo"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iwinfo")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self create_netlink_generic_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .firmware.read_sysfile_files (subj))
+       (call .firmware.search_sysfile_dirs (subj))
+
+       (call .libiwinfo.read_datafile_files (subj))
+       (call .libiwinfo.search_datafile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .netifd.use_fds (subj))
+       (call .netifd.read_runtimetmpfile_files (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (call .wifi.use_fds (subj))
+       (call .wifi.writeinherited_fifo_files (subj))
+
+       (call .wpad.search_runtimetmpfile_dirs (subj)))

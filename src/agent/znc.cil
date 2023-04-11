@@ -1,0 +1,153 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .znc.subj_type_transition (subj)))
+
+(in .file
+    (call .znc.conffile_obj_type_transition_certfile (unconfined.subj_typeattr))
+    (call .znc.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .znc.obj_type_transition_conftmpfile (unconfined.subj_typeattr))
+    (call .znc.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .znc.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(in .znc
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/etc/znc"
+     dir
+     conffile_file_context)
+    (filecon
+     "/etc/znc/.*"
+     any
+     conffile_file_context)
+
+    (filecon
+     "/etc/znc\.cert"
+     file
+     certfile_file_context)
+    (filecon
+     "/etc/znc\.cert\..*"
+     file
+     certfile_file_context)
+
+    (filecon
+     "/tmp/etc/znc"
+     dir
+     conftmpfile_file_context)
+    (filecon
+     "/tmp/etc/znc/.*"
+     any
+     conftmpfile_file_context)
+
+    (filecon
+     "/usr/bin/znc"
+     file
+     execfile_file_context)
+
+    (filecon
+     "/usr/share/znc"
+     dir
+     datafile_file_context)
+    (filecon
+     "/usr/share/znc/.*"
+     any
+     datafile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro conffile_obj_type_transition_certfile ((type ARG1))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 certfile file "znc.cert")))
+
+    (macro getattr_certfile_files ((type ARG1))
+           (allow ARG1 certfile (file (getattr))))
+
+    (macro obj_type_transition_conffile ((type ARG1))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 conffile dir "znc")))
+
+    (macro obj_type_transition_conftmpfile ((type ARG1))
+           (call .tmpfile.conftmpfile_obj_type_transition
+                 (ARG1 conftmpfile dir "znc")))
+
+    (macro obj_type_transition_datafile ((type ARG1))
+           (call .file.datafile_obj_type_transition
+                 (ARG1 datafile dir "znc")))
+
+    (macro obj_type_transition_execfile ((type ARG1))
+           (call .file.execfile_obj_type_transition
+                 (ARG1 execfile file "znc")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .agent.base_template)
+    (blockinherit .file.cert.obj_template)
+    (blockinherit .file.conf.obj_template)
+    (blockinherit .file.data.obj_template)
+    (blockinherit .tmpfile.conf.obj_template)
+
+    (allow subj self create_udp_socket)
+
+    (call read_certfile_files (subj))
+
+    ;; EXTERNAL_CONFIG=1
+    (call manage_conffile_dirs (subj))
+    (call manage_conffile_files (subj))
+    (call manage_conffile_lnk_files (subj))
+
+    (call manage_conftmpfile_dirs (subj))
+    (call manage_conftmpfile_files (subj))
+    (call manage_conftmpfile_lnk_files (subj))
+
+    (call list_datafile_dirs (subj))
+    (call read_datafile_files (subj))
+
+    (call tcp_bind_netports (subj))
+
+    (call .file.search_conffile_dirs (subj))
+
+    (call .irc.tcp_bind_netports (subj))
+    (call .irc.tcp_connect_netports (subj))
+
+    (call .locale.read.subj_type (subj))
+
+    (call .nameservice.read_miscfile_files (subj))
+
+    (call .net.egress_netifs (subj))
+    (call .net.sendto_netnodes (subj))
+    (call .net.tcp_bind_netnodes (subj))
+    (call .net.udp_bind_netnodes (subj))
+
+    (call .random.read_nodedev_chr_files (subj))
+
+    (call .resolv.read.subj_type (subj))
+
+    (call .tmpfile.search_conftmpfile_dirs (subj))
+
+    (optional znc_opt_acme
+              (call .acme.read_conffile_files (subj))
+              (call .acme.read_conffile_lnk_files (subj))
+              (call .acme.search_conffile_dirs (subj)))
+
+    (optional znc_opt_dnsnetpacket
+              (call .dns.local.client.recvsend_netpackets (subj)))
+
+    (optional znc_opt_ircnetpacket
+              (call .irc.server.recvsend_netpackets (subj))
+              (call .irc.client.recvsend_netpackets (subj)))
+
+    (optional znc_opt_sslcertfile
+              (call .ssl.read.subj_type (subj)))
+
+    (optional znc_opt_zncnetpacket
+              (call .znc.server.recvsend_netpackets (subj))))

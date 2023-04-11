@@ -1,0 +1,97 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .jshn.subj_type_transition (subj)))
+
+(in .file
+    (call .jshn.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block jshn
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/jshn"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "jshn")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+       (call .sys.dontaudit_readwrite_udp_sockets (subj))
+
+       (call .board.manage_miscfile_files (subj))
+       (call .board.conffile_obj_type_transition_miscfile (subj))
+       (call .board.tmp_obj_type_transition_miscfile (subj))
+
+       (call .boarddetect.writeinherited_fifo_files (subj))
+
+       (call .configgenerate.writeinherited_fifo_files (subj))
+
+       (call .devstatus.writeinherited_fifo_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .hotplugcall.writeinherited_fifo_files (subj))
+
+       ;; might be a leak
+       (call .net.readinherited_procfile_files (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .ntpdhotplug.writeinherited_fifo_files (subj))
+
+       (call .odhcp6c.writeinherited_fifo_files (subj))
+
+       (call .odhcpd.use_fds (subj))
+       (call .odhcpd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .odhcpd.update.writeinherited_fifo_files (subj))
+
+       (call .opkg.call.writeinherited_fifo_files (subj))
+       (call .opkg.dontaudit_writeinherited_tmpfile_files (subj))
+
+       (call .pppd.writeinherited_fifo_files (subj))
+       (call .pppd.dontaudit_readwrite_packet_sockets (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (call .wifi.writeinherited_fifo_files (subj))
+
+       (optional jshn_opt_cgiio
+                 (call .cgiio.writeinherited_fifo_files (subj)))
+
+       (optional jshn_opt_dnsmasq
+                 (call .dnsmasq.writeinherited_fifo_files (subj)))
+
+       (optional jshn_opt_initscript
+                 (call .initscript.writeinherited_all_fifo_files (subj)))
+
+       (optional jshn_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+       (optional jshn_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

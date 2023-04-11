@@ -1,0 +1,432 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block cgroupfile
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.obj_all_macro_template)
+
+       (call .file.obj_type (obj_typeattr))
+
+       (call .cgroup.associate_filesystems (obj_typeattr))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block obj_base_template
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (context
+               cgroupfile_file_context
+               (.u
+                .r
+                cgroupfile
+                (systemlow
+                 systemlow)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_base_template)
+
+              (type
+               cgroupfile)
+
+              (call .cgroupfile.obj_type (cgroupfile)))
+
+       (block obj_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile addname_dir))
+
+              (macro append_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile append_blk_file))
+
+              (macro append_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile append_chr_file))
+
+              (macro append_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile append_fifo_file))
+
+              (macro append_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile append_file))
+
+              (macro appendinherited_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile appendinherited_blk_file))
+
+              (macro appendinherited_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile appendinherited_chr_file))
+
+              (macro appendinherited_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile appendinherited_fifo_file))
+
+              (macro appendinherited_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile appendinherited_file))
+
+              (macro cgroupfile_obj_type_transition
+                     ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                     (typetransition ARG1 cgroupfile ARG3 ARG4 ARG2)
+                     (call addname_cgroupfile_dirs (ARG1)))
+
+              (macro create_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (create))))
+
+              (macro create_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_blk_file))
+
+              (macro create_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_chr_file))
+
+              (macro create_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile create_dir))
+
+              (macro create_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_fifo_file))
+
+              (macro create_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_file))
+
+              (macro create_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_lnk_file))
+
+              (macro create_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile create_sock_file))
+
+              (macro deletename_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile deletename_dir))
+
+              (macro delete_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (delete))))
+
+              (macro delete_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_blk_file))
+
+              (macro delete_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_chr_file))
+
+              (macro delete_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile delete_dir))
+
+              (macro delete_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_fifo_file))
+
+              (macro delete_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_file))
+
+              (macro delete_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_lnk_file))
+
+              (macro delete_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile delete_sock_file))
+
+              (macro execute_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile execute_file))
+
+              (macro list_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile list_dir))
+
+              (macro listinherited_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile listinherited_dir))
+
+              (macro manage_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (manage))))
+
+              (macro manage_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_blk_file))
+
+              (macro manage_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_chr_file))
+
+              (macro manage_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile manage_dir))
+
+              (macro manage_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_fifo_file))
+
+              (macro manage_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_file))
+
+              (macro manage_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_lnk_file))
+
+              (macro manage_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile manage_sock_file))
+
+              (macro mapexecute_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile mapexecute_chr_file))
+
+              (macro mapexecute_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile mapexecute_file))
+
+              (macro mounton_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (mounton))))
+
+              (macro mounton_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_blk_file))
+
+              (macro mounton_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_chr_file))
+
+              (macro mounton_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_dir))
+
+              (macro mounton_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_fifo_file))
+
+              (macro mounton_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_file))
+
+              (macro mounton_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_lnk_file))
+
+              (macro mounton_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile mounton_sock_file))
+
+              (macro read_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (read))))
+
+              (macro read_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_blk_file))
+
+              (macro read_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_chr_file))
+
+              (macro read_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_fifo_file))
+
+              (macro read_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_file))
+
+              (macro read_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_lnk_file))
+
+              (macro read_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile read_sock_file))
+
+              (macro readinherited_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile readinherited_blk_file))
+
+              (macro readinherited_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile readinherited_chr_file))
+
+              (macro readinherited_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile readinherited_fifo_file))
+
+              (macro readinherited_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile readinherited_file))
+
+              (macro readinherited_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile readinherited_sock_file))
+
+              (macro readwrite_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (readwrite))))
+
+              (macro readwrite_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_blk_file))
+
+              (macro readwrite_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_chr_file))
+
+              (macro readwrite_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_dir))
+
+              (macro readwrite_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_fifo_file))
+
+              (macro readwrite_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_file))
+
+              (macro readwrite_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_lnk_file))
+
+              (macro readwrite_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwrite_sock_file))
+
+              (macro readwriteinherited_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_blk_file))
+
+              (macro readwriteinherited_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_chr_file))
+
+              (macro readwriteinherited_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_dir))
+
+              (macro readwriteinherited_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_file))
+
+              (macro readwriteinherited_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile readwriteinherited_sock_file))
+
+              (macro relabel_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (relabel))))
+
+              (macro relabel_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_blk_file))
+
+              (macro relabel_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_chr_file))
+
+              (macro relabel_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_dir))
+
+              (macro relabel_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_fifo_file))
+
+              (macro relabel_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_file))
+
+              (macro relabel_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_lnk_file))
+
+              (macro relabel_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabel_sock_file))
+
+              (macro relabelfrom_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (relabelfrom))))
+
+              (macro relabelfrom_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_blk_file))
+
+              (macro relabelfrom_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_chr_file))
+
+              (macro relabelfrom_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_dir))
+
+              (macro relabelfrom_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_fifo_file))
+
+              (macro relabelfrom_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_file))
+
+              (macro relabelfrom_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_lnk_file))
+
+              (macro relabelfrom_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelfrom_sock_file))
+
+              (macro relabelto_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (relabelto))))
+
+              (macro relabelto_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_blk_file))
+
+              (macro relabelto_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_chr_file))
+
+              (macro relabelto_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_dir))
+
+              (macro relabelto_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_fifo_file))
+
+              (macro relabelto_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_file))
+
+              (macro relabelto_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_lnk_file))
+
+              (macro relabelto_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile relabelto_sock_file))
+
+              (macro rename_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (rename))))
+
+              (macro rename_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_blk_file))
+
+              (macro rename_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_chr_file))
+
+              (macro rename_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile rename_dir))
+
+              (macro rename_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_fifo_file))
+
+              (macro rename_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_file))
+
+              (macro rename_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_lnk_file))
+
+              (macro rename_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile rename_sock_file))
+
+              (macro search_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile search_dir))
+
+              (macro write_cgroupfile ((type ARG1))
+                     (allow ARG1 cgroupfile (allfiles (write))))
+
+              (macro write_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_blk_file))
+
+              (macro write_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_chr_file))
+
+              (macro write_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile write_dir))
+
+              (macro write_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_fifo_file))
+
+              (macro write_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_file))
+
+              (macro write_cgroupfile_lnk_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_lnk_file))
+
+              (macro write_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile write_sock_file))
+
+              (macro writeinherited_cgroupfile_blk_files ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_blk_file))
+
+              (macro writeinherited_cgroupfile_chr_files ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_chr_file))
+
+              (macro writeinherited_cgroupfile_dirs ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_dir))
+
+              (macro writeinherited_cgroupfile_fifo_files ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_fifo_file))
+
+              (macro writeinherited_cgroupfile_files ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_file))
+
+              (macro writeinherited_cgroupfile_sock_files ((type ARG1))
+                     (allow ARG1 cgroupfile writeinherited_sock_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_macro_template))
+
+       (block obj_template
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_template)
+
+              (blockinherit .cgroupfile.obj_base_template)
+              (blockinherit .cgroupfile.obj_macro_template)))

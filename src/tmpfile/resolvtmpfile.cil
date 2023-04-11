@@ -1,0 +1,71 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .resolv.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block resolv
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/resolv\.conf"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/resolv\.conf\.auto"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/resolv\.conf\.ppp"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/resolv\.conf\.d"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/resolv\.conf\,d/.*"
+        any
+        tmpfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "resolv.conf"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "resolv.conf.auto"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "resolv.conf.ppp"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile dir "resolv.conf.d")))
+
+       (macro watch_tmpfile_dirs ((type ARG1))
+              (allow ARG1 tmpfile (dir (watch))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .tmpfile.obj_template)
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit subj.subj_all_macro_template)
+
+              (call read_tmpfile_files (subj_typeattr))
+              (call search_tmpfile_dirs (subj_typeattr))
+
+              (call .file.read_conffile_lnk_files (subj_typeattr))
+
+              (call .tmp.read_fs_lnk_files (subj_typeattr))))

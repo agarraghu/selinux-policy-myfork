@@ -1,0 +1,47 @@
+/new_root /
+/new_root/bin /usr/bin
+/new_root/lib /usr/lib
+/new_root/sbin /usr/bin
+/new_root/usr/libexec /usr/bin
+/new_root/usr/sbin /usr/bin
+
+/overlay/upper /
+/overlay/upper/bin /usr/bin
+/overlay/upper/lib /usr/lib
+/overlay/upper/sbin /usr/bin
+/overlay/upper/usr/libexec /usr/bin
+/overlay/upper/usr/sbin /usr/bin
+
+/rom /
+/rom/bin /usr/bin
+/rom/lib /usr/lib
+/rom/sbin /usr/bin
+/rom/usr/libexec /usr/bin
+/rom/usr/sbin /usr/bin
+
+/rwm/upper /
+/rwm/upper/bin /usr/bin
+/rwm/upper/lib /usr/lib
+/rwm/upper/sbin /usr/bin
+/rwm/upper/usr/libexec /usr/bin
+/rwm/upper/usr/sbin /usr/bin
+
+/tmp/overlay/upper /
+/tmp/overlay/upper/bin /usr/bin
+/tmp/overlay/upper/lib /usr/lib
+/tmp/overlay/upper/sbin /usr/bin
+/tmp/overlay/upper/usr/libexec /usr/bin
+/tmp/overlay/upper/usr/sbin /usr/bin
+
+/tmp/root/upper /
+/tmp/root/upper/bin /usr/bin
+/tmp/root/upper/lib /usr/lib
+/tmp/root/upper/sbin /usr/bin
+/tmp/root/upper/usr/libexec /usr/bin
+/tmp/root/upper/usr/sbin /usr/bin
+
+/bin /usr/bin
+/lib /usr/lib
+/sbin /usr/bin
+/usr/libexec /usr/bin
+/usr/sbin /usr/bin

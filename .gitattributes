@@ -1,0 +1,8 @@
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/README export-ignore
+/support export-ignore
+* text=auto
+*.cil linguist-detectable=true
+*.cil whitespace=tab-in-indent,trailing-space

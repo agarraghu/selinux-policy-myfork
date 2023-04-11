@@ -1,0 +1,434 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(class
+ anon_inode
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ appletalk_socket
+ ())
+(class
+ association
+ (polmatch recvfrom sendto setcontext))
+(class
+ bpf
+ (map_create map_read map_write prog_load prog_run))
+(class
+ binder
+ (call impersonate set_context_mgr transfer))
+(class
+ blk_file
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ cap_userns
+ ())
+(class
+ cap2_userns
+ ())
+(class
+ capability
+ ())
+(class
+ capability2
+ ())
+(class
+ chr_file
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ dccp_socket
+ (name_connect node_bind))
+(class
+ dir
+ (add_name remove_name reparent rmdir search watch watch_mount watch_reads
+           watch_sb watch_with_perm))
+(class
+ fd
+ (use))
+(class
+ fifo_file
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ file
+ (entrypoint execute_no_trans watch watch_mount watch_reads watch_sb
+             watch_with_perm))
+(class
+ filesystem
+ (associate getattr mount quotaget quotamod relabelfrom relabelto remount
+            unmount watch))
+(class
+ infiniband_endport
+ (manage_subnet))
+(class
+ infiniband_pkey
+ (access))
+(class
+ ipc
+ ())
+(class
+ kernel_service
+ (create_files_as use_as_override))
+(class
+ key
+ (create link read search setattr view write))
+(class
+ key_socket
+ ())
+(class
+ lnk_file
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ lockdown
+ (confidentiality integrity))
+(class
+ memprotect
+ (mmap_zero))
+(class
+ msg
+ (receive send))
+(class
+ msgq
+ (enqueue))
+(class
+ netif
+ (egress ingress))
+(class
+ netlink_audit_socket
+ (nlmsg_read nlmsg_readpriv nlmsg_relay nlmsg_tty_audit nlmsg_write))
+(class
+ netlink_connector_socket
+ ())
+(class
+ netlink_crypto_socket
+ ())
+(class
+ netlink_dnrt_socket
+ ())
+(class
+ netlink_fib_lookup_socket
+ ())
+(class
+ netlink_generic_socket
+ ())
+(class
+ netlink_iscsi_socket
+ ())
+(class
+ netlink_kobject_uevent_socket
+ ())
+(class
+ netlink_netfilter_socket
+ ())
+(class
+ netlink_nflog_socket
+ ())
+(class
+ netlink_rdma_socket
+ ())
+(class
+ netlink_route_socket
+ (nlmsg_read nlmsg_write))
+(class
+ netlink_scsitransport_socket
+ ())
+(class
+ netlink_selinux_socket
+ ())
+(class
+ netlink_socket
+ ())
+(class
+ netlink_tcpdiag_socket
+ (nlmsg_read nlmsg_write))
+(class
+ netlink_xfrm_socket
+ (nlmsg_read nlmsg_write))
+(class
+ node
+ (recvfrom sendto))
+(class
+ packet
+ (forward_in forward_out recv relabelto send))
+(class
+ packet_socket
+ ())
+(class
+ passwd
+ (chfn chsh crontab passwd rootok))
+(class
+ peer
+ (recv))
+(class
+ perf_event
+ (cpu kernel open read tracepoint write))
+(class
+ process
+ (dyntransition execheap execmem execstack fork getattr getcap getpgid
+                getrlimit getsched getsession noatsecure ptrace rlimitinh
+                setexec setcap setcurrent setfscreate setkeycreate setpgid
+                setrlimit setsched setsockcreate share sigchld siginh sigkill
+                signal signull sigstop transition))
+(class
+ process2
+ (nnp_transition nosuid_transition))
+(class
+ rawip_socket
+ (node_bind))
+(class
+ security
+ (check_context compute_av compute_create compute_member compute_relabel
+                compute_user load_policy read_policy setbool setcheckreqprot
+                setenforce setsecparam validate_trans))
+(class
+ sem
+ ())
+(class
+ shm
+ (lock))
+(class
+ sock_file
+ (watch watch_mount watch_reads watch_sb watch_with_perm))
+(class
+ socket
+ ())
+(class
+ system
+ (ipc_info module_load module_request syslog_console syslog_mod syslog_read))
+(class
+ tcp_socket
+ (name_connect node_bind))
+(class
+ tun_socket
+ (attach_queue))
+(class
+ udp_socket
+ (node_bind))
+(class
+ unix_dgram_socket
+ ())
+(class
+ unix_stream_socket
+ (connectto))
+
+(classcommon anon_inode common_file)
+(classcommon appletalk_socket common_socket)
+(classcommon blk_file common_file)
+(classcommon cap_userns common_capability)
+(classcommon cap2_userns common_capability2)
+(classcommon capability common_capability)
+(classcommon capability2 common_capability2)
+(classcommon chr_file common_file)
+(classcommon dccp_socket common_socket)
+(classcommon dir common_file)
+(classcommon fifo_file common_file)
+(classcommon file common_file)
+(classcommon ipc common_ipc)
+(classcommon key_socket common_socket)
+(classcommon lnk_file common_file)
+(classcommon msgq common_ipc)
+(classcommon netlink_audit_socket common_socket)
+(classcommon netlink_connector_socket common_socket)
+(classcommon netlink_crypto_socket common_socket)
+(classcommon netlink_dnrt_socket common_socket)
+(classcommon netlink_fib_lookup_socket common_socket)
+(classcommon netlink_generic_socket common_socket)
+(classcommon netlink_iscsi_socket common_socket)
+(classcommon netlink_kobject_uevent_socket common_socket)
+(classcommon netlink_netfilter_socket common_socket)
+(classcommon netlink_nflog_socket common_socket)
+(classcommon netlink_rdma_socket common_socket)
+(classcommon netlink_route_socket common_socket)
+(classcommon netlink_scsitransport_socket common_socket)
+(classcommon netlink_selinux_socket common_socket)
+(classcommon netlink_socket common_socket)
+(classcommon netlink_tcpdiag_socket common_socket)
+(classcommon netlink_xfrm_socket common_socket)
+(classcommon packet_socket common_socket)
+(classcommon rawip_socket common_socket)
+(classcommon sem common_ipc)
+(classcommon shm common_ipc)
+(classcommon sock_file common_file)
+(classcommon socket common_socket)
+(classcommon tcp_socket common_socket)
+(classcommon tun_socket common_socket)
+(classcommon udp_socket common_socket)
+(classcommon unix_dgram_socket common_socket)
+(classcommon unix_stream_socket common_socket)
+
+(classorder
+ (security process system capability filesystem file dir fd lnk_file chr_file
+           blk_file sock_file fifo_file socket tcp_socket udp_socket
+           rawip_socket node netif netlink_socket packet_socket key_socket
+           unix_stream_socket unix_dgram_socket sem msg msgq shm ipc passwd
+           netlink_route_socket netlink_tcpdiag_socket netlink_nflog_socket
+           netlink_xfrm_socket netlink_selinux_socket netlink_audit_socket
+           netlink_dnrt_socket association netlink_kobject_uevent_socket
+           appletalk_socket packet key dccp_socket memprotect peer capability2
+           kernel_service tun_socket binder netlink_iscsi_socket
+           netlink_fib_lookup_socket netlink_connector_socket
+           netlink_netfilter_socket netlink_generic_socket
+           netlink_scsitransport_socket netlink_rdma_socket
+           netlink_crypto_socket cap_userns cap2_userns infiniband_pkey
+           infiniband_endport process2 bpf perf_event lockdown anon_inode))
+
+;; extended
+(class
+ alg_socket
+ ())
+(class
+ atmpvc_socket
+ ())
+(class
+ atmsvc_socket
+ ())
+(class
+ ax25_socket
+ ())
+(class
+ bluetooth_socket
+ ())
+(class
+ caif_socket
+ ())
+(class
+ can_socket
+ ())
+(class
+ decnet_socket
+ ())
+(class
+ icmp_socket
+ (node_bind))
+(class
+ ieee802154_socket
+ ())
+(class
+ ipx_socket
+ ())
+(class
+ irda_socket
+ ())
+(class
+ isdn_socket
+ ())
+(class
+ iucv_socket
+ ())
+(class
+ kcm_socket
+ ())
+(class
+ llc_socket
+ ())
+(class
+ mctp_socket
+ ())
+(class
+ netrom_socket
+ ())
+(class
+ nfc_socket
+ ())
+(class
+ phonet_socket
+ ())
+(class
+ pppox_socket
+ ())
+(class
+ qipcrtr_socket
+ ())
+(class
+ rds_socket
+ ())
+(class
+ rose_socket
+ ())
+(class
+ rxrpc_socket
+ ())
+(class
+ sctp_socket
+ (association name_connect node_bind))
+(class
+ smc_socket
+ ())
+(class
+ tipc_socket
+ ())
+(class
+ vsock_socket
+ ())
+(class
+ xdp_socket
+ ())
+(class
+ x25_socket
+ ())
+
+(classcommon alg_socket common_socket)
+(classcommon atmpvc_socket common_socket)
+(classcommon atmsvc_socket common_socket)
+(classcommon ax25_socket common_socket)
+(classcommon bluetooth_socket common_socket)
+(classcommon caif_socket common_socket)
+(classcommon can_socket common_socket)
+(classcommon decnet_socket common_socket)
+(classcommon icmp_socket common_socket)
+(classcommon ieee802154_socket common_socket)
+(classcommon ipx_socket common_socket)
+(classcommon irda_socket common_socket)
+(classcommon isdn_socket common_socket)
+(classcommon iucv_socket common_socket)
+(classcommon kcm_socket common_socket)
+(classcommon llc_socket common_socket)
+(classcommon mctp_socket common_socket)
+(classcommon netrom_socket common_socket)
+(classcommon nfc_socket common_socket)
+(classcommon phonet_socket common_socket)
+(classcommon pppox_socket common_socket)
+(classcommon qipcrtr_socket common_socket)
+(classcommon rds_socket common_socket)
+(classcommon rose_socket common_socket)
+(classcommon rxrpc_socket common_socket)
+(classcommon sctp_socket common_socket)
+(classcommon smc_socket common_socket)
+(classcommon tipc_socket common_socket)
+(classcommon vsock_socket common_socket)
+(classcommon x25_socket common_socket)
+(classcommon xdp_socket common_socket)
+
+(classorder
+ (unordered alg_socket atmpvc_socket atmsvc_socket ax25_socket bluetooth_socket
+            caif_socket can_socket decnet_socket icmp_socket ieee802154_socket
+            ipx_socket irda_socket isdn_socket iucv_socket kcm_socket
+            llc_socket mctp_socket  netrom_socket nfc_socket phonet_socket
+            pppox_socket qipcrtr_socket rds_socket rose_socket rxrpc_socket
+            sctp_socket smc_socket tipc_socket vsock_socket xdp_socket
+            x25_socket))
+
+(common
+ common_capability
+ (audit_control audit_write chown dac_read_search dac_override fowner fsetid
+                ipc_lock ipc_owner kill linux_immutable lease mknod net_admin
+                net_bind_service net_broadcast net_raw setfcap setgid setpcap
+                setuid sys_admin sys_boot sys_chroot sys_module sys_nice
+                sys_pacct sys_ptrace sys_rawio sys_resource sys_time
+                sys_tty_config))
+(common
+ common_capability2
+ (audit_read block_suspend bpf checkpoint_restore mac_admin mac_override
+             perfmon syslog wake_alarm))
+(common
+ common_file
+ (append audit_access create execmod execute getattr ioctl lock link map
+         mounton open quotaon read relabelfrom relabelto rename setattr unlink
+         write))
+(common
+ common_ipc
+ (associate create destroy getattr read setattr unix_read unix_write write))
+(common
+ common_socket
+ (accept append bind connect create getattr getopt ioctl listen lock map
+         name_bind read recvfrom relabelfrom relabelto sendto setattr setopt
+         shutdown write))

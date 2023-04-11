@@ -1,0 +1,485 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_statetmpfile
+          (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/lib"
+     dir
+     statetmpfile_file_context)
+    (filecon
+     "/tmp/lib/.*"
+     any
+     statetmpfile_file_context)
+
+    (filecon
+     "/tmp/state"
+     dir
+     statetmpfile_file_context)
+    (filecon
+     "/tmp/state/.*"
+     any
+     statetmpfile_file_context)
+
+    (filecon
+     "/tmp/usr"
+     dir
+     statetmpfile_file_context)
+    (filecon
+     "/tmp/usr/.*"
+     any
+     statetmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_statetmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 statetmpfile dir "lib"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 statetmpfile dir "state"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 statetmpfile dir "usr")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit state.obj_template)
+
+    (block state
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   statetmpfile_file_context
+                   (.u
+                    .r
+                    statetmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   statetmpfile)
+
+                  (call .tmpfile.state.obj_type (statetmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile addname_dir))
+
+                  (macro append_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile append_blk_file))
+
+                  (macro append_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile append_chr_file))
+
+                  (macro append_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile append_fifo_file))
+
+                  (macro append_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile append_file))
+
+                  (macro appendinherited_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile appendinherited_file))
+
+                  (macro create_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (create))))
+
+                  (macro create_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_blk_file))
+
+                  (macro create_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_chr_file))
+
+                  (macro create_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile create_dir))
+
+                  (macro create_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_fifo_file))
+
+                  (macro create_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_file))
+
+                  (macro create_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_lnk_file))
+
+                  (macro create_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile create_sock_file))
+
+                  (macro deletename_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile deletename_dir))
+
+                  (macro delete_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (delete))))
+
+                  (macro delete_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_blk_file))
+
+                  (macro delete_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_chr_file))
+
+                  (macro delete_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile delete_dir))
+
+                  (macro delete_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_fifo_file))
+
+                  (macro delete_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_file))
+
+                  (macro delete_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_lnk_file))
+
+                  (macro delete_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile delete_sock_file))
+
+                  (macro execute_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile execute_file))
+
+                  (macro list_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile list_dir))
+
+                  (macro listinherited_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile listinherited_dir))
+
+                  (macro manage_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (manage))))
+
+                  (macro manage_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_blk_file))
+
+                  (macro manage_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_chr_file))
+
+                  (macro manage_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile manage_dir))
+
+                  (macro manage_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_fifo_file))
+
+                  (macro manage_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_file))
+
+                  (macro manage_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_lnk_file))
+
+                  (macro manage_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile manage_sock_file))
+
+                  (macro mapexecute_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile mapexecute_file))
+
+                  (macro mounton_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (mounton))))
+
+                  (macro mounton_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_blk_file))
+
+                  (macro mounton_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_chr_file))
+
+                  (macro mounton_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_dir))
+
+                  (macro mounton_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_fifo_file))
+
+                  (macro mounton_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_file))
+
+                  (macro mounton_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_lnk_file))
+
+                  (macro mounton_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile mounton_sock_file))
+
+                  (macro read_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (read))))
+
+                  (macro read_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_blk_file))
+
+                  (macro read_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_chr_file))
+
+                  (macro read_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_fifo_file))
+
+                  (macro read_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_file))
+
+                  (macro readinherited_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile readinherited_blk_file))
+
+                  (macro readinherited_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile readinherited_chr_file))
+
+                  (macro readinherited_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile readinherited_fifo_file))
+
+                  (macro readinherited_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile readinherited_file))
+
+                  (macro readinherited_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile readinherited_sock_file))
+
+                  (macro read_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_lnk_file))
+
+                  (macro read_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile read_sock_file))
+
+                  (macro readwrite_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_blk_file))
+
+                  (macro readwrite_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_chr_file))
+
+                  (macro readwrite_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_dir))
+
+                  (macro readwrite_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_fifo_file))
+
+                  (macro readwrite_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_file))
+
+                  (macro readwriteinherited_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_lnk_file))
+
+                  (macro readwrite_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile readwrite_sock_file))
+
+                  (macro relabel_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (relabel))))
+
+                  (macro relabel_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_blk_file))
+
+                  (macro relabel_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_chr_file))
+
+                  (macro relabel_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_dir))
+
+                  (macro relabel_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_fifo_file))
+
+                  (macro relabel_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_file))
+
+                  (macro relabel_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_lnk_file))
+
+                  (macro relabel_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabel_sock_file))
+
+                  (macro relabelfrom_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_file))
+
+                  (macro relabelfrom_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_blk_file))
+
+                  (macro relabelto_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_chr_file))
+
+                  (macro relabelto_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_dir))
+
+                  (macro relabelto_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_fifo_file))
+
+                  (macro relabelto_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_file))
+
+                  (macro relabelto_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_lnk_file))
+
+                  (macro relabelto_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile relabelto_sock_file))
+
+                  (macro rename_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (rename))))
+
+                  (macro rename_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_blk_file))
+
+                  (macro rename_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_chr_file))
+
+                  (macro rename_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile rename_dir))
+
+                  (macro rename_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_fifo_file))
+
+                  (macro rename_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_file))
+
+                  (macro rename_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_lnk_file))
+
+                  (macro rename_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile rename_sock_file))
+
+                  (macro search_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile search_dir))
+
+                  (macro statetmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 statetmpfile ARG3 ARG4 ARG2)
+                         (call addname_statetmpfile_dirs (ARG1)))
+
+                  (macro write_statetmpfile ((type ARG1))
+                         (allow ARG1 statetmpfile (allfiles (write))))
+
+                  (macro write_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_blk_file))
+
+                  (macro write_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_chr_file))
+
+                  (macro write_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile write_dir))
+
+                  (macro write_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_fifo_file))
+
+                  (macro write_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_file))
+
+                  (macro writeinherited_statetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_statetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_statetmpfile_dirs ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_dir))
+
+                  (macro writeinherited_statetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_statetmpfile_files ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_file))
+
+                  (macro writeinherited_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile writeinherited_sock_file))
+
+                  (macro write_statetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_lnk_file))
+
+                  (macro write_statetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 statetmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.state.obj_base_template)
+                  (blockinherit .tmpfile.state.obj_macro_template))))

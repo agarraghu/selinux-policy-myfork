@@ -1,0 +1,16 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block icmp
+
+       (block client
+
+              (blockinherit .net.packet.obj_template))
+
+       (block server
+
+              (macro dontaudit_recv_netpackets ((type ARG1))
+                     (dontaudit ARG1 netpacket (packet (recv))))
+
+              (blockinherit .net.packet.obj_template)))

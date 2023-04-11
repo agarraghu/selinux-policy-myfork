@@ -1,0 +1,39 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcblockd.subj_type_transition (subj)))
+
+(in .file
+    (call .rcblockd.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcblockd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/blockd"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "blockd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .blockmount.subj_type_transition (subj))
+
+       (call .tmpfile.list_runtimetmpfile_dirs (subj)))

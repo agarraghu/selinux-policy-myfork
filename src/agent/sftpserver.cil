@@ -1,0 +1,71 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .sftpserver.subj_type_transition (subj)))
+
+(in .file
+    (call .sftpserver.libfile_obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block sftpserver
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/lib/sftp-server"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_execfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 execfile file "sftp-server")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (call manage_tmpfile_dirs (subj))
+       (call manage_tmpfile_files (subj))
+       (call manage_tmpfile_lnk_files (subj))
+       (call obj_type_transition_tmpfile (subj dir "*"))
+       (call obj_type_transition_tmpfile (subj file "*"))
+       (call obj_type_transition_tmpfile (subj lnk_file "*"))
+
+       (call .file.manage_homefile_dirs (subj))
+       (call .file.manage_homefile_files (subj))
+       (call .file.manage_homefile_lnk_files (subj))
+       (call .file.read_conffile_lnk_files (subj))
+       (call .file.dontaudit_manage_all_dirs (subj))
+       (call .file.dontaudit_manage_all_files (subj))
+       (call .file.dontaudit_manage_all_lnk_files (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .mnt.search_miscfile_dirs (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+
+       (optional sftpserver_opt_dropbear
+                 (call .dropbear.readwriteinherited_fifo_files (subj)))
+
+       (optional sftpserver_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj))))

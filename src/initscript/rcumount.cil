@@ -1,0 +1,54 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcumount.subj_type_transition (subj)))
+
+(in .file
+    (call .rcumount.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcumount
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/umount"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "umount")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (sys_admin sys_rawio)))
+
+       (call .getattr_invalid_filesystems (subj))
+       (call .remount_invalid_filesystems (subj))
+       (call .unmount_invalid_filesystems (subj))
+
+       (call .dev.stor.read_all_blk_files (subj))
+       (call .dev.stor.read.subj_type (subj))
+
+       (call .fs.getattr_all_filesystems (subj))
+       (call .fs.remount_all_filesystems (subj))
+       (call .fs.unmount_all_filesystems (subj))
+
+       (call .kernel.search_sysfile_dirs (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj)))

@@ -1,0 +1,463 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_spooltmpfile
+          (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/spool"
+     dir
+     spooltmpfile_file_context)
+    (filecon
+     "/tmp/spool/.*"
+     any
+     spooltmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_spooltmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 spooltmpfile dir "spool")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit spool.obj_template)
+
+    (block spool
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   spooltmpfile_file_context
+                   (.u
+                    .r
+                    spooltmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   spooltmpfile)
+
+                  (call .tmpfile.spool.obj_type (spooltmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile addname_dir))
+
+                  (macro append_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile append_blk_file))
+
+                  (macro append_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile append_chr_file))
+
+                  (macro append_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile append_fifo_file))
+
+                  (macro append_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile append_file))
+
+                  (macro appendinherited_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile appendinherited_file))
+
+                  (macro create_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (create))))
+
+                  (macro create_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_blk_file))
+
+                  (macro create_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_chr_file))
+
+                  (macro create_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile create_dir))
+
+                  (macro create_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_fifo_file))
+
+                  (macro create_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_file))
+
+                  (macro create_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_lnk_file))
+
+                  (macro create_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile create_sock_file))
+
+                  (macro deletename_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile deletename_dir))
+
+                  (macro delete_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (delete))))
+
+                  (macro delete_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_blk_file))
+
+                  (macro delete_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_chr_file))
+
+                  (macro delete_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_dir))
+
+                  (macro delete_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_fifo_file))
+
+                  (macro delete_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_file))
+
+                  (macro delete_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_lnk_file))
+
+                  (macro delete_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile delete_sock_file))
+
+                  (macro execute_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile execute_file))
+
+                  (macro list_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile list_dir))
+
+                  (macro listinherited_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile listinherited_dir))
+
+                  (macro manage_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (manage))))
+
+                  (macro manage_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_blk_file))
+
+                  (macro manage_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_chr_file))
+
+                  (macro manage_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_dir))
+
+                  (macro manage_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_fifo_file))
+
+                  (macro manage_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_file))
+
+                  (macro manage_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_lnk_file))
+
+                  (macro manage_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile manage_sock_file))
+
+                  (macro mapexecute_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mapexecute_file))
+
+                  (macro mounton_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (mounton))))
+
+                  (macro mounton_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_blk_file))
+
+                  (macro mounton_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_chr_file))
+
+                  (macro mounton_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_dir))
+
+                  (macro mounton_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_fifo_file))
+
+                  (macro mounton_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_file))
+
+                  (macro mounton_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_lnk_file))
+
+                  (macro mounton_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile mounton_sock_file))
+
+                  (macro read_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (read))))
+
+                  (macro read_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_blk_file))
+
+                  (macro read_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_chr_file))
+
+                  (macro read_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_fifo_file))
+
+                  (macro read_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_file))
+
+                  (macro readinherited_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readinherited_blk_file))
+
+                  (macro readinherited_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readinherited_chr_file))
+
+                  (macro readinherited_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readinherited_fifo_file))
+
+                  (macro readinherited_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readinherited_file))
+
+                  (macro readinherited_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readinherited_sock_file))
+
+                  (macro read_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_lnk_file))
+
+                  (macro read_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile read_sock_file))
+
+                  (macro readwrite_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_blk_file))
+
+                  (macro readwrite_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_chr_file))
+
+                  (macro readwrite_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_dir))
+
+                  (macro readwrite_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_fifo_file))
+
+                  (macro readwrite_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_file))
+
+                  (macro readwriteinherited_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_lnk_file))
+
+                  (macro readwrite_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile readwrite_sock_file))
+
+                  (macro relabel_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (relabel))))
+
+                  (macro relabel_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_blk_file))
+
+                  (macro relabel_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_chr_file))
+
+                  (macro relabel_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_dir))
+
+                  (macro relabel_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_fifo_file))
+
+                  (macro relabel_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_file))
+
+                  (macro relabel_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_lnk_file))
+
+                  (macro relabel_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabel_sock_file))
+
+                  (macro relabelfrom_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_file))
+
+                  (macro relabelfrom_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_blk_file))
+
+                  (macro relabelto_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_chr_file))
+
+                  (macro relabelto_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_dir))
+
+                  (macro relabelto_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_fifo_file))
+
+                  (macro relabelto_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_file))
+
+                  (macro relabelto_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_lnk_file))
+
+                  (macro relabelto_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile relabelto_sock_file))
+
+                  (macro rename_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (rename))))
+
+                  (macro rename_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_blk_file))
+
+                  (macro rename_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_chr_file))
+
+                  (macro rename_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_dir))
+
+                  (macro rename_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_fifo_file))
+
+                  (macro rename_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_file))
+
+                  (macro rename_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_lnk_file))
+
+                  (macro rename_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile rename_sock_file))
+
+                  (macro search_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile search_dir))
+
+                  (macro spooltmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 spooltmpfile ARG3 ARG4 ARG2)
+                         (call addname_spooltmpfile_dirs (ARG1)))
+
+                  (macro write_spooltmpfile ((type ARG1))
+                         (allow ARG1 spooltmpfile (allfiles (write))))
+
+                  (macro write_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_blk_file))
+
+                  (macro write_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_chr_file))
+
+                  (macro write_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile write_dir))
+
+                  (macro write_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_fifo_file))
+
+                  (macro write_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_file))
+
+                  (macro writeinherited_spooltmpfile_blk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_spooltmpfile_chr_files ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_spooltmpfile_dirs ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_dir))
+
+                  (macro writeinherited_spooltmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_spooltmpfile_files ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_file))
+
+                  (macro writeinherited_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile writeinherited_sock_file))
+
+                  (macro write_spooltmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_lnk_file))
+
+                  (macro write_spooltmpfile_sock_files ((type ARG1))
+                         (allow ARG1 spooltmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.spool.obj_base_template)
+                  (blockinherit .tmpfile.spool.obj_macro_template))))

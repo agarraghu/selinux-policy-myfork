@@ -1,0 +1,57 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcnetwork.subj_type_transition (subj)))
+
+(in .file
+    (call .rcnetwork.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcnetwork
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/network"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "network")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .corepattern.getattr_sysctlfile_files (subj))
+
+       (call .ifup.subj_type_transition (subj))
+
+       (call .ipv6.read_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .net.search_sysctlfile_dirs (subj))
+
+       (call .network.list_miscfile_dirs (subj))
+       (call .network.read_miscfile_files (subj))
+
+       (call .swconfig.subj_type_transition (subj))
+
+       (call .wifi.subj_type_transition (subj)))

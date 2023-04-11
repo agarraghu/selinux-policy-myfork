@@ -1,0 +1,49 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .shell.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block shell
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/bash"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/busybox"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/tcsh"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro execute_execfile_files ((type ARG1))
+              (allow ARG1 execfile execute_file)
+              ;; coreutils, audit these events
+              (call .file.auditallow_execute_execfile_files (ARG1))
+              (call .file.execute_execfile_files (ARG1)))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "bash"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "busybox"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tcsh")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.exec.obj_template))

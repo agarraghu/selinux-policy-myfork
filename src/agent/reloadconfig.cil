@@ -1,0 +1,84 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .reloadconfig.subj_type_transition (subj)))
+
+(in .ubus
+
+    (call .reloadconfig.use_fds (subj)))
+
+(in .file
+    (call .reloadconfig.obj_type_transition_execfile
+          (unconfined.subj_typeattr))
+    (call .reloadconfig.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(block reloadconfig
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/config\.check"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/config\.check/.*"
+        any
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/config\.md5"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/reload_config"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "reload_config")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "config.check"))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "config.md5")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .uci.defaults.read_conffile_files (subj))
+       (call .uci.defaults.search_conffile_dirs (subj))
+       (call .uci.list_conffile_dirs (subj))
+       (call .uci.read_conffile_files (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (optional reloadconfig_opt_rcboot
+                 (call .rcboot.use_fds (subj))))

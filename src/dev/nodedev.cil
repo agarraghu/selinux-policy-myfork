@@ -1,0 +1,439 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+
+    (block node
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro getattr_all_chr_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (chr_file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call dev.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   nodedev_file_context
+                   (.u
+                    .r
+                    nodedev
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   nodedev)
+
+                  (call .dev.node.obj_type (nodedev)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev addname_dir))
+
+                  (macro append_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev append_blk_file))
+
+                  (macro append_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev append_chr_file))
+
+                  (macro append_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev append_fifo_file))
+
+                  (macro append_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev append_file))
+
+                  (macro appendinherited_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev appendinherited_blk_file))
+
+                  (macro appendinherited_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev appendinherited_chr_file))
+
+                  (macro appendinherited_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev appendinherited_fifo_file))
+
+                  (macro appendinherited_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev appendinherited_file))
+
+                  (macro create_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (create))))
+
+                  (macro create_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev create_blk_file))
+
+                  (macro create_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev create_chr_file))
+
+                  (macro create_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev create_dir))
+
+                  (macro create_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev create_fifo_file))
+
+                  (macro create_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev create_file))
+
+                  (macro create_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev create_lnk_file))
+
+                  (macro create_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev create_sock_file))
+
+                  (macro deletename_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev deletename_dir))
+
+                  (macro delete_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (delete))))
+
+                  (macro delete_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev delete_blk_file))
+
+                  (macro delete_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev delete_chr_file))
+
+                  (macro delete_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev delete_dir))
+
+                  (macro delete_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev delete_fifo_file))
+
+                  (macro delete_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev delete_file))
+
+                  (macro delete_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev delete_lnk_file))
+
+                  (macro delete_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev delete_sock_file))
+
+                  (macro execute_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev execute_file))
+
+                  (macro list_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev list_dir))
+
+                  (macro listinherited_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev listinherited_dir))
+
+                  (macro manage_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (manage))))
+
+                  (macro manage_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev manage_blk_file))
+
+                  (macro manage_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev manage_chr_file))
+
+                  (macro manage_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev manage_dir))
+
+                  (macro manage_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev manage_fifo_file))
+
+                  (macro manage_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev manage_file))
+
+                  (macro manage_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev manage_lnk_file))
+
+                  (macro manage_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev manage_sock_file))
+
+                  (macro mapexecute_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev mapexecute_chr_file))
+
+                  (macro mapexecute_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev mapexecute_file))
+
+                  (macro mounton_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (mounton))))
+
+                  (macro mounton_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_blk_file))
+
+                  (macro mounton_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_chr_file))
+
+                  (macro mounton_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev mounton_dir))
+
+                  (macro mounton_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_fifo_file))
+
+                  (macro mounton_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_file))
+
+                  (macro mounton_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_lnk_file))
+
+                  (macro mounton_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev mounton_sock_file))
+
+                  (macro nodedev_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 nodedev ARG3 ARG4 ARG2)
+                         (call addname_nodedev_dirs (ARG1)))
+
+                  (macro read_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (read))))
+
+                  (macro read_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev read_blk_file))
+
+                  (macro read_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev read_chr_file))
+
+                  (macro read_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev read_fifo_file))
+
+                  (macro read_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev read_file))
+
+                  (macro readinherited_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev readinherited_blk_file))
+
+                  (macro readinherited_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev readinherited_chr_file))
+
+                  (macro readinherited_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev readinherited_fifo_file))
+
+                  (macro readinherited_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev readinherited_file))
+
+                  (macro readinherited_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev readinherited_sock_file))
+
+                  (macro read_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev read_lnk_file))
+
+                  (macro read_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev read_sock_file))
+
+                  (macro readwrite_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (readwrite))))
+
+                  (macro readwrite_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_blk_file))
+
+                  (macro readwrite_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_chr_file))
+
+                  (macro readwrite_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev readwrite_dir))
+
+                  (macro readwrite_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_fifo_file))
+
+                  (macro readwrite_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_file))
+
+                  (macro readwriteinherited_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_dir))
+
+                  (macro readwriteinherited_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_file))
+
+                  (macro readwriteinherited_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev readwriteinherited_sock_file))
+
+                  (macro readwrite_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_lnk_file))
+
+                  (macro readwrite_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev readwrite_sock_file))
+
+                  (macro relabel_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (relabel))))
+
+                  (macro relabel_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_blk_file))
+
+                  (macro relabel_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_chr_file))
+
+                  (macro relabel_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev relabel_dir))
+
+                  (macro relabel_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_fifo_file))
+
+                  (macro relabel_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_file))
+
+                  (macro relabel_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_lnk_file))
+
+                  (macro relabel_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev relabel_sock_file))
+
+                  (macro relabelfrom_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_blk_file))
+
+                  (macro relabelfrom_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_chr_file))
+
+                  (macro relabelfrom_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_dir))
+
+                  (macro relabelfrom_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_fifo_file))
+
+                  (macro relabelfrom_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_file))
+
+                  (macro relabelfrom_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_lnk_file))
+
+                  (macro relabelfrom_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev relabelfrom_sock_file))
+
+                  (macro relabelto_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (relabelto))))
+
+                  (macro relabelto_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_blk_file))
+
+                  (macro relabelto_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_chr_file))
+
+                  (macro relabelto_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev relabelto_dir))
+
+                  (macro relabelto_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_fifo_file))
+
+                  (macro relabelto_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_file))
+
+                  (macro relabelto_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_lnk_file))
+
+                  (macro relabelto_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev relabelto_sock_file))
+
+                  (macro rename_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (rename))))
+
+                  (macro rename_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev rename_blk_file))
+
+                  (macro rename_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev rename_chr_file))
+
+                  (macro rename_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev rename_dir))
+
+                  (macro rename_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev rename_fifo_file))
+
+                  (macro rename_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev rename_file))
+
+                  (macro rename_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev rename_lnk_file))
+
+                  (macro rename_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev rename_sock_file))
+
+                  (macro search_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev search_dir))
+
+                  (macro write_nodedev ((type ARG1))
+                         (allow ARG1 nodedev (allfiles (write))))
+
+                  (macro write_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev write_blk_file))
+
+                  (macro write_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev write_chr_file))
+
+                  (macro write_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev write_dir))
+
+                  (macro write_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev write_fifo_file))
+
+                  (macro write_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev write_file))
+
+                  (macro writeinherited_nodedev_blk_files ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_blk_file))
+
+                  (macro writeinherited_nodedev_chr_files ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_chr_file))
+
+                  (macro writeinherited_nodedev_dirs ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_dir))
+
+                  (macro writeinherited_nodedev_fifo_files ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_fifo_file))
+
+                  (macro writeinherited_nodedev_files ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_file))
+
+                  (macro writeinherited_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev writeinherited_sock_file))
+
+                  (macro write_nodedev_lnk_files ((type ARG1))
+                         (allow ARG1 nodedev write_lnk_file))
+
+                  (macro write_nodedev_sock_files ((type ARG1))
+                         (allow ARG1 nodedev write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .dev.node.obj_base_template)
+                  (blockinherit .dev.node.obj_macro_template))))

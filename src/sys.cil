@@ -1,0 +1,133 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ kernel)
+
+(sidcontext
+ kernel
+ (.u
+  .r
+  .sys.subj
+  (systemlow
+   systemlow)))
+
+(userprefix
+ u
+ r)
+(selinuxuserdefault
+ u
+ (systemlow
+  systemhigh))
+
+(user
+ u)
+
+(userlevel
+ u
+ systemlow)
+(userrange
+ u
+ (systemlow
+  systemhigh))
+(userrole
+ u
+ r)
+
+(role
+ r)
+
+(block sys
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro controlsyslogconsole ((type ARG1))
+              (allow ARG1 subj (system (syslog_console))))
+
+       (macro modifyringbuffer ((type ARG1))
+              (allow ARG1 subj (system (syslog_mod))))
+
+       (macro readringbuffer ((type ARG1))
+              (allow ARG1 subj (system (syslog_read))))
+
+       (macro requestmodule ((type ARG1))
+              (allow ARG1 subj (system (module_request))))
+
+       (macro search_keyrings ((type ARG1))
+              (allow ARG1 subj (key (search))))
+
+       (macro type ((type ARG1))
+              (typeattributeset typeattr ARG1))
+
+       (macro dontaudit_readwrite_udp_sockets ((type ARG1))
+              (dontaudit ARG1 subj readwrite_udp_socket))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (typeattribute
+        typeattr)
+
+       (roletype
+        r
+        typeattr)
+
+       (blockinherit .subj.subj_template)
+
+       (call .subj.interactivefd.subj_type (subj))
+
+       (call .unconfined.subj_type (subj))
+
+       (block loadkernelmodule
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr self (capability (sys_module)))
+
+              (allow subj_typeattr self (capability (sys_nice)))
+              (allow subj_typeattr subj (process (setsched))))
+
+       (block mountpoint
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro mounton_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr (dir (getattr mounton))))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .file.obj_all_macro_template)
+
+              (allow unconfined.subj_typeattr obj_typeattr (dir (mounton))))
+
+       (block unconfined
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allow subj_typeattr subj (system (not module_load)))
+
+              (call loadkernelmodule.subj_type (subj_typeattr))))

@@ -1,0 +1,71 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .tcpdump.subj_type_transition (subj)))
+
+(in .file
+    (call .tcpdump.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block tcpdump
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/tcpdump"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tcpdump")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (net_raw setgid setuid)))
+       (allow subj self create_netlink_generic_socket)
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_packet_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (packet_socket (map)))
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.readwriteinherited_fifo_files (subj))
+       (call .sys.search_fs_dirs (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .file.manage_homefile_files (subj))
+       (call .file.readwrite_homefile_dirs (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (optional tcpdump_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj))))

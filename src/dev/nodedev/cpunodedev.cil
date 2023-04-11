@@ -1,0 +1,59 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .cpu.obj_type_transition_nodedev (unconfined.subj_typeattr)))
+
+(in .cpu
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/dev/cpu([0-9]+)?"
+     char
+     nodedev_file_context)
+    (filecon
+     "/dev/cpu/.+"
+     char
+     nodedev_file_context)
+    (filecon
+     "/dev/msr([0-9]+)?"
+     char
+     nodedev_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_nodedev ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "cpu0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "cpu1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "cpu2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "cpu3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "cpuid"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "microcode"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "msr"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "msr0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "msr1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "msr2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 nodedev chr_file "msr3")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .dev.node.obj_template))

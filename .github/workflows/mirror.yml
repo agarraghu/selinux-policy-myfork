@@ -1,0 +1,15 @@
+name: mirror
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: mirror-repository
+        uses: spyoungtech/mirror-action@v0.4.0
+        with:
+          REMOTE: 'https://git.defensec.nl/selinux-policy.git'
+          GIT_USERNAME: github
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}

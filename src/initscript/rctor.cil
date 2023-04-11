@@ -1,0 +1,51 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rctor.subj_type_transition (subj)))
+
+(in .file
+    (call .rctor.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rctor
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/tor"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "tor")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (chown dac_override dac_read_search)))
+
+       (call .tor.list_conffile_dirs (subj))
+       (call .tor.read_conffile_files (subj))
+
+       (call .tor.manage_tmpfile_files (subj))
+       (call .tor.obj_type_transition_tmpfile (subj))
+
+       (call .tor.manage_logtmpfile_dirs (subj))
+       (call .tor.manage_logtmpfile_files (subj))
+       (call .tor.obj_type_transition_logtmpfile (subj))
+
+       (call .tor.manage_statetmpfile_dirs (subj))
+       (call .tor.manage_statetmpfile_files (subj))
+       (call .tor.obj_type_transition_statetmpfile (subj)))

@@ -1,0 +1,515 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+
+    ;;
+    ;; Policy
+    ;;
+
+    (call stor.readwrite.subj_type (unconfined.subj_typeattr))
+
+    (block stor
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro getattr_all_blk_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (blk_file (getattr))))
+
+           (macro getattr_all_chr_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (chr_file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call dev.obj_type (obj_typeattr))
+
+           (call readwrite.subj_type (unconfined.subj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   stordev_file_context
+                   (.u
+                    .r
+                    stordev
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   stordev)
+
+                  (call .dev.stor.obj_type (stordev)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev addname_dir))
+
+                  (macro append_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev append_blk_file))
+
+                  (macro append_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev append_chr_file))
+
+                  (macro append_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev append_fifo_file))
+
+                  (macro append_stordev_files ((type ARG1))
+                         (allow ARG1 stordev append_file))
+
+                  (macro appendinherited_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev appendinherited_blk_file))
+
+                  (macro appendinherited_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev appendinherited_chr_file))
+
+                  (macro appendinherited_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev appendinherited_fifo_file))
+
+                  (macro appendinherited_stordev_files ((type ARG1))
+                         (allow ARG1 stordev appendinherited_file))
+
+                  (macro create_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (create))))
+
+                  (macro create_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev create_blk_file))
+
+                  (macro create_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev create_chr_file))
+
+                  (macro create_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev create_dir))
+
+                  (macro create_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev create_fifo_file))
+
+                  (macro create_stordev_files ((type ARG1))
+                         (allow ARG1 stordev create_file))
+
+                  (macro create_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev create_lnk_file))
+
+                  (macro create_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev create_sock_file))
+
+                  (macro deletename_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev deletename_dir))
+
+                  (macro delete_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (delete))))
+
+                  (macro delete_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev delete_blk_file))
+
+                  (macro delete_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev delete_chr_file))
+
+                  (macro delete_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev delete_dir))
+
+                  (macro delete_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev delete_fifo_file))
+
+                  (macro delete_stordev_files ((type ARG1))
+                         (allow ARG1 stordev delete_file))
+
+                  (macro delete_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev delete_lnk_file))
+
+                  (macro delete_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev delete_sock_file))
+
+                  (macro execute_stordev_files ((type ARG1))
+                         (allow ARG1 stordev execute_file))
+
+                  (macro list_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev list_dir))
+
+                  (macro listinherited_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev listinherited_dir))
+
+                  (macro manage_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (manage))))
+
+                  (macro manage_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev manage_blk_file))
+
+                  (macro manage_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev manage_chr_file))
+
+                  (macro manage_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev manage_dir))
+
+                  (macro manage_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev manage_fifo_file))
+
+                  (macro manage_stordev_files ((type ARG1))
+                         (allow ARG1 stordev manage_file))
+
+                  (macro manage_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev manage_lnk_file))
+
+                  (macro manage_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev manage_sock_file))
+
+                  (macro mapexecute_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev mapexecute_chr_file))
+
+                  (macro mapexecute_stordev_files ((type ARG1))
+                         (allow ARG1 stordev mapexecute_file))
+
+                  (macro mounton_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (mounton))))
+
+                  (macro mounton_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev mounton_blk_file))
+
+                  (macro mounton_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev mounton_chr_file))
+
+                  (macro mounton_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev mounton_dir))
+
+                  (macro mounton_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev mounton_fifo_file))
+
+                  (macro mounton_stordev_files ((type ARG1))
+                         (allow ARG1 stordev mounton_file))
+
+                  (macro mounton_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev mounton_lnk_file))
+
+                  (macro mounton_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev mounton_sock_file))
+
+                  (macro read_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (read))))
+
+                  (macro read_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev read_blk_file))
+
+                  (macro read_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev read_chr_file))
+
+                  (macro read_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev read_fifo_file))
+
+                  (macro read_stordev_files ((type ARG1))
+                         (allow ARG1 stordev read_file))
+
+                  (macro readinherited_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev readinherited_blk_file))
+
+                  (macro readinherited_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev readinherited_chr_file))
+
+                  (macro readinherited_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev readinherited_fifo_file))
+
+                  (macro readinherited_stordev_files ((type ARG1))
+                         (allow ARG1 stordev readinherited_file))
+
+                  (macro readinherited_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev readinherited_sock_file))
+
+                  (macro read_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev read_lnk_file))
+
+                  (macro read_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev read_sock_file))
+
+                  (macro readwrite_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (readwrite))))
+
+                  (macro readwrite_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_blk_file))
+
+                  (macro readwrite_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_chr_file))
+
+                  (macro readwrite_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev readwrite_dir))
+
+                  (macro readwrite_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_fifo_file))
+
+                  (macro readwrite_stordev_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_file))
+
+                  (macro readwriteinherited_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_dir))
+
+                  (macro readwriteinherited_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_stordev_files ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_file))
+
+                  (macro readwriteinherited_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev readwriteinherited_sock_file))
+
+                  (macro readwrite_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_lnk_file))
+
+                  (macro readwrite_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev readwrite_sock_file))
+
+                  (macro relabel_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (relabel))))
+
+                  (macro relabel_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev relabel_blk_file))
+
+                  (macro relabel_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev relabel_chr_file))
+
+                  (macro relabel_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev relabel_dir))
+
+                  (macro relabel_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev relabel_fifo_file))
+
+                  (macro relabel_stordev_files ((type ARG1))
+                         (allow ARG1 stordev relabel_file))
+
+                  (macro relabel_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev relabel_lnk_file))
+
+                  (macro relabel_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev relabel_sock_file))
+
+                  (macro relabelfrom_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_blk_file))
+
+                  (macro relabelfrom_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_chr_file))
+
+                  (macro relabelfrom_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_dir))
+
+                  (macro relabelfrom_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_fifo_file))
+
+                  (macro relabelfrom_stordev_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_file))
+
+                  (macro relabelfrom_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_lnk_file))
+
+                  (macro relabelfrom_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev relabelfrom_sock_file))
+
+                  (macro relabelto_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (relabelto))))
+
+                  (macro relabelto_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_blk_file))
+
+                  (macro relabelto_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_chr_file))
+
+                  (macro relabelto_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev relabelto_dir))
+
+                  (macro relabelto_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_fifo_file))
+
+                  (macro relabelto_stordev_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_file))
+
+                  (macro relabelto_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_lnk_file))
+
+                  (macro relabelto_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev relabelto_sock_file))
+
+                  (macro rename_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (rename))))
+
+                  (macro rename_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev rename_blk_file))
+
+                  (macro rename_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev rename_chr_file))
+
+                  (macro rename_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev rename_dir))
+
+                  (macro rename_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev rename_fifo_file))
+
+                  (macro rename_stordev_files ((type ARG1))
+                         (allow ARG1 stordev rename_file))
+
+                  (macro rename_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev rename_lnk_file))
+
+                  (macro rename_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev rename_sock_file))
+
+                  (macro search_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev search_dir))
+
+                  (macro stordev_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 stordev ARG3 ARG4 ARG2)
+                         (call addname_stordev_dirs (ARG1)))
+
+                  (macro write_stordev ((type ARG1))
+                         (allow ARG1 stordev (allfiles (write))))
+
+                  (macro write_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev write_blk_file))
+
+                  (macro write_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev write_chr_file))
+
+                  (macro write_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev write_dir))
+
+                  (macro write_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev write_fifo_file))
+
+                  (macro write_stordev_files ((type ARG1))
+                         (allow ARG1 stordev write_file))
+
+                  (macro writeinherited_stordev_blk_files ((type ARG1))
+                         (allow ARG1 stordev writeinherited_blk_file))
+
+                  (macro writeinherited_stordev_chr_files ((type ARG1))
+                         (allow ARG1 stordev writeinherited_chr_file))
+
+                  (macro writeinherited_stordev_dirs ((type ARG1))
+                         (allow ARG1 stordev writeinherited_dir))
+
+                  (macro writeinherited_stordev_fifo_files ((type ARG1))
+                         (allow ARG1 stordev writeinherited_fifo_file))
+
+                  (macro writeinherited_stordev_files ((type ARG1))
+                         (allow ARG1 stordev writeinherited_file))
+
+                  (macro writeinherited_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev writeinherited_sock_file))
+
+                  (macro write_stordev_lnk_files ((type ARG1))
+                         (allow ARG1 stordev write_lnk_file))
+
+                  (macro write_stordev_sock_files ((type ARG1))
+                         (allow ARG1 stordev write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .dev.stor.obj_base_template)
+                  (blockinherit .dev.stor.obj_macro_template))
+
+           (block read
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr (blk_file (read)))
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (chr_file (read))))
+
+           (block readwrite
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (call read.subj_type (subj_typeattr))
+                  (call write.subj_type (subj_typeattr)))
+
+           (block unconfined
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (allow subj_typeattr obj_typeattr
+                         (blk_file (not (execmod map mounton))))
+                  (allow subj_typeattr obj_typeattr
+                         (chr_file (not execmod))))
+
+           (block write
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (blk_file (append write)))
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (chr_file (append write))))))

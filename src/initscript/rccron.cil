@@ -1,0 +1,47 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rccron.subj_type_transition (subj)))
+
+(in .file
+    (call .rccron.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rccron
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/cron"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "cron")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .cron.addname_miscfile_dirs (subj))
+       (call .cron.create_miscfile_dirs (subj))
+       (call .cron.create_miscfile_lnk_files (subj))
+       (call .cron.getattr_miscfile_files (subj))
+       (call .cron.spooltmpfile_obj_type_transition_miscfile (subj))
+
+       (call .tmpfile.create_spooltmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_spooltmpfile (subj))
+
+       (optional rccron_opt_acme
+                 (call .acme.use_fds (subj))))

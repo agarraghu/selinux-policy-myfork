@@ -1,0 +1,84 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .boarddetect.obj_type_transition_conffile
+          (unconfined.subj_typeattr))
+    (call .boarddetect.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block boarddetect
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/board\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/board\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/board_detect"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "board.d")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "board_detect")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .board.read_miscfile_files (subj))
+
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .configgenerate.use_fds (subj))
+
+       (call .dev.stor.read.subj_type (subj))
+
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .functions.search_miscfile_dirs (subj))
+       (call .functions.read_miscfile_files (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .mtd.read_procfile_files (subj))
+
+       (call .preinit.read_tmpfile_files (subj))
+       (call .preinit.search_tmpfile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (optional boarddetect_opt_mtdstordev
+                 (call .mtd.read_stordev_blk_files (subj))))

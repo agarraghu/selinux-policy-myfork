@@ -1,0 +1,658 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .luci.bwc.subj_type_transition (subj))
+    (call .luci.cgi.subj_type_transition (subj))
+    (call .luci.peeraddr.subj_type_transition (subj))
+    (call .luci.reload.subj_type_transition (subj))
+    (call .luci.subj_type_transition (subj)))
+
+(in .file
+    (call .luci.bwc.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .luci.bwc.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr))
+    (call .luci.bwc.obj_type_transition_statetmpfile
+          (unconfined.subj_typeattr))
+    (call .luci.cgi.obj_type_transition_cgiscriptfile
+          (unconfined.subj_typeattr))
+    (call .luci.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .luci.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .luci.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .luci.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr dir "luci-modulecache"))
+    (call .luci.peeraddr.obj_type_transition_execfile
+          (unconfined.subj_typeattr))
+    (call .luci.reload.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(in .uhttpd
+    (call .luci.cgi.subj_type_transition (subj)))
+
+(block luci
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/luci-uploads"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/luci-uploads/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/luci-indexcache\..*"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/luci-modulecache"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/luci-modulecache/.*"
+        any
+        tmpfile_file_context)
+
+       (filecon
+        "/usr/bin/rpcd/luci"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/rpcd/luci\.wireguard"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/share/luci"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/luci/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "luci-uploads")))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "luci")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "luci"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "luci.wireguard")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.data.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (allow subj self (capability (setuid)))
+       (allow subj self (process (setrlimit)))
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call bwc.subj_type_transition (subj))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .cron.list_miscfile_dirs (subj))
+       (call .cron.read_miscfile_files (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .dnsmasq.subj_type_transition (subj))
+
+       (call .file.auth.write.subj_type (subj))
+       (call .file.execute_initscriptfile_files (subj))
+       (call .file.list_initscriptfile_dirs (subj))
+       (call .file.manage_conffile_lnk_files (subj))
+       (call .file.readwrite_conffile_dirs (subj))
+
+       (call .fs.getattr_all_filesystems (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .fw3.read_datafile_files (subj))
+       (call .fw3.search_datafile_dirs (subj))
+       (call .fw3.subj_type_transition (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .kernel.search_sysctlfile_dirs (subj))
+       (call .kernel.search_sysfile_dirs (subj))
+
+       (call .leds.list_sysfile_dirs (subj))
+       (call .leds.read_sysfile_lnk_files (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .loadavg.read_procfile_files (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .lua.execute_execfile_files (subj))
+
+       (call .meminfo.read_procfile_files (subj))
+
+       (call .module.search_sysfile_dirs (subj))
+
+       (call .nameservice.manage_miscfile_files (subj))
+
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .rccommon.read_conffile_files (subj))
+
+       (call .selinux.computeav (subj))
+       (call .selinux.linked.subj_type (subj))
+       (call .selinux.setfscreate.subj_type (subj))
+
+       (call .shadow.manage_authfile_files (subj))
+       (call .shadow.read.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .stat.read_procfile_files (subj))
+
+       (call .subj.passwd_all (subj))
+       (call .subj.read_state_all (subj))
+
+       (call .swconfig.subj_type_transition (subj))
+
+       (call .tmpfile.search_locktmpfile_dirs (subj))
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+       (call .tmpfile.write_locktmpfile_files (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.readwrite_conffile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .wpad.subj_type_transition (subj))
+
+       (optional luci_opt_blockmount
+                 ;; mountpoints currently supported
+                 (call .file.search_homefile_dirs (subj))
+                 (call .blockmount.subj_type_transition (subj))
+                 (call .mnt.search_miscfile_dirs (subj))
+                 (call .overlay.search_miscfile_dirs (subj)))
+
+       (optional luci_opt_rcacme
+                 (call .rcacme.subj_type_transition (subj)))
+
+       (optional luci_opt_rcblockd
+                 (call .rcblockd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcboot
+                 (call .rcboot.subj_type_transition (subj)))
+
+       (optional luci_opt_rcbootcount
+                 (call .rcbootcount.subj_type_transition (subj)))
+
+       (optional luci_opt_rcchronyd
+                 (call .rcchronyd.subj_type_transition (subj)))
+
+       (optional luci_opt_rccron
+                 (call .rccron.subj_type_transition (subj)))
+
+       (optional luci_opt_rcdnsmasq
+                 (call .rcdnsmasq.subj_type_transition (subj)))
+
+       (optional luci_opt_rcdropbear
+                 (call .rcdropbear.subj_type_transition (subj)))
+
+       (optional luci_opt_rcfirewall
+                 (call .rcfirewall.subj_type_transition (subj)))
+
+       (optional luci_opt_rcfstab
+                 (call .rcfstab.subj_type_transition (subj)))
+
+       (optional luci_opt_rcgpioswitch
+                 (call .rcgpioswitch.subj_type_transition (subj)))
+
+       (optional luci_opt_rcigmpproxy
+                 (call .rcigmpproxy.subj_type_transition (subj)))
+
+       (optional luci_opt_rcirqbalance
+                 (call .rcirqbalance.subj_type_transition (subj)))
+
+       (optional luci_opt_rcled
+                 (call .rcled.subj_type_transition (subj)))
+
+       (optional luci_opt_rclog
+                 (call .rclog.subj_type_transition (subj)))
+
+       (optional luci_opt_rcmurmur
+                 (call .rcmurmur.subj_type_transition (subj)))
+
+       (optional luci_opt_rcnetwork
+                 (call .rcnetwork.subj_type_transition (subj)))
+
+       (optional luci_opt_rcnftqos
+                 (call .rcnftqos.subj_type_transition (subj)))
+
+       (optional luci_opt_rcngircd
+                 (call .rcngircd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcodhcpd
+                 (call .rcodhcpd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcrpcd
+                 (call .rcrpcd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsocat
+                 (call .rcsocat.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsqm
+                 (call .rcsqm.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsquid
+                 (call .rcsquid.subj_type_transition (subj)))
+
+       (optional luci_opt_rcstubby
+                 (call .rcstubby.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsysctl
+                 (call .rcsysctl.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsysfixtime
+                 (call .rcsysfixtime.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsysntpd
+                 (call .rcsysntpd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcsystem
+                 (call .rcsystem.subj_type_transition (subj)))
+
+       (optional luci_opt_rctinyproxy
+                 (call .rctinyproxy.subj_type_transition (subj)))
+
+       (optional luci_opt_rctor
+                 (call .rctor.subj_type_transition (subj)))
+
+       (optional luci_opt_rcttyd
+                 (call .rcttyd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcucitrack
+                 (call .rcucitrack.subj_type_transition (subj)))
+
+       (optional luci_opt_rcuhttpd
+                 (call .rcuhttpd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcumount
+                 (call .rcumount.subj_type_transition (subj)))
+
+       (optional luci_opt_rcunbound
+                 (call .rcunbound.subj_type_transition (subj)))
+
+       (optional luci_opt_rcurandomseed
+                 (call .rcurandomseed.subj_type_transition (subj)))
+
+       (optional luci_opt_rcurngd
+                 (call .rcurngd.subj_type_transition (subj)))
+
+       (optional luci_opt_rcwpad
+                 (call .rcwpad.subj_type_transition (subj)))
+
+       (optional luci_opt_rcznc
+                 (call .rcznc.subj_type_transition (subj)))
+
+       (optional luci_opt_rczram
+                 (call .rczram.subj_type_transition (subj)))
+
+       (optional luci_opt_sslcertfile
+                 (call .ssl.search_certfile_dirs (subj)))
+
+       (optional luci_opt_wireguard
+                 (call .wireguard.subj_type_transition (subj)))
+
+       (block bwc
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/tmp/lib/luci-bwc"
+               dir
+               statetmpfile_file_context)
+              (filecon
+               "/tmp/lib/luci-bwc/.*"
+               any
+               statetmpfile_file_context)
+
+              (filecon
+               "/tmp/run/luci-bwc\.pid"
+               file
+               runtimetmpfile_file_context)
+
+              (filecon
+               "/usr/bin/luci-bwc"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro map_statetmpfile_dirs ((type ARG1))
+                     (allow ARG1 statetmpfile (dir (map))))
+
+              (macro map_statetmpfile_files ((type ARG1))
+                     (allow ARG1 statetmpfile (file (map))))
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "luci-bwc")))
+
+              (macro obj_type_transition_runtimetmpfile ((type ARG1))
+                     (call .tmpfile.runtimetmpfile_obj_type_transition
+                           (ARG1 runtimetmpfile file "luci-bwc.pid")))
+
+              (macro obj_type_transition_statetmpfile ((type ARG1))
+                     (call .tmpfile.statetmpfile_obj_type_transition
+                           (ARG1 statetmpfile dir "luci-bwc")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+              (blockinherit .tmpfile.runtime.obj_template)
+              (blockinherit .tmpfile.state.obj_template)
+
+              (allow subj self create_netlink_generic_socket)
+              (allow subj self create_udp_socket)
+              (allow subj self create_unix_dgram_socket)
+
+              (call manage_runtimetmpfile_files (subj))
+              (call obj_type_transition_runtimetmpfile (subj))
+
+              (call manage_statetmpfile_dirs (subj))
+              (call manage_statetmpfile_files (subj))
+              (call map_statetmpfile_dirs (subj))
+              (call map_statetmpfile_files (subj))
+              (call obj_type_transition_statetmpfile (subj))
+
+              ;; compat with genfs_seclabel_symlinks=0
+              (call .sys.read_fs_lnk_files (subj))
+              (call .sys.search_fs_dirs (subj))
+
+              (call .class.list_sysfile_dirs (subj))
+              (call .class.read_sysfile_lnk_files (subj))
+
+              (call .devices.read_sysfile_files (subj))
+              (call .devices.search_sysfile_dirs (subj))
+
+              (call .file.search_conffile_dirs (subj))
+
+              (call .loadavg.read_procfile_files (subj))
+
+              (call .net.read_procfile_files (subj))
+              (call .net.read_procfile_lnk_files (subj))
+
+              (call .tmpfile.deletename_runtimetmpfile_dirs (subj)))
+
+       (block cgi
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/www/cgi-bin/luci"
+               file
+               cgiscriptfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_cgiscriptfile ((type ARG1))
+                     (call .file.cgiscriptfile_obj_type_transition
+                           (ARG1 cgiscriptfile file "luci")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .cgiscript.base_template)
+
+              (allow subj self (capability (net_admin)))
+              (allow subj self create_netlink_generic_socket)
+              (allow subj self create_netlink_route_socket)
+              (allow subj self create_udp_socket)
+              (allow subj self create_unix_dgram_socket)
+              (allow subj self create_unix_stream_socket)
+              (allow subj self (netlink_route_socket (nlmsg_read)))
+
+              (call list_datafile_dirs (subj))
+              (call read_datafile_files (subj))
+
+              (call manage_tmpfile_dirs (subj))
+              (call manage_tmpfile_files (subj))
+              (call obj_type_transition_tmpfile (subj dir "luci-modulecache"))
+              (call obj_type_transition_tmpfile (subj file "*"))
+
+              (call .sys.loadkernelmodule.subj_type (subj))
+              (call .sys.read_fs_lnk_files (subj))
+              (call .sys.requestmodule (subj))
+              (call .sys.writeinherited_fifo_files (subj))
+
+              (call .blockmount.auditexecute_execfile_files (subj))
+
+              (call .board.read_miscfile_files (subj))
+
+              (call .class.list_sysfile_dirs (subj))
+
+              (call .devices.list_sysfile_dirs (subj))
+              (call .devices.read_sysfile_files (subj))
+
+              (call .dnsmasq.auditexecute_execfile_files (subj))
+
+              (call .dropbear.auditexecute_execfile_files (subj))
+
+              (call .file.read_conffile_lnk_files (subj))
+              (call .file.search_initscriptfile_dirs (subj))
+              (call .file.search_cgiscriptfile_dirs (subj))
+
+              (call .fw3.auditexecute_execfile_files (subj))
+
+              (call .leds.list_sysfile_dirs (subj))
+
+              (call .locale.read.subj_type (subj))
+
+              (call .logd.unix_dgram_send (subj))
+
+              (call .logread.subj_type_transition (subj))
+
+              (call .lua.execute_execfile_files (subj))
+
+              (call .nameservice.read_miscfile_files (subj))
+
+              (call .net.read_procfile_files (subj))
+              (call .net.read_procfile_lnk_files (subj))
+
+              (call .osrelease.read_miscfile_files (subj))
+
+              (call .random.read_nodedev_chr_files (subj))
+
+              (call .selinux.linked.subj_type (subj))
+
+              (call .shadow.read_authfile_files (subj))
+              (call .shadow.read.subj_type (subj))
+
+              (call .shell.execute_execfile_files (subj))
+
+              (call .swconfig.auditexecute_execfile_files (subj))
+
+              (call .tmpfile.search_runtimetmpfile_dirs (subj))
+              (call .tmpfile.search_statetmpfile_dirs (subj))
+
+              (call .uci.readwrite_conffile_files (subj))
+              (call .uci.read_tmpfile_files (subj))
+              (call .uci.search_conffile_dirs (subj))
+              (call .uci.search_tmpfile_dirs (subj))
+
+              (call .ucode.subj_type_transition (subj))
+
+              (call .ubusd.unix_stream_connect (subj))
+
+              (call .uhttpd.auditexecute_execfile_files (subj))
+              (call .uhttpd.getattr_execfile_files (subj))
+              (call .uhttpd.readwriteinherited_fifo_files (subj))
+
+              (call .www.search_miscfile_dirs (subj))
+
+              (optional luci_cgi_opt_acme
+                        (call .acme.search_conffile_dirs (subj)))
+
+              (optional luci_opt_httpproxynetpacket
+                        (call .httpproxy.client.recvsend_netpackets (subj)))
+
+              (optional luci_cgi_opt_nftables
+                        (call .nftables.auditexecute_execfile_files (subj)))
+
+              (optional luci_cgi_opt_rcsquid
+                        (call .rcsquid.subj_type_transition (subj)))
+
+              (optional luci_cgi_opt_rctinyproxy
+                        (call .rctinyproxy.subj_type_transition (subj)))
+
+              (optional luci_cgi_opt_rcunbound
+                        (call .rcunbound.subj_type_transition (subj)))
+
+              (optional luci_cgi_opt_squid
+                        (call .squid.readwrite_conffile_files (subj))
+                        (call .squid.search_conffile_dirs (subj)))
+
+              (optional luci_cgi_opt_tinyproxy
+                        (call .tinyproxy.search_conffile_dirs (subj)))
+
+              (optional luci_cgi_opt_unbound
+                        (call .unbound.read_statetmpfile_files (subj))
+                        (call .unbound.readwrite_conffile_files (subj))
+                        (call .unbound.search_conffile_dirs (subj))
+                        (call .unbound.search_statetmpfile_dirs (subj)))
+
+              (optional luci_cgi_opt_unboundcontrol
+                        (call .unbound.control.subj_type_transition (subj)))
+
+              ;; luci-app-tinyproxy
+              (optional luci_cgi_opt_wget
+                        (call .httpproxy.tcp_connect_netports (subj))
+                        (call .net.egress_netifs (subj))
+                        (call .net.sendto_netnodes (subj))
+                        (call .wget.execute_execfile_files (subj)))
+
+              (optional luci_cgi_opt_wireguard
+                        (call .wireguard.subj_type_transition (subj)))
+
+              (optional luci_cgi_opt_xtables
+                        (call .xtables.auditexecute_execfile_files (subj))))
+
+       (block peeraddr
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/bin/luci-peeraddr"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "luci-peeraddr")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+
+              (allow subj self create_netlink_route_socket)
+              (allow subj self (netlink_route_socket (nlmsg_read)))
+
+              (call .jsonfilter.subj_type_transition (subj))
+
+              (call .selinux.linked.subj_type (subj))
+
+              (call .shell.execute_execfile_files (subj))
+
+              (call .ubus.subj_type_transition (subj))
+
+              (call .uci.subj_type_transition (subj))
+
+              (optional luci_peeraddr_opt_cgiio
+                        (call .cgiio.writeinherited_fifo_files (subj))))
+
+       (block reload
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/bin/luci-reload"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "luci-reload")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)))

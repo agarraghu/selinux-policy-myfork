@@ -1,0 +1,662 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ unlabeled)
+
+;;
+;; Contexts
+;;
+
+(sidcontext
+ any_socket
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ file_labels
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ fs
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ icmp_socket
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ igmp_packet
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ init
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ kmod
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ policy
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ scmp_packet
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+sysctl_dev
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_fs
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_kernel
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_modprobe
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_net
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_net_unix
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ sysctl_vm
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+(sidcontext
+ tcp_socket
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+
+(sidcontext
+ unlabeled
+ (.u
+  .r
+  .invalid
+  (systemlow
+   systemlow)))
+
+;;
+;; Macros
+;;
+
+(macro access_invalid_netpkeys ((type ARG1))
+       (allow ARG1 .invalid (infiniband_pkey (access))))
+
+(macro addname_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid addname_dir))
+
+(macro append_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid append_blk_file))
+
+(macro append_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid append_chr_file))
+
+(macro append_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid append_fifo_file))
+
+(macro append_invalid_files ((type ARG1))
+       (allow ARG1 .invalid append_file))
+
+(macro appendinherited_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid appendinherited_blk_file))
+
+(macro appendinherited_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid appendinherited_chr_file))
+
+(macro appendinherited_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid appendinherited_fifo_file))
+
+(macro appendinherited_invalid_files ((type ARG1))
+       (allow ARG1 .invalid appendinherited_file))
+
+(macro associate_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (associate))))
+
+(macro associate_invalid_sctp_sockets ((type ARG1))
+       (allow ARG1 .invalid (sctp_socket (association))))
+
+(macro create_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (create))))
+
+(macro create_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid create_blk_file))
+
+(macro create_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid create_chr_file))
+
+(macro create_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid create_dir))
+
+(macro create_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid create_fifo_file))
+
+(macro create_invalid_files ((type ARG1))
+       (allow ARG1 .invalid create_file))
+
+(macro create_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid create_lnk_file))
+
+(macro create_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid create_sock_file))
+
+(macro dccp_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (dccp_socket (node_bind))))
+
+(macro dccp_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (dccp_socket (name_bind))))
+
+(macro dccp_connect_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (dccp_socket (name_connect))))
+
+(macro deletename_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid deletename_dir))
+
+(macro delete_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (delete))))
+
+(macro delete_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid delete_blk_file))
+
+(macro delete_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid delete_chr_file))
+
+(macro delete_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid delete_dir))
+
+(macro delete_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid delete_fifo_file))
+
+(macro delete_invalid_files ((type ARG1))
+       (allow ARG1 .invalid delete_file))
+
+(macro delete_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid delete_lnk_file))
+
+(macro delete_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid delete_sock_file))
+
+(macro egress_invalid_netifs ((type ARG1))
+       (allow ARG1 .invalid (netif (egress))))
+
+(macro egressingress_invalid_netifs ((type ARG1))
+       (allow ARG1 .invalid (netif (egress ingress))))
+
+(macro execute_invalid_files ((type ARG1))
+       (allow ARG1 .invalid execute_file))
+
+(macro forward_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (forward_in forward_out))))
+
+(macro forwardin_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (forwardin))))
+
+(macro forwardout_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (forwardout))))
+
+(macro getattr_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (getattr))))
+
+(macro icmp_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (icmp_socket (node_bind))))
+
+(macro icmp_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (icmp_socket (name_bind))))
+
+(macro ingress_invalid_netifs ((type ARG1))
+       (allow ARG1 .invalid (netif (ingress))))
+
+(macro invalid_obj_type_transition
+       ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+       (typetransition ARG1 .invalid ARG3 ARG4 ARG2)
+       (call addname_invalid_dirs (ARG1)))
+
+(macro list_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid list_dir))
+
+(macro listinherited_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid listinherited_dir))
+
+(macro manage_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (manage))))
+
+(macro manage_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid manage_blk_file))
+
+(macro manage_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid manage_chr_file))
+
+(macro manage_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid manage_dir))
+
+(macro manage_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid manage_fifo_file))
+
+(macro manage_invalid_files ((type ARG1))
+       (allow ARG1 .invalid manage_file))
+
+(macro manage_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid manage_lnk_file))
+
+(macro manage_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid manage_sock_file))
+
+(macro managesubnet_invalid_netendports ((type ARG1))
+       (allow ARG1 .invalid (infiniband_endport (manage_subnet))))
+
+(macro mapexecute_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid mapexecute_chr_file))
+
+(macro mapexecute_invalid_files ((type ARG1))
+       (allow ARG1 .invalid mapexecute_file))
+
+(macro mount_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (mount))))
+
+(macro mounton_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (mounton))))
+
+(macro mounton_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid mounton_blk_file))
+
+(macro mounton_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid mounton_chr_file))
+
+(macro mounton_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid mounton_dir))
+
+(macro mounton_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid mounton_fifo_file))
+
+(macro mounton_invalid_files ((type ARG1))
+       (allow ARG1 .invalid mounton_file))
+
+(macro mounton_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid mounton_lnk_file))
+
+(macro mounton_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid mounton_sock_file))
+
+(macro polmatchsetcontext_invalid_netspds ((type ARG1))
+       (allow ARG1 .invalid (association (polmatch setcontext))))
+
+(macro quotaget_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (quotaget))))
+
+(macro quotamod_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (quotamod))))
+
+(macro rawip_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (rawip_socket (node_bind))))
+
+(macro rawip_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (rawip_socket (name_bind))))
+
+(macro read_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (read))))
+
+(macro read_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid read_blk_file))
+
+(macro read_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid read_chr_file))
+
+(macro read_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid read_fifo_file))
+
+(macro read_invalid_files ((type ARG1))
+       (allow ARG1 .invalid read_file))
+
+(macro readinherited_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid readinherited_blk_file))
+
+(macro readinherited_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid readinherited_chr_file))
+
+(macro readinherited_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid readinherited_fifo_file))
+
+(macro readinherited_invalid_files ((type ARG1))
+       (allow ARG1 .invalid readinherited_file))
+
+(macro readinherited_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid readinherited_sock_file))
+
+(macro read_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid read_lnk_file))
+
+(macro read_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid read_sock_file))
+
+(macro readwrite_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (readwrite))))
+
+(macro readwrite_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_blk_file))
+
+(macro readwrite_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_chr_file))
+
+(macro readwrite_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid readwrite_dir))
+
+(macro readwrite_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_fifo_file))
+
+(macro readwrite_invalid_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_file))
+
+(macro readwriteinherited_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_blk_file))
+
+(macro readwriteinherited_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_chr_file))
+
+(macro readwriteinherited_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_dir))
+
+(macro readwriteinherited_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_fifo_file))
+
+(macro readwriteinherited_invalid_files ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_file))
+
+(macro readwriteinherited_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid readwriteinherited_sock_file))
+
+(macro readwrite_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_lnk_file))
+
+(macro readwrite_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid readwrite_sock_file))
+
+(macro recv_invalid_netpeers ((type ARG1))
+       (allow ARG1 .invalid (peer (recv))))
+
+(macro recv_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (recv))))
+
+(macro recvfrom_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (node (recvfrom))))
+
+(macro recvfromsendto_invalid_associations ((type ARG1))
+       (allow ARG1 .invalid (association (recvfrom sendto))))
+
+(macro recvfromsendto_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (node (recvfrom sendto))))
+
+(macro recvsend_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (recv send))))
+
+(macro relabel_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (relabel))))
+
+(macro relabel_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid relabel_blk_file))
+
+(macro relabel_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid relabel_chr_file))
+
+(macro relabel_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid relabel_dir))
+
+(macro relabel_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid relabel_fifo_file))
+
+(macro relabel_invalid_files ((type ARG1))
+       (allow ARG1 .invalid relabel_file))
+
+(macro relabel_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (relabelfrom relabelto))))
+
+(macro relabel_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid relabel_lnk_file))
+
+(macro relabel_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid relabel_sock_file))
+
+(macro relabelfrom_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (relabelfrom))))
+
+(macro relabelfrom_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_blk_file))
+
+(macro relabelfrom_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_chr_file))
+
+(macro relabelfrom_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_dir))
+
+(macro relabelfrom_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_fifo_file))
+
+(macro relabelfrom_invalid_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_file))
+
+(macro relabelfrom_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (relabelfrom))))
+
+(macro relabelfrom_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_lnk_file))
+
+(macro relabelfrom_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid relabelfrom_sock_file))
+
+(macro relabelto_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (relabelto))))
+
+(macro relabelto_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_blk_file))
+
+(macro relabelto_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_chr_file))
+
+(macro relabelto_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid relabelto_dir))
+
+(macro relabelto_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_fifo_file))
+
+(macro relabelto_invalid_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_file))
+
+(macro relabelto_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (relabelto))))
+
+(macro relabelto_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_lnk_file))
+
+(macro relabelto_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (relabelto))))
+
+(macro relabelto_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid relabelto_sock_file))
+
+(macro remount_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (remount))))
+
+(macro rename_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (rename))))
+
+(macro rename_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid rename_blk_file))
+
+(macro rename_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid rename_chr_file))
+
+(macro rename_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid rename_dir))
+
+(macro rename_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid rename_fifo_file))
+
+(macro rename_invalid_files ((type ARG1))
+       (allow ARG1 .invalid rename_file))
+
+(macro rename_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid rename_lnk_file))
+
+(macro rename_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid rename_sock_file))
+
+(macro sctp_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (sctp_socket (node_bind))))
+
+(macro sctp_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (sctp_socket (name_bind))))
+
+(macro sctp_connect_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (sctp_socket (name_connect))))
+
+(macro search_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid search_dir))
+
+(macro send_invalid_netpackets ((type ARG1))
+       (allow ARG1 .invalid (packet (send))))
+
+(macro sendto_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (node (sendto))))
+
+(macro tcp_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (tcp_socket (node_bind))))
+
+(macro tcp_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (tcp_socket (name_bind))))
+
+(macro tcp_connect_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (tcp_socket (name_connect))))
+
+(macro udp_bind_invalid_netnodes ((type ARG1))
+       (allow ARG1 .invalid (udp_socket (node_bind))))
+
+(macro udp_bind_invalid_netports ((type ARG1))
+       (allow ARG1 .invalid (udp_socket (name_bind))))
+
+(macro unmount_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (unmount))))
+
+(macro watch_invalid_filesystems ((type ARG1))
+       (allow ARG1 .invalid (filesystem (watch))))
+
+(macro write_invalid ((type ARG1))
+       (allow ARG1 .invalid (allfiles (write))))
+
+(macro write_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid write_blk_file))
+
+(macro write_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid write_chr_file))
+
+(macro write_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid write_dir))
+
+(macro write_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid write_fifo_file))
+
+(macro write_invalid_files ((type ARG1))
+       (allow ARG1 .invalid write_file))
+
+(macro writeinherited_invalid_blk_files ((type ARG1))
+       (allow ARG1 .invalid writeinherited_blk_file))
+
+(macro writeinherited_invalid_chr_files ((type ARG1))
+       (allow ARG1 .invalid writeinherited_chr_file))
+
+(macro writeinherited_invalid_dirs ((type ARG1))
+       (allow ARG1 .invalid writeinherited_dir))
+
+(macro writeinherited_invalid_fifo_files ((type ARG1))
+       (allow ARG1 .invalid writeinherited_fifo_file))
+
+(macro writeinherited_invalid_files ((type ARG1))
+       (allow ARG1 .invalid writeinherited_file))
+
+(macro writeinherited_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid writeinherited_sock_file))
+
+(macro write_invalid_lnk_files ((type ARG1))
+       (allow ARG1 .invalid write_lnk_file))
+
+(macro write_invalid_sock_files ((type ARG1))
+       (allow ARG1 .invalid write_sock_file))
+
+;;
+;; Policy
+;;
+
+(type
+ invalid)
+
+(allow .invalid self (filesystem (associate)))
+
+(call .sys.type (invalid))
+
+(call .fs.seclabel.associate_all_filesystems (invalid))

@@ -1,0 +1,170 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .blockmount.subj_type_transition (subj)))
+
+(in .file
+    (call .blockmount.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .blockmount.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr dir "extroot"))
+    (call .blockmount.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr dir "ubifs_cfg")))
+
+(block blockmount
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/block"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr execute))))
+
+       (macro mounton_tmpfile_dirs ((type ARG1))
+              (allow ARG1 tmpfile (dir (getattr mounton))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "block")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (allow subj self (capability (mknod sys_admin sys_resource)))
+       (allow subj self (capability2 (syslog)))
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call manage_tmpfile_dirs (subj))
+       (call mounton_tmpfile_dirs (subj))
+       (call obj_type_transition_tmpfile (subj dir "*"))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.readringbuffer (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.setsched (subj)) ;; might be able to dontaudit this (could be mount related)
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .block.read_sysfile_lnk_files (subj))
+       (call .block.search_sysfile_dirs (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_files (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .dev.list_sysfile_dirs (subj))
+       (call .dev.node.getattr_all_chr_files (subj))
+       (call .dev.read_sysfile_lnk_files (subj))
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+
+       (call .file.mounton_homefile_dirs (subj))
+       (call .file.search_conffile_dirs (subj))
+
+       (call .filesystems.read_procfile_files (subj))
+
+       (call .hotplugcall.use_fds (subj))
+
+       (call .kmsg.readwrite_nodedev_chr_files (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .loopctl.read_nodedev_chr_files (subj))
+
+       (call .mnt.manage_miscfile_dirs (subj))
+       (call .mnt.mounton_miscfile_dirs (subj))
+
+       (call .mtd.read_procfile_files (subj))
+
+       (call .overlay.mounton_miscfile_dirs (subj))
+       (call .overlay.manage_miscfile_dirs (subj))
+       (call .overlay.manage_miscfile_files (subj))
+       (call .overlay.obj_type_transition_miscfile (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       ;; initial block detect > /etc/config/fstab
+       (call .uci.readwrite_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (call .xattr.mount_filesystems (subj))
+       (call .xattr.unmount_filesystems (subj))
+
+       (optional blockmount_opt_hdstordev
+                 (call .hd.create_stordev_blk_files (subj))
+                 (call .hd.obj_type_transition_stordev (subj))
+                 (call .hd.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_loopstordev
+                 (call .loop.create_stordev_blk_files (subj))
+                 (call .loop.obj_type_transition_stordev (subj))
+                 (call .loop.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_mmcstordev
+                 (call .mmc.create_stordev_blk_files (subj))
+                 (call .mmc.obj_type_transition_stordev (subj))
+                 (call .mmc.read_stordev_chr_files (subj))
+                 (call .mmc.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_mtdstordev
+                 (call .mtd.create_stordev_blk_files (subj))
+                 (call .mtd.obj_type_transition_stordev (subj))
+                 (call .mtd.readwrite_stordev_chr_files (subj))
+                 (call .mtd.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_nvmestordev
+                 (call .nvme.create_stordev_blk_files (subj))
+                 (call .nvme.obj_type_transition_stordev (subj))
+                 (call .nvme.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_rcblockd
+                 (call .rcblockd.use_fds (subj)))
+
+       (optional blockmount_opt_rcboot
+                 (call .rcboot.use_fds (subj)))
+
+       (optional blockmount_opt_rcfstab
+                 (call .rcfstab.use_fds (subj)))
+
+       (optional blockmount_opt_sdstordev
+                 (call .sd.create_stordev_blk_files (subj))
+                 (call .sd.obj_type_transition_stordev (subj))
+                 (call .sd.readwrite_stordev_blk_files (subj)))
+
+       (optional blockmount_opt_vdstordev
+                 (call .vd.create_stordev_blk_files (subj))
+                 (call .vd.obj_type_transition_stordev (subj))
+                 (call .vd.readwrite_stordev_blk_files (subj))))

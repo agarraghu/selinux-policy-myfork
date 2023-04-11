@@ -1,0 +1,75 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .locale.datafile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .locale.tmp_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block locale
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/localtime"
+        symlink
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/TZ"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/usr/share/zoneinfo"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/share/zoneinfo/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro map_miscfile_files ((type ARG1))
+              (allow ARG1 miscfile (file (map))))
+
+       (macro datafile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 miscfile dir "zoneinfo")))
+
+       (macro tmp_obj_type_transition_miscfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile file "TZ"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile lnk_file "localtime")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .xattr.associate_filesystems (miscfile))
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (call list_miscfile_dirs (subj_typeattr))
+              (call map_miscfile_files (subj_typeattr))
+              (call read_miscfile_files (subj_typeattr))
+              (call read_miscfile_lnk_files (subj_typeattr))
+
+              (call .file.read_conffile_lnk_files (subj_typeattr))))

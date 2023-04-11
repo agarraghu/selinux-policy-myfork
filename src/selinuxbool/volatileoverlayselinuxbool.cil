@@ -1,0 +1,28 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable
+ volatile_overlay
+ true)
+
+(tunableif .volatile_overlay
+           (true
+            (call .tmp.associate_filesystems (.file.obj_typeattr))))
+
+(block volatile_overlay
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/volatile_overlay"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))

@@ -1,0 +1,435 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    (block misc
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call file.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   miscfile_file_context
+                   (.u
+                    .r
+                    miscfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   miscfile)
+
+                  (call .file.misc.obj_type (miscfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile addname_dir))
+
+                  (macro append_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile append_blk_file))
+
+                  (macro append_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile append_chr_file))
+
+                  (macro append_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile append_fifo_file))
+
+                  (macro append_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile append_file))
+
+                  (macro appendinherited_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile appendinherited_blk_file))
+
+                  (macro appendinherited_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile appendinherited_chr_file))
+
+                  (macro appendinherited_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile appendinherited_fifo_file))
+
+                  (macro appendinherited_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile appendinherited_file))
+
+                  (macro create_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (create))))
+
+                  (macro create_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile create_blk_file))
+
+                  (macro create_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile create_chr_file))
+
+                  (macro create_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile create_dir))
+
+                  (macro create_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile create_fifo_file))
+
+                  (macro create_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile create_file))
+
+                  (macro create_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile create_lnk_file))
+
+                  (macro create_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile create_sock_file))
+
+                  (macro deletename_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile deletename_dir))
+
+                  (macro delete_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (delete))))
+
+                  (macro delete_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile delete_blk_file))
+
+                  (macro delete_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile delete_chr_file))
+
+                  (macro delete_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile delete_dir))
+
+                  (macro delete_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile delete_fifo_file))
+
+                  (macro delete_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile delete_file))
+
+                  (macro delete_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile delete_lnk_file))
+
+                  (macro delete_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile delete_sock_file))
+
+                  (macro execute_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile execute_file))
+
+                  (macro list_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile list_dir))
+
+                  (macro listinherited_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile listinherited_dir))
+
+                  (macro load_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile (system (module_load))))
+
+                  (macro manage_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (manage))))
+
+                  (macro manage_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile manage_blk_file))
+
+                  (macro manage_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile manage_chr_file))
+
+                  (macro manage_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile manage_dir))
+
+                  (macro manage_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile manage_fifo_file))
+
+                  (macro manage_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile manage_file))
+
+                  (macro manage_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile manage_lnk_file))
+
+                  (macro manage_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile manage_sock_file))
+
+                  (macro mapexecute_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile mapexecute_chr_file))
+
+                  (macro mapexecute_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile mapexecute_file))
+
+                  (macro miscfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 miscfile ARG3 ARG4 ARG2)
+                         (call addname_miscfile_dirs (ARG1)))
+
+                  (macro mounton_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (mounton))))
+
+                  (macro mounton_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_blk_file))
+
+                  (macro mounton_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_chr_file))
+
+                  (macro mounton_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile mounton_dir))
+
+                  (macro mounton_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_fifo_file))
+
+                  (macro mounton_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_file))
+
+                  (macro mounton_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_lnk_file))
+
+                  (macro mounton_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile mounton_sock_file))
+
+                  (macro read_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (read))))
+
+                  (macro read_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile read_blk_file))
+
+                  (macro read_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile read_chr_file))
+
+                  (macro read_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile read_fifo_file))
+
+                  (macro read_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile read_file))
+
+                  (macro readinherited_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile readinherited_blk_file))
+
+                  (macro readinherited_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile readinherited_chr_file))
+
+                  (macro readinherited_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile readinherited_fifo_file))
+
+                  (macro readinherited_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile readinherited_file))
+
+                  (macro readinherited_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile readinherited_sock_file))
+
+                  (macro read_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile read_lnk_file))
+
+                  (macro read_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile read_sock_file))
+
+                  (macro readwrite_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (readwrite))))
+
+                  (macro readwrite_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_blk_file))
+
+                  (macro readwrite_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_chr_file))
+
+                  (macro readwrite_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile readwrite_dir))
+
+                  (macro readwrite_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_fifo_file))
+
+                  (macro readwrite_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_file))
+
+                  (macro readwriteinherited_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_file))
+
+                  (macro readwriteinherited_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile readwriteinherited_sock_file))
+
+                  (macro readwrite_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_lnk_file))
+
+                  (macro readwrite_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile readwrite_sock_file))
+
+                  (macro relabel_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (relabel))))
+
+                  (macro relabel_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_blk_file))
+
+                  (macro relabel_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_chr_file))
+
+                  (macro relabel_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile relabel_dir))
+
+                  (macro relabel_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_fifo_file))
+
+                  (macro relabel_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_file))
+
+                  (macro relabel_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_lnk_file))
+
+                  (macro relabel_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile relabel_sock_file))
+
+                  (macro relabelfrom_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_dir))
+
+                  (macro relabelfrom_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_file))
+
+                  (macro relabelfrom_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile relabelfrom_sock_file))
+
+                  (macro relabelto_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (relabelto))))
+
+                  (macro relabelto_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_blk_file))
+
+                  (macro relabelto_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_chr_file))
+
+                  (macro relabelto_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile relabelto_dir))
+
+                  (macro relabelto_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_fifo_file))
+
+                  (macro relabelto_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_file))
+
+                  (macro relabelto_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_lnk_file))
+
+                  (macro relabelto_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile relabelto_sock_file))
+
+                  (macro rename_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (rename))))
+
+                  (macro rename_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile rename_blk_file))
+
+                  (macro rename_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile rename_chr_file))
+
+                  (macro rename_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile rename_dir))
+
+                  (macro rename_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile rename_fifo_file))
+
+                  (macro rename_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile rename_file))
+
+                  (macro rename_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile rename_lnk_file))
+
+                  (macro rename_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile rename_sock_file))
+
+                  (macro search_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile search_dir))
+
+                  (macro write_miscfile ((type ARG1))
+                         (allow ARG1 miscfile (allfiles (write))))
+
+                  (macro write_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile write_blk_file))
+
+                  (macro write_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile write_chr_file))
+
+                  (macro write_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile write_dir))
+
+                  (macro write_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile write_fifo_file))
+
+                  (macro write_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile write_file))
+
+                  (macro writeinherited_miscfile_blk_files ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_blk_file))
+
+                  (macro writeinherited_miscfile_chr_files ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_chr_file))
+
+                  (macro writeinherited_miscfile_dirs ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_dir))
+
+                  (macro writeinherited_miscfile_fifo_files ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_fifo_file))
+
+                  (macro writeinherited_miscfile_files ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_file))
+
+                  (macro writeinherited_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile writeinherited_sock_file))
+
+                  (macro write_miscfile_lnk_files ((type ARG1))
+                         (allow ARG1 miscfile write_lnk_file))
+
+                  (macro write_miscfile_sock_files ((type ARG1))
+                         (allow ARG1 miscfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.misc.obj_base_template)
+                  (blockinherit .file.misc.obj_macro_template))))

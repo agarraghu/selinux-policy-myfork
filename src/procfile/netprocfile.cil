@@ -1,0 +1,27 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .net
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (genfscon
+     "proc"
+     "/net"
+     procfile_file_context)
+
+    ;;
+    ;; Macro
+    ;;
+
+    (macro dontaudit_readinherited_procfile_files ((type ARG1))
+           (dontaudit ARG1 procfile readinherited_file))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .procfile.obj_template))

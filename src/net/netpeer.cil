@@ -1,0 +1,121 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ netmsg)
+
+(sidcontext
+ netmsg
+ (.u
+  .r
+  .net.netpeer
+  (systemlow
+   systemlow)))
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .net.peer.subj_template)
+
+    (call peer.associate_all_sctp_sockets (unconfined.subj_typeattr))
+    (call peer.recv_all_netpeers (unconfined.subj_typeattr))
+
+    (call .associate_invalid_sctp_sockets (unconfined.subj_typeattr))
+    (call .recv_invalid_netpeers (unconfined.subj_typeattr))
+
+    (block peer
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit subj_all_macro_template)
+
+           (call .sys.type (subj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block subj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netpeer_context
+                   (.u
+                    .r
+                    netpeer
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_base_template)
+
+                  (type
+                   netpeer)
+
+                  (call .net.peer.subj_type (netpeer)))
+
+           (block subj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro subj_type ((type ARG1))
+                         (typeattributeset subj_typeattr ARG1))
+
+                  (macro recv_all_netpeers ((type ARG1))
+                         (allow ARG1 subj_typeattr (peer (recv))))
+
+                  (macro associate_all_sctp_sockets ((type ARG1))
+                         (allow ARG1 subj_typeattr
+                                (sctp_socket (association))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_all_macro_template)
+
+                  (typeattribute
+                   subj_typeattr))
+
+           (block subj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro recv_netpeers ((type ARG1))
+                         (allow ARG1 netpeer (peer (recv))))
+
+                  (macro associate_sctp_sockets ((type ARG1))
+                         (allow ARG1 netpeer (sctp_socket (association))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_macro_template))
+
+           (block subj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract subj_template)
+
+                  (blockinherit .net.peer.subj_base_template)
+                  (blockinherit .net.peer.subj_macro_template))))

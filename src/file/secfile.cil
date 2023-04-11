@@ -1,0 +1,498 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    (block sec
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro getattr_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call exception.obj_type (obj_typeattr))
+
+           (call .xattr.associate_filesystems (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   secfile_file_context
+                   (.u
+                    .r
+                    secfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   secfile)
+
+                  (call .file.sec.obj_type (secfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile addname_dir))
+
+                  (macro append_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile append_blk_file))
+
+                  (macro append_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile append_chr_file))
+
+                  (macro append_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile append_fifo_file))
+
+                  (macro append_secfile_files ((type ARG1))
+                         (allow ARG1 secfile append_file))
+
+                  (macro appendinherited_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile appendinherited_blk_file))
+
+                  (macro appendinherited_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile appendinherited_chr_file))
+
+                  (macro appendinherited_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile appendinherited_fifo_file))
+
+                  (macro appendinherited_secfile_files ((type ARG1))
+                         (allow ARG1 secfile appendinherited_file))
+
+                  (macro create_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (create))))
+
+                  (macro create_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile create_blk_file))
+
+                  (macro create_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile create_chr_file))
+
+                  (macro create_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile create_dir))
+
+                  (macro create_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile create_fifo_file))
+
+                  (macro create_secfile_files ((type ARG1))
+                         (allow ARG1 secfile create_file))
+
+                  (macro create_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile create_lnk_file))
+
+                  (macro create_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile create_sock_file))
+
+                  (macro deletename_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile deletename_dir))
+
+                  (macro delete_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (delete))))
+
+                  (macro delete_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile delete_blk_file))
+
+                  (macro delete_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile delete_chr_file))
+
+                  (macro delete_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile delete_dir))
+
+                  (macro delete_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile delete_fifo_file))
+
+                  (macro delete_secfile_files ((type ARG1))
+                         (allow ARG1 secfile delete_file))
+
+                  (macro delete_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile delete_lnk_file))
+
+                  (macro delete_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile delete_sock_file))
+
+                  (macro execute_secfile_files ((type ARG1))
+                         (allow ARG1 secfile execute_file))
+
+                  (macro list_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile list_dir))
+
+                  (macro listinherited_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile listinherited_dir))
+
+                  (macro manage_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (manage))))
+
+                  (macro manage_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile manage_blk_file))
+
+                  (macro manage_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile manage_chr_file))
+
+                  (macro manage_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile manage_dir))
+
+                  (macro manage_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile manage_fifo_file))
+
+                  (macro manage_secfile_files ((type ARG1))
+                         (allow ARG1 secfile manage_file))
+
+                  (macro manage_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile manage_lnk_file))
+
+                  (macro manage_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile manage_sock_file))
+
+                  (macro mapexecute_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile mapexecute_chr_file))
+
+                  (macro mapexecute_secfile_files ((type ARG1))
+                         (allow ARG1 secfile mapexecute_file))
+
+                  (macro mounton_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (mounton))))
+
+                  (macro mounton_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile mounton_blk_file))
+
+                  (macro mounton_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile mounton_chr_file))
+
+                  (macro mounton_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile mounton_dir))
+
+                  (macro mounton_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile mounton_fifo_file))
+
+                  (macro mounton_secfile_files ((type ARG1))
+                         (allow ARG1 secfile mounton_file))
+
+                  (macro mounton_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile mounton_lnk_file))
+
+                  (macro mounton_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile mounton_sock_file))
+
+                  (macro read_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (read))))
+
+                  (macro read_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile read_blk_file))
+
+                  (macro read_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile read_chr_file))
+
+                  (macro read_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile read_fifo_file))
+
+                  (macro read_secfile_files ((type ARG1))
+                         (allow ARG1 secfile read_file))
+
+                  (macro readinherited_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile readinherited_blk_file))
+
+                  (macro readinherited_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile readinherited_chr_file))
+
+                  (macro readinherited_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile readinherited_fifo_file))
+
+                  (macro readinherited_secfile_files ((type ARG1))
+                         (allow ARG1 secfile readinherited_file))
+
+                  (macro readinherited_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile readinherited_sock_file))
+
+                  (macro read_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile read_lnk_file))
+
+                  (macro read_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile read_sock_file))
+
+                  (macro readwrite_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (readwrite))))
+
+                  (macro readwrite_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_blk_file))
+
+                  (macro readwrite_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_chr_file))
+
+                  (macro readwrite_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile readwrite_dir))
+
+                  (macro readwrite_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_fifo_file))
+
+                  (macro readwrite_secfile_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_file))
+
+                  (macro readwriteinherited_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_secfile_files ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_file))
+
+                  (macro readwriteinherited_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile readwriteinherited_sock_file))
+
+                  (macro readwrite_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_lnk_file))
+
+                  (macro readwrite_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile readwrite_sock_file))
+
+                  (macro relabel_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (relabel))))
+
+                  (macro relabel_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile relabel_blk_file))
+
+                  (macro relabel_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile relabel_chr_file))
+
+                  (macro relabel_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile relabel_dir))
+
+                  (macro relabel_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile relabel_fifo_file))
+
+                  (macro relabel_secfile_files ((type ARG1))
+                         (allow ARG1 secfile relabel_file))
+
+                  (macro relabel_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile relabel_lnk_file))
+
+                  (macro relabel_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile relabel_sock_file))
+
+                  (macro relabelfrom_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_dir))
+
+                  (macro relabelfrom_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_secfile_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_file))
+
+                  (macro relabelfrom_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile relabelfrom_sock_file))
+
+                  (macro relabelto_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (relabelto))))
+
+                  (macro relabelto_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_blk_file))
+
+                  (macro relabelto_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_chr_file))
+
+                  (macro relabelto_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile relabelto_dir))
+
+                  (macro relabelto_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_fifo_file))
+
+                  (macro relabelto_secfile_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_file))
+
+                  (macro relabelto_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_lnk_file))
+
+                  (macro relabelto_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile relabelto_sock_file))
+
+                  (macro rename_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (rename))))
+
+                  (macro rename_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile rename_blk_file))
+
+                  (macro rename_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile rename_chr_file))
+
+                  (macro rename_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile rename_dir))
+
+                  (macro rename_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile rename_fifo_file))
+
+                  (macro rename_secfile_files ((type ARG1))
+                         (allow ARG1 secfile rename_file))
+
+                  (macro rename_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile rename_lnk_file))
+
+                  (macro rename_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile rename_sock_file))
+
+                  (macro search_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile search_dir))
+
+                  (macro secfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 secfile ARG3 ARG4 ARG2)
+                         (call addname_secfile_dirs (ARG1)))
+
+                  (macro write_secfile ((type ARG1))
+                         (allow ARG1 secfile (allfiles (write))))
+
+                  (macro write_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile write_blk_file))
+
+                  (macro write_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile write_chr_file))
+
+                  (macro write_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile write_dir))
+
+                  (macro write_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile write_fifo_file))
+
+                  (macro write_secfile_files ((type ARG1))
+                         (allow ARG1 secfile write_file))
+
+                  (macro writeinherited_secfile_blk_files ((type ARG1))
+                         (allow ARG1 secfile writeinherited_blk_file))
+
+                  (macro writeinherited_secfile_chr_files ((type ARG1))
+                         (allow ARG1 secfile writeinherited_chr_file))
+
+                  (macro writeinherited_secfile_dirs ((type ARG1))
+                         (allow ARG1 secfile writeinherited_dir))
+
+                  (macro writeinherited_secfile_fifo_files ((type ARG1))
+                         (allow ARG1 secfile writeinherited_fifo_file))
+
+                  (macro writeinherited_secfile_files ((type ARG1))
+                         (allow ARG1 secfile writeinherited_file))
+
+                  (macro writeinherited_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile writeinherited_sock_file))
+
+                  (macro write_secfile_lnk_files ((type ARG1))
+                         (allow ARG1 secfile write_lnk_file))
+
+                  (macro write_secfile_sock_files ((type ARG1))
+                         (allow ARG1 secfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.sec.obj_base_template)
+                  (blockinherit .file.sec.obj_macro_template))
+
+           (block relabelto
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (file (relabelto)))
+
+                  (call subj_type (unconfined.subj_typeattr)))
+
+           (block write
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (file (append write)))
+
+                  (call subj_type (unconfined.subj_typeattr))))
+
+    (block exceptsec
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and
+             file.obj_typeattr
+             (not
+              (sec.obj_typeattr))))))

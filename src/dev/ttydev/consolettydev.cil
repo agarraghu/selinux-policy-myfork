@@ -1,0 +1,49 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call console.obj_type_transition_ttydev (unconfined.subj_typeattr)))
+
+(block console
+
+       ;;
+       ;; Contexts
+       ;;
+
+       ;; this causes issues with /rom/dev/console (its mislabeled and r/o)
+       (filecon
+        "/dev/console"
+        char
+        ())
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_ttydev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 ttydev chr_file "console")))
+
+       (macro readwriteinherited_ttydev_chr_files ((type ARG1))
+              (typeattributeset readwriteinherited_ttydev.subj_typeattr ARG1))
+
+       (macro dontaudit_readwriteinherited_ttydev_chr_files ((type ARG1))
+              (dontaudit ARG1 ttydev readwriteinherited_chr_file))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.tty.obj_template)
+
+       (block readwriteinherited_ttydev
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allowx subj_typeattr ttydev (ioctl chr_file (not (0x5412))))
+              (allow subj_typeattr ttydev readwriteinherited_chr_file)))

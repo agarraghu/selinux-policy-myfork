@@ -1,0 +1,694 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/dev/tty.+"
+     char
+     ttydev_file_context)
+    (filecon
+     "/dev/vcs[^/]*"
+     char
+     ttydev_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_ttydev ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty10"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty11"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty12"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty13"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty14"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty15"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty16"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty17"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty18"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty19"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty20"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty21"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty22"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty23"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty24"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty25"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty26"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty27"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty28"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty29"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty30"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty31"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty32"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty33"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty34"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty35"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty36"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty37"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty38"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty39"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty40"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty41"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty42"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty43"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty44"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty45"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty46"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty47"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty48"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty49"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty50"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty51"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty52"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty53"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty54"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty55"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty56"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty57"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty58"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty59"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty60"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty61"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty62"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty63"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "tty9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyACM0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyACM1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyMSM0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyMSM1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyPCI0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyPCI1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS10"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS11"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS12"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS13"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS14"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyS15"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyUSB0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyUSB1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyUSB2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "ttyUSB3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcs"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcs1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcsa"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcsa1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcsu"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 ttydev chr_file "vcsu1")))
+
+    (macro readwriteinherited_ttydev_chr_files ((type ARG1))
+           (typeattributeset readwriteinherited_ttydev.subj_typeattr ARG1))
+
+    (macro dontaudit_readwriteinherited_ttydev_chr_files ((type ARG1))
+           (dontaudit ARG1 ttydev readwriteinherited_chr_file))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit tty.obj_template)
+
+    (call obj_type_transition_ttydev (unconfined.subj_typeattr))
+
+    (block readwriteinherited_ttydev
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .subj.subj_all_macro_template)
+
+           (allowx subj_typeattr ttydev (ioctl chr_file (not (0x5412))))
+           (allow subj_typeattr ttydev readwriteinherited_chr_file))
+
+    (block tty
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro readwriteinherited_all_chr_files ((type ARG1))
+                  (typeattributeset readwriteinherited_all.subj_typeattr ARG1))
+
+           (macro writeinherited_all_chr_files ((type ARG1))
+                  (allowx ARG1 obj_typeattr (ioctl chr_file (not (0x5412))))
+                  (allow ARG1 obj_typeattr writeinherited_chr_file))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call dev.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   ttydev_file_context
+                   (.u
+                    .r
+                    ttydev
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   ttydev)
+
+                  (call .dev.tty.obj_type (ttydev)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev addname_dir))
+
+                  (macro append_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev append_blk_file))
+
+                  (macro append_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev append_chr_file))
+
+                  (macro append_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev append_fifo_file))
+
+                  (macro append_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev append_file))
+
+                  (macro appendinherited_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev appendinherited_blk_file))
+
+                  (macro appendinherited_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev appendinherited_chr_file))
+
+                  (macro appendinherited_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev appendinherited_fifo_file))
+
+                  (macro appendinherited_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev appendinherited_file))
+
+                  (macro create_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (create))))
+
+                  (macro create_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev create_blk_file))
+
+                  (macro create_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev create_chr_file))
+
+                  (macro create_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev create_dir))
+
+                  (macro create_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev create_fifo_file))
+
+                  (macro create_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev create_file))
+
+                  (macro create_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev create_lnk_file))
+
+                  (macro create_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev create_sock_file))
+
+                  (macro deletename_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev deletename_dir))
+
+                  (macro delete_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (delete))))
+
+                  (macro delete_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev delete_blk_file))
+
+                  (macro delete_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev delete_chr_file))
+
+                  (macro delete_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev delete_dir))
+
+                  (macro delete_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev delete_fifo_file))
+
+                  (macro delete_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev delete_file))
+
+                  (macro delete_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev delete_lnk_file))
+
+                  (macro delete_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev delete_sock_file))
+
+                  (macro execute_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev execute_file))
+
+                  (macro list_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev list_dir))
+
+                  (macro listinherited_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev listinherited_dir))
+
+                  (macro manage_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (manage))))
+
+                  (macro manage_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev manage_blk_file))
+
+                  (macro manage_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev manage_chr_file))
+
+                  (macro manage_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev manage_dir))
+
+                  (macro manage_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev manage_fifo_file))
+
+                  (macro manage_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev manage_file))
+
+                  (macro manage_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev manage_lnk_file))
+
+                  (macro manage_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev manage_sock_file))
+
+                  (macro mapexecute_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev mapexecute_chr_file))
+
+                  (macro mapexecute_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev mapexecute_file))
+
+                  (macro mounton_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (mounton))))
+
+                  (macro mounton_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_blk_file))
+
+                  (macro mounton_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_chr_file))
+
+                  (macro mounton_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev mounton_dir))
+
+                  (macro mounton_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_fifo_file))
+
+                  (macro mounton_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_file))
+
+                  (macro mounton_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_lnk_file))
+
+                  (macro mounton_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev mounton_sock_file))
+
+                  (macro read_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (read))))
+
+                  (macro read_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev read_blk_file))
+
+                  (macro read_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev read_chr_file))
+
+                  (macro read_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev read_fifo_file))
+
+                  (macro read_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev read_file))
+
+                  (macro readinherited_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev readinherited_blk_file))
+
+                  (macro readinherited_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev readinherited_chr_file))
+
+                  (macro readinherited_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev readinherited_fifo_file))
+
+                  (macro readinherited_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev readinherited_file))
+
+                  (macro readinherited_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev readinherited_sock_file))
+
+                  (macro read_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev read_lnk_file))
+
+                  (macro read_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev read_sock_file))
+
+                  (macro readwrite_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (readwrite))))
+
+                  (macro readwrite_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_blk_file))
+
+                  (macro readwrite_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_chr_file))
+
+                  (macro readwrite_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev readwrite_dir))
+
+                  (macro readwrite_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_fifo_file))
+
+                  (macro readwrite_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_file))
+
+                  (macro readwriteinherited_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_ttydev_chr_files ((type ARG1))
+                         (allowx ARG1 ttydev (ioctl chr_file (not (0x5412))))
+                         (allow ARG1 ttydev readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev readwriteinherited_dir))
+
+                  (macro readwriteinherited_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev readwriteinherited_file))
+
+                  (macro readwriteinherited_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev readwriteinherited_sock_file))
+
+                  (macro readwrite_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_lnk_file))
+
+                  (macro readwrite_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev readwrite_sock_file))
+
+                  (macro relabel_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (relabel))))
+
+                  (macro relabel_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_blk_file))
+
+                  (macro relabel_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_chr_file))
+
+                  (macro relabel_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev relabel_dir))
+
+                  (macro relabel_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_fifo_file))
+
+                  (macro relabel_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_file))
+
+                  (macro relabel_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_lnk_file))
+
+                  (macro relabel_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev relabel_sock_file))
+
+                  (macro relabelfrom_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_blk_file))
+
+                  (macro relabelfrom_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_chr_file))
+
+                  (macro relabelfrom_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_dir))
+
+                  (macro relabelfrom_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_fifo_file))
+
+                  (macro relabelfrom_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_file))
+
+                  (macro relabelfrom_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_lnk_file))
+
+                  (macro relabelfrom_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev relabelfrom_sock_file))
+
+                  (macro relabelto_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (relabelto))))
+
+                  (macro relabelto_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_blk_file))
+
+                  (macro relabelto_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_chr_file))
+
+                  (macro relabelto_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev relabelto_dir))
+
+                  (macro relabelto_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_fifo_file))
+
+                  (macro relabelto_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_file))
+
+                  (macro relabelto_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_lnk_file))
+
+                  (macro relabelto_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev relabelto_sock_file))
+
+                  (macro rename_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (rename))))
+
+                  (macro rename_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev rename_blk_file))
+
+                  (macro rename_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev rename_chr_file))
+
+                  (macro rename_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev rename_dir))
+
+                  (macro rename_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev rename_fifo_file))
+
+                  (macro rename_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev rename_file))
+
+                  (macro rename_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev rename_lnk_file))
+
+                  (macro rename_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev rename_sock_file))
+
+                  (macro search_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev search_dir))
+
+                  (macro ttydev_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 ttydev ARG3 ARG4 ARG2)
+                         (call addname_ttydev_dirs (ARG1)))
+
+                  (macro write_ttydev ((type ARG1))
+                         (allow ARG1 ttydev (allfiles (write))))
+
+                  (macro write_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev write_blk_file))
+
+                  (macro write_ttydev_chr_files ((type ARG1))
+                         (allow ARG1 ttydev write_chr_file))
+
+                  (macro write_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev write_dir))
+
+                  (macro write_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev write_fifo_file))
+
+                  (macro write_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev write_file))
+
+                  (macro writeinherited_ttydev_blk_files ((type ARG1))
+                         (allow ARG1 ttydev writeinherited_blk_file))
+
+                  (macro writeinherited_ttydev_chr_files ((type ARG1))
+                         (allowx ARG1 ttydev (ioctl chr_file (not (0x5412))))
+                         (allow ARG1 ttydev writeinherited_chr_file))
+
+                  (macro writeinherited_ttydev_dirs ((type ARG1))
+                         (allow ARG1 ttydev writeinherited_dir))
+
+                  (macro writeinherited_ttydev_fifo_files ((type ARG1))
+                         (allow ARG1 ttydev writeinherited_fifo_file))
+
+                  (macro writeinherited_ttydev_files ((type ARG1))
+                         (allow ARG1 ttydev writeinherited_file))
+
+                  (macro writeinherited_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev writeinherited_sock_file))
+
+                  (macro write_ttydev_lnk_files ((type ARG1))
+                         (allow ARG1 ttydev write_lnk_file))
+
+                  (macro write_ttydev_sock_files ((type ARG1))
+                         (allow ARG1 ttydev write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .dev.tty.obj_base_template)
+                  (blockinherit .dev.tty.obj_macro_template))
+
+           (block readwriteinherited_all
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (allowx subj_typeattr obj_typeattr
+                          (ioctl chr_file (not (0x5412))))
+                  (allow subj_typeattr obj_typeattr
+                         readwriteinherited_chr_file))))

@@ -1,0 +1,460 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+
+    (block pty
+
+           ;;
+           ;;  Macros
+           ;;
+
+           (macro readwriteinherited_all_chr_files ((type ARG1))
+                  (typeattributeset readwriteinherited_all.subj_typeattr ARG1))
+
+           (macro writeinherited_all_chr_files ((type ARG1))
+                  (allowx ARG1 obj_typeattr (ioctl chr_file (not (0x5412))))
+                  (allow ARG1 obj_typeattr writeinherited_chr_file))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call dev.obj_type (obj_typeattr))
+
+           (call .pts.associate_filesystems (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   ptydev_file_context
+                   (.u
+                    .r
+                    ptydev
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   ptydev)
+
+                  (call .dev.pty.obj_type (ptydev)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev addname_dir))
+
+                  (macro append_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev append_blk_file))
+
+                  (macro append_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev append_chr_file))
+
+                  (macro append_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev append_fifo_file))
+
+                  (macro append_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev append_file))
+
+                  (macro appendinherited_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev appendinherited_blk_file))
+
+                  (macro appendinherited_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev appendinherited_chr_file))
+
+                  (macro appendinherited_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev appendinherited_fifo_file))
+
+                  (macro appendinherited_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev appendinherited_file))
+
+                  (macro create_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (create))))
+
+                  (macro create_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev create_blk_file))
+
+                  (macro create_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev create_chr_file))
+
+                  (macro create_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev create_dir))
+
+                  (macro create_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev create_fifo_file))
+
+                  (macro create_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev create_file))
+
+                  (macro create_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev create_lnk_file))
+
+                  (macro create_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev create_sock_file))
+
+                  (macro deletename_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev deletename_dir))
+
+                  (macro delete_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (delete))))
+
+                  (macro delete_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev delete_blk_file))
+
+                  (macro delete_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev delete_chr_file))
+
+                  (macro delete_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev delete_dir))
+
+                  (macro delete_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev delete_fifo_file))
+
+                  (macro delete_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev delete_file))
+
+                  (macro delete_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev delete_lnk_file))
+
+                  (macro delete_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev delete_sock_file))
+
+                  (macro execute_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev execute_file))
+
+                  (macro list_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev list_dir))
+
+                  (macro listinherited_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev listinherited_dir))
+
+                  (macro manage_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (manage))))
+
+                  (macro manage_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev manage_blk_file))
+
+                  (macro manage_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev manage_chr_file))
+
+                  (macro manage_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev manage_dir))
+
+                  (macro manage_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev manage_fifo_file))
+
+                  (macro manage_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev manage_file))
+
+                  (macro manage_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev manage_lnk_file))
+
+                  (macro manage_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev manage_sock_file))
+
+                  (macro mapexecute_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev mapexecute_chr_file))
+
+                  (macro mapexecute_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev mapexecute_file))
+
+                  (macro mounton_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (mounton))))
+
+                  (macro mounton_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_blk_file))
+
+                  (macro mounton_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_chr_file))
+
+                  (macro mounton_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev mounton_dir))
+
+                  (macro mounton_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_fifo_file))
+
+                  (macro mounton_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_file))
+
+                  (macro mounton_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_lnk_file))
+
+                  (macro mounton_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev mounton_sock_file))
+
+                  (macro ptydev_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 ptydev ARG3 ARG4 ARG2)
+                         (call addname_ptydev_dirs (ARG1)))
+
+                  (macro read_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (read))))
+
+                  (macro read_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev read_blk_file))
+
+                  (macro read_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev read_chr_file))
+
+                  (macro read_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev read_fifo_file))
+
+                  (macro read_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev read_file))
+
+                  (macro readinherited_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev readinherited_blk_file))
+
+                  (macro readinherited_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev readinherited_chr_file))
+
+                  (macro readinherited_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev readinherited_fifo_file))
+
+                  (macro readinherited_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev readinherited_file))
+
+                  (macro readinherited_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev readinherited_sock_file))
+
+                  (macro read_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev read_lnk_file))
+
+                  (macro read_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev read_sock_file))
+
+                  (macro readwrite_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (readwrite))))
+
+                  (macro readwrite_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_blk_file))
+
+                  (macro readwrite_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_chr_file))
+
+                  (macro readwrite_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev readwrite_dir))
+
+                  (macro readwrite_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_fifo_file))
+
+                  (macro readwrite_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_file))
+
+                  (macro readwriteinherited_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_ptydev_chr_files ((type ARG1))
+                         (allowx ARG1 ptydev (ioctl chr_file (not (0x5412))))
+                         (allow ARG1 ptydev readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev readwriteinherited_dir))
+
+                  (macro readwriteinherited_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev readwriteinherited_file))
+
+                  (macro readwriteinherited_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev readwriteinherited_sock_file))
+
+                  (macro readwrite_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_lnk_file))
+
+                  (macro readwrite_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev readwrite_sock_file))
+
+                  (macro relabel_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (relabel))))
+
+                  (macro relabel_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_blk_file))
+
+                  (macro relabel_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_chr_file))
+
+                  (macro relabel_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev relabel_dir))
+
+                  (macro relabel_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_fifo_file))
+
+                  (macro relabel_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_file))
+
+                  (macro relabel_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_lnk_file))
+
+                  (macro relabel_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev relabel_sock_file))
+
+                  (macro relabelfrom_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_blk_file))
+
+                  (macro relabelfrom_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_chr_file))
+
+                  (macro relabelfrom_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_dir))
+
+                  (macro relabelfrom_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_fifo_file))
+
+                  (macro relabelfrom_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_file))
+
+                  (macro relabelfrom_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_lnk_file))
+
+                  (macro relabelfrom_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev relabelfrom_sock_file))
+
+                  (macro relabelto_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (relabelto))))
+
+                  (macro relabelto_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_blk_file))
+
+                  (macro relabelto_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_chr_file))
+
+                  (macro relabelto_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev relabelto_dir))
+
+                  (macro relabelto_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_fifo_file))
+
+                  (macro relabelto_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_file))
+
+                  (macro relabelto_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_lnk_file))
+
+                  (macro relabelto_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev relabelto_sock_file))
+
+                  (macro rename_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (rename))))
+
+                  (macro rename_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev rename_blk_file))
+
+                  (macro rename_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev rename_chr_file))
+
+                  (macro rename_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev rename_dir))
+
+                  (macro rename_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev rename_fifo_file))
+
+                  (macro rename_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev rename_file))
+
+                  (macro rename_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev rename_lnk_file))
+
+                  (macro rename_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev rename_sock_file))
+
+                  (macro search_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev search_dir))
+
+                  (macro write_ptydev ((type ARG1))
+                         (allow ARG1 ptydev (allfiles (write))))
+
+                  (macro write_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev write_blk_file))
+
+                  (macro write_ptydev_chr_files ((type ARG1))
+                         (allow ARG1 ptydev write_chr_file))
+
+                  (macro write_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev write_dir))
+
+                  (macro write_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev write_fifo_file))
+
+                  (macro write_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev write_file))
+
+                  (macro writeinherited_ptydev_blk_files ((type ARG1))
+                         (allow ARG1 ptydev writeinherited_blk_file))
+
+                  (macro writeinherited_ptydev_chr_files ((type ARG1))
+                         (allowx ARG1 ptydev (ioctl chr_file (not (0x5412))))
+                         (allow ARG1 ptydev writeinherited_chr_file))
+
+                  (macro writeinherited_ptydev_dirs ((type ARG1))
+                         (allow ARG1 ptydev writeinherited_dir))
+
+                  (macro writeinherited_ptydev_fifo_files ((type ARG1))
+                         (allow ARG1 ptydev writeinherited_fifo_file))
+
+                  (macro writeinherited_ptydev_files ((type ARG1))
+                         (allow ARG1 ptydev writeinherited_file))
+
+                  (macro writeinherited_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev writeinherited_sock_file))
+
+                  (macro write_ptydev_lnk_files ((type ARG1))
+                         (allow ARG1 ptydev write_lnk_file))
+
+                  (macro write_ptydev_sock_files ((type ARG1))
+                         (allow ARG1 ptydev write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .dev.pty.obj_base_template)
+                  (blockinherit .dev.pty.obj_macro_template))
+
+           (block readwriteinherited_all
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (allowx subj_typeattr obj_typeattr
+                          (ioctl chr_file (not (0x5412))))
+                  (allow subj_typeattr obj_typeattr
+                         readwriteinherited_chr_file))))

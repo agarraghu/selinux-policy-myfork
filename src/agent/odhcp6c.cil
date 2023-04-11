@@ -1,0 +1,122 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .odhcp6c.subj_type_transition (subj)))
+
+(in .file
+    (call .odhcp6c.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .odhcp6c.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block odhcp6c
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/odhcp6c\.user"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/odhcp6c\.user\..*"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/etc/odhcp6c\.user\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/odhcp6c\.user\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/odhcp6c"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "odhcp6c.user.d"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "odhcp6c.user")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "odhcp6c")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+
+       (allow subj self (capability (net_raw)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dhcp.udp_bind_netports (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .fw3.subj_type_transition (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.search_sysctlfile_dirs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .ipv6.readwrite_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+
+       (call .netifd.execute_miscfile_files (subj))
+       (call .netifd.search_miscfile_dirs (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       ;; rawip socket packets cannot be labeled (used for dhcpv6 relay etc)
+       (call .recvsend_invalid_netpackets (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (optional odhcp6c_opt_dhcpnetpacket
+                 (call .dhcp.client.recvsend_netpackets (subj))
+                 (call .dhcp.server.recvsend_netpackets (subj))))

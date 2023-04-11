@@ -1,0 +1,463 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/run"
+     dir
+     runtimetmpfile_file_context)
+    (filecon
+     "/tmp/run/.*"
+     any
+     runtimetmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_runtimetmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 runtimetmpfile dir "run")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit runtime.obj_template)
+
+    (block runtime
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   runtimetmpfile_file_context
+                   (.u
+                    .r
+                    runtimetmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   runtimetmpfile)
+
+                  (call .tmpfile.runtime.obj_type (runtimetmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile addname_dir))
+
+                  (macro append_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile append_blk_file))
+
+                  (macro append_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile append_chr_file))
+
+                  (macro append_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile append_fifo_file))
+
+                  (macro append_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile append_file))
+
+                  (macro appendinherited_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile appendinherited_file))
+
+                  (macro create_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (create))))
+
+                  (macro create_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_blk_file))
+
+                  (macro create_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_chr_file))
+
+                  (macro create_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_dir))
+
+                  (macro create_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_fifo_file))
+
+                  (macro create_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_file))
+
+                  (macro create_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_lnk_file))
+
+                  (macro create_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile create_sock_file))
+
+                  (macro deletename_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile deletename_dir))
+
+                  (macro delete_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (delete))))
+
+                  (macro delete_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_blk_file))
+
+                  (macro delete_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_chr_file))
+
+                  (macro delete_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_dir))
+
+                  (macro delete_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_fifo_file))
+
+                  (macro delete_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_file))
+
+                  (macro delete_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_lnk_file))
+
+                  (macro delete_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile delete_sock_file))
+
+                  (macro execute_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile execute_file))
+
+                  (macro list_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile list_dir))
+
+                  (macro listinherited_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile listinherited_dir))
+
+                  (macro manage_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (manage))))
+
+                  (macro manage_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_blk_file))
+
+                  (macro manage_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_chr_file))
+
+                  (macro manage_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_dir))
+
+                  (macro manage_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_fifo_file))
+
+                  (macro manage_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_file))
+
+                  (macro manage_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_lnk_file))
+
+                  (macro manage_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile manage_sock_file))
+
+                  (macro mapexecute_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mapexecute_file))
+
+                  (macro mounton_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (mounton))))
+
+                  (macro mounton_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_blk_file))
+
+                  (macro mounton_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_chr_file))
+
+                  (macro mounton_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_dir))
+
+                  (macro mounton_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_fifo_file))
+
+                  (macro mounton_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_file))
+
+                  (macro mounton_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_lnk_file))
+
+                  (macro mounton_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile mounton_sock_file))
+
+                  (macro read_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (read))))
+
+                  (macro read_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_blk_file))
+
+                  (macro read_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_chr_file))
+
+                  (macro read_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_fifo_file))
+
+                  (macro read_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_file))
+
+                  (macro readinherited_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readinherited_blk_file))
+
+                  (macro readinherited_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readinherited_chr_file))
+
+                  (macro readinherited_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readinherited_fifo_file))
+
+                  (macro readinherited_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readinherited_file))
+
+                  (macro readinherited_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readinherited_sock_file))
+
+                  (macro read_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_lnk_file))
+
+                  (macro read_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile read_sock_file))
+
+                  (macro readwrite_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_blk_file))
+
+                  (macro readwrite_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_chr_file))
+
+                  (macro readwrite_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_dir))
+
+                  (macro readwrite_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_fifo_file))
+
+                  (macro readwrite_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_file))
+
+                  (macro readwriteinherited_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_lnk_file))
+
+                  (macro readwrite_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile readwrite_sock_file))
+
+                  (macro relabel_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (relabel))))
+
+                  (macro relabel_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_blk_file))
+
+                  (macro relabel_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_chr_file))
+
+                  (macro relabel_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_dir))
+
+                  (macro relabel_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_fifo_file))
+
+                  (macro relabel_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_file))
+
+                  (macro relabel_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_lnk_file))
+
+                  (macro relabel_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabel_sock_file))
+
+                  (macro relabelfrom_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_file))
+
+                  (macro relabelfrom_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_blk_file))
+
+                  (macro relabelto_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_chr_file))
+
+                  (macro relabelto_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_dir))
+
+                  (macro relabelto_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_fifo_file))
+
+                  (macro relabelto_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_file))
+
+                  (macro relabelto_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_lnk_file))
+
+                  (macro relabelto_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile relabelto_sock_file))
+
+                  (macro rename_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (rename))))
+
+                  (macro rename_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_blk_file))
+
+                  (macro rename_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_chr_file))
+
+                  (macro rename_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_dir))
+
+                  (macro rename_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_fifo_file))
+
+                  (macro rename_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_file))
+
+                  (macro rename_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_lnk_file))
+
+                  (macro rename_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile rename_sock_file))
+
+                  (macro runtimetmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 runtimetmpfile ARG3 ARG4 ARG2)
+                         (call addname_runtimetmpfile_dirs (ARG1)))
+
+                  (macro search_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile search_dir))
+
+                  (macro write_runtimetmpfile ((type ARG1))
+                         (allow ARG1 runtimetmpfile (allfiles (write))))
+
+                  (macro write_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_blk_file))
+
+                  (macro write_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_chr_file))
+
+                  (macro write_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_dir))
+
+                  (macro write_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_fifo_file))
+
+                  (macro write_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_file))
+
+                  (macro writeinherited_runtimetmpfile_blk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_runtimetmpfile_chr_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_runtimetmpfile_dirs ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_dir))
+
+                  (macro writeinherited_runtimetmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_runtimetmpfile_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_file))
+
+                  (macro writeinherited_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile writeinherited_sock_file))
+
+                  (macro write_runtimetmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_lnk_file))
+
+                  (macro write_runtimetmpfile_sock_files ((type ARG1))
+                         (allow ARG1 runtimetmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.runtime.obj_base_template)
+                  (blockinherit .tmpfile.runtime.obj_macro_template))))

@@ -1,0 +1,60 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .shadow.obj_type_transition_authfile (unconfined.subj_typeattr))
+    (call .shadow.read.subj_type (unconfined.subj_typeattr)))
+
+(block shadow
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/shadow"
+        file
+        authfile_file_context)
+       (filecon
+        "/etc/shadow~"
+        file
+        authfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_authfile_files ((type ARG1))
+              (allow ARG1 authfile (file (getattr))))
+
+       (macro obj_type_transition_authfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 authfile file "shadow")))
+
+       (macro dontaudit_read_authfile_files ((type ARG1))
+              (dontaudit ARG1 authfile read_file))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.auth.obj_template)
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr authfile (file (read)))))

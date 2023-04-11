@@ -1,0 +1,28 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in zram
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (genfscon
+     "sysfs"
+     "/devices/virtual/block/zram0"
+     sysfile_file_context)
+    (genfscon
+     "sysfs"
+     "/devices/virtual/block/zram1"
+     sysfile_file_context)
+    (genfscon
+     "sysfs"
+     "/devices/virtual/block/zram2"
+     sysfile_file_context)
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .sysfile.block.obj_template))

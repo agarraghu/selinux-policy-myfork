@@ -1,0 +1,32 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block chronycmd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (portcon
+        "dccp"
+        323
+        netport_context)
+       (portcon
+        "sctp"
+        323
+        netport_context)
+       (portcon
+        "tcp"
+        323
+        netport_context)
+       (portcon
+        "udp"
+        323
+        netport_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .net.port.reserved.obj_template))

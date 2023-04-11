@@ -1,0 +1,94 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block agent
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template)
+
+       ;; this should eventually not be needed but at this time /rom in unlabeled
+       (call .list_unlabeled_dirs (subj_typeattr))
+
+       (call .dev.pty.readwriteinherited_all.subj_type (subj_typeattr))
+
+       (call .dev.tty.readwriteinherited_all.subj_type (subj_typeattr))
+
+       (call .file.list_homefile_dirs (subj_typeattr))
+
+       ;; the big hammer
+       (call .mountroot.use_fds (subj_typeattr))
+
+       (call .subj.useinteractivefd.subj_type (subj_typeattr))
+
+       ;; is this leaked from initscript?
+       (call .tmpfile.writeinherited_locktmpfile_files (subj_typeattr))
+
+       (optional agent_opt_dropbear
+                 ;; could this be a leak?
+                 (call .dropbear.readwriteinherited_fifo_files (subj_typeattr)))
+
+       (optional agent_opt_luci
+                 (call .luci.writeinherited_fifo_files (subj_typeattr)))
+
+       (optional agent_opt_rpcd
+                 (call .rpcd.readwriteinherited_fifo_files (subj_typeattr)))
+
+       (optional agent_opt_rpcd
+                 (call .rpcd.dontaudit_readinherited_datafile_files
+                       (subj_typeattr)))
+
+       (optional agent_opt_ucode
+                 (call .ucode.dontaudit_readinherited_datafile_files
+                       (subj_typeattr)))
+
+       (block exec
+
+              ;;
+              ;; Policy
+              ;;
+
+              (macro getattr_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr (file (getattr))))
+
+              (blockinherit .file.obj_all_macro_template))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block base_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro subj_type_transition ((type ARG1))
+                     (allow ARG1 subj (process (transition)))
+                     (dontaudit ARG1 subj
+                                (process (noatsecure siginh rlimitinh)))
+
+                     (allow subj ARG1 (process (sigchld)))
+
+                     (call execfile_subj_type_transition (ARG1 subj))
+                     (call mapexecute_execfile_files (ARG1))
+                     (call read_execfile_files (ARG1)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract base_template)
+
+              (blockinherit .file.exec.obj_template)
+              (blockinherit .subj.common.subj_template)
+
+              (call entrypoint_execfile_files (subj))
+              (call mapexecute_execfile_files (subj))
+              (call read_execfile_files (subj))
+
+              (call .agent.exec.obj_type (execfile))
+              (call .agent.subj_type (subj))))

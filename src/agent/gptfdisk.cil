@@ -1,0 +1,130 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .gptfdisk.subj_type_transition (subj)))
+
+(in .file
+    (call .gptfdisk.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block gptfdisk
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/addpart"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/cfdisk"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/cgdisk"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/delpart"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/fdisk"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/fixparts"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/gdisk"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/partx"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/sfdisk"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/sgdisk"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "addpart"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "cfdisk"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "cgdisk"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "delpart"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fdisk"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fixparts"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "gdisk"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "partx"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "sfdisk"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "sgdisk")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (sys_admin)))
+
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_fs_dirs (subj))
+
+       (call .block.read_sysfile_lnk_files (subj))
+       (call .block.search_sysfile_dirs (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (optional gptfdisk_opt_dmstordev
+                 (call .dm.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_hdstordev
+                 (call .hd.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_loopstordev
+                 (call .loop.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_mmcstordev
+                 (call .mmc.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_nvmestordev
+                 (call .nvme.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_sdstordev
+                 (call .sd.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_vdstordev
+                 (call .vd.readwrite_stordev_blk_files (subj)))
+
+       (optional gptfdisk_opt_zramstordev
+                 (call .zram.readwrite_stordev_blk_files (subj))))

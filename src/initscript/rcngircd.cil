@@ -1,0 +1,44 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcngircd.subj_type_transition (subj)))
+
+(in .file
+    (call .rcngircd.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcngircd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/ngircd"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "ngircd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (kill sys_ptrace)))
+
+       (call .ngircd.signal (subj))
+       (call .ngircd.subj_type_transition (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .subj.read_state_all (subj)))

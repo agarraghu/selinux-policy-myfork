@@ -1,0 +1,178 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .subj
+    (call .ttyd.readwriteinherited_fifo_files (subj_typeattr)))
+
+(in .sys
+    (call .ttyd.dontaudit_readwrite_netlink_route_sockets (subj))
+    (call .ttyd.subj_type_transition (subj)))
+
+(in .file
+    (call .ttyd.conffile_obj_type_transition_certfile
+          (unconfined.subj_typeattr))
+    (call .ttyd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .ttyd.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(in ttyd
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/etc/ttyd\.crt"
+     file
+     certfile_file_context)
+    (filecon
+     "/etc/ttyd\.crt\..*"
+     file
+     certfile_file_context)
+    (filecon
+     "/etc/ttyd\.key"
+     file
+     certfile_file_context)
+    (filecon
+     "/etc/ttyd\.key\..*"
+     file
+     certfile_file_context)
+
+    (filecon
+     "/tmp/run/ttyd\.sock"
+     socket
+     runtimetmpfile_file_context)
+
+    (filecon
+     "/usr/bin/ttyd"
+     file
+     execfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro conffile_obj_type_transition_certfile ((type ARG1))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 certfile file "ttyd.crt"))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 certfile file "ttyd.key")))
+
+    (macro obj_type_transition_execfile ((type ARG1))
+           (call .file.execfile_obj_type_transition
+                 (ARG1 execfile file "ttyd")))
+
+    (macro obj_type_transition_ptydev ((type ARG1))
+           (call .pts.fs_obj_type_transition
+                 (ARG1 ptydev chr_file "*")))
+
+    (macro obj_type_transition_runtimetmpfile ((type ARG1))
+           (call .tmpfile.runtimetmpfile_obj_type_transition
+                 (ARG1 runtimetmpfile sock_file "ttyd.sock")))
+
+    (macro readwriteinherited_ptydev_chr_files ((type ARG1))
+           (typeattributeset readwriteinherited_ptydev.subj_typeattr ARG1))
+
+    (macro unix_stream_connect ((type ARG1))
+           (call connectto_unix_stream_sockets (ARG1))
+           (call write_runtimetmpfile_sock_files (ARG1)))
+
+    (macro dontaudit_readwrite_netlink_route_sockets ((type ARG1))
+           (dontaudit ARG1 subj (netlink_route_socket (read write))))
+
+    (macro dontaudit_readwriteinherited_ptydev_chr_files ((type ARG1))
+           (dontaudit ARG1 ptydev readwriteinherited_chr_file))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .agent.base_template)
+    (blockinherit .dev.pty.obj_template)
+    (blockinherit .file.cert.obj_template)
+    (blockinherit .tmpfile.runtime.obj_template)
+
+    (allow subj self (capability (chown setgid setuid)))
+    (allow subj self create_netlink_route_socket)
+    (allow subj self create_unix_dgram_socket)
+    (allow subj self create_unix_stream_socket)
+    (allow subj self (netlink_route_socket (nlmsg_read)))
+    (allow subj self (unix_stream_socket (accept listen)))
+
+    (call read_certfile_files (subj))
+
+    (call obj_type_transition_ptydev (subj))
+    (call readwrite_ptydev_chr_files (subj))
+
+    (call manage_runtimetmpfile_sock_files (subj))
+    (call obj_type_transition_runtimetmpfile (subj))
+
+    (call .sys.list_rootfile_dirs (subj))
+    (call .sys.readwriteinherited_fifo_files (subj))
+    (call .sys.transition (subj))
+    (call .sys.dontaudit_noatsecure (subj))
+    (call .sys.dontaudit_rlimitinh (subj))
+    (call .sys.dontaudit_siginh (subj))
+
+    (call .file.read_conffile_lnk_files (subj))
+
+    (call .locale.read.subj_type (subj))
+
+    (call .logd.unix_dgram_send (subj))
+
+    (call .login.execute_execfile_files (subj))
+
+    (call .nameservice.read_miscfile_files (subj))
+
+    (call .net.egress_netifs (subj))
+    ;; allow random port functionality
+    (call .net.port.unreserved.tcp_bind_all_netports (subj))
+    (call .net.sendto_netnodes (subj))
+    (call .net.tcp_bind_netnodes (subj))
+
+    (call .ptmx.readwrite_nodedev_chr_files (subj))
+
+    (call .random.read_nodedev_chr_files (subj))
+
+    (call .selinux.linked.subj_type (subj))
+
+    ;; execute shell execfiles with an automatic transition to sys.subj by default
+    (call .shell.execfile_subj_type_transition (subj .sys.subj))
+    (call .shell.mapexecute_execfile_files (subj))
+    (call .shell.read_execfile_files (subj))
+
+    (call .subj.getpgid_all (subj))
+    (call .subj.signal_all (subj))
+    (call .subj.signull_all (subj))
+
+    (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+    (call .tmpfile.search_conftmpfile_dirs (subj))
+
+    (call .uci.execute_execfile_files (subj))
+    (call .uci.read_conffile_files (subj))
+    (call .uci.read_tmpfile_files (subj))
+    (call .uci.search_conffile_dirs (subj))
+    (call .uci.search_tmpfile_dirs (subj))
+
+    (optional ttyd_opt_acme
+              (call .acme.read_conffile_files (subj))
+              (call .acme.read_conffile_lnk_files (subj))
+              (call .acme.search_conffile_dirs (subj)))
+
+    (optional ttyd_opt_sslcertfile
+              (call .ssl.read.subj_type (subj)))
+
+    (optional ttyd_opt_ttydnetpacket
+              (call .ttyd.server.recvsend_netpackets (subj)))
+
+    (block readwriteinherited_ptydev
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .subj.subj_all_macro_template)
+
+           (allowx subj_typeattr ptydev (ioctl chr_file (not (0x5412))))
+           (allow subj_typeattr ptydev readwriteinherited_chr_file)))

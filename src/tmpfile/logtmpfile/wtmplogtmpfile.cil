@@ -1,0 +1,32 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .wtmp.obj_type_transition_logtmpfile (unconfined.subj_typeattr)))
+
+(block wtmp
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/log/wtmp"
+        file
+        logtmpfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+
+       (macro obj_type_transition_logtmpfile ((type ARG1))
+              (call .tmpfile.logtmpfile_obj_type_transition
+                    (ARG1 logtmpfile file "wtmp")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .tmpfile.log.obj_template))

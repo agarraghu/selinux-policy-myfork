@@ -1,0 +1,24 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(handleunknown
+ deny)
+
+(mls
+ false)
+
+(policycap
+ "always_check_network")
+(policycap
+ "cgroup_seclabel")
+(policycap
+ "extended_socket_class")
+(policycap
+ "genfs_seclabel_symlinks")
+(policycap
+ "network_peer_controls")
+(policycap
+ "nnp_nosuid_transition")
+(policycap
+ "open_perms")

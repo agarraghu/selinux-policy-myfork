@@ -1,0 +1,61 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .iw.subj_type_transition (subj)))
+
+(in .file
+    (call .iw.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block iw
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/iw"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iw")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (net_admin)))
+       (allow subj self create_netlink_generic_socket)
+       (allow subj self create_unix_dgram_socket)
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .wifi.writeinherited_fifo_files (subj)))

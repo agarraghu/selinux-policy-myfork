@@ -1,0 +1,73 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .unbound.control.subj_type_transition (subj)))
+
+(in .file
+    (call .unbound.control.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(in unbound
+
+    (block control
+
+           ;;
+           ;; Contexts
+           ;;
+
+           (filecon
+            "/usr/bin/unbound-control"
+            file
+            execfile_file_context)
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro obj_type_transition_execfile ((type ARG1))
+                  (call .file.execfile_obj_type_transition
+                        (ARG1 execfile file "unbound-control")))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .agent.base_template)
+
+           (call .sys.readwriteinherited_fifo_files (subj))
+
+           (call .file.search_conffile_dirs (subj))
+
+           (call .net.egress_netifs (subj))
+           (call .net.sendto_netnodes (subj))
+           (call .net.dontaudit_readinherited_procfile_files (subj))
+
+           (call .tmpfile.search_conftmpfile_dirs (subj))
+           (call .tmpfile.search_statetmpfile_dirs (subj))
+
+           (call .ubdnscontrol.tcp_connect_netports (subj))
+
+           (call .unbound.odhcpd.use_fds (subj))
+           (call .unbound.odhcpd.readinherited_fifo_files (subj))
+
+           (call .unbound.list_statetmpfile_dirs (subj))
+           (call .unbound.read_statetmpfile_files (subj))
+
+           (optional unbound_control_opt_luci
+                     (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+           (optional unbound_control_opt_odhcpd
+                     (call .odhcpd.use_fds (subj))
+                     (call .odhcpd.dontaudit_readwrite_netlink_route_sockets
+                           (subj)))
+
+           (optional unbound_control_opt_sslcertfile
+                     (call .ssl.read.subj_type (subj)))
+
+           (optional unbound_control_opt_ubdnscontrolnetpacket
+                     (call .ubdnscontrol.client.recvsend_netpackets (subj)))
+
+           (optional unbound_control_opt_uhttpd
+                     (call .uhttpd.readinherited_fifo_files (subj)))))

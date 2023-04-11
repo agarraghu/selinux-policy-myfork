@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .rccommon.obj_type_transition_conffile (unconfined.subj_typeattr)))
+
+(block rccommon
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/rc\.common"
+        file
+        conffile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "rc.common")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.conf.obj_template))

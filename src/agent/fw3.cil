@@ -1,0 +1,194 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .fw3.subj_type_transition (subj)))
+
+(in .file
+    (call .fw3.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .fw3.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .fw3.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr "fw3.lock"))
+    (call .fw3.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr "fw3.state"))
+    (call .fw3.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr "fw4.lock"))
+    (call .fw3.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr "fw4.state")))
+
+(block fw3
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/fw3\.lock"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/fw3\.state"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/fw4\.lock"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/fw4\.state"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/fw3"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/fw4"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/share/fw3"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/fw3/.*"
+        any
+        datafile_file_context)
+
+       (filecon
+        "/usr/share/firewall4"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/firewall4/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr execute))))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "firewall4"))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "fw3")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fw3"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fw4")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1)(name ARG2))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file ARG2)))
+
+       (macro readwrite_fifo_files ((type ARG1))
+              (allow ARG1 subj readwrite_fifo_file))
+
+       (macro dontaudit_writeinherited_runtimetmpfile_files ((type ARG1))
+              (dontaudit ARG1 runtimetmpfile writeinherited_file))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.data.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (dac_override net_admin net_raw)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+       ;; this is due to it trying to create "contrack" file in /proc/net
+       (dontaudit subj self (dir (add_name write)))
+       (dontaudit subj self (file (create)))
+
+       (call search_datafile_dirs (subj))
+       (call read_datafile_files (subj))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj "*"))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .firewall.read_conffile_files (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .hotplugcall.subj_type_transition (subj))
+       (call .hotplugcall.use_fds (subj))
+
+       (call .ipv4.search_sysctlfile_dirs (subj))
+       (call .ipv4.write_sysctlfile_files (subj))
+
+       (call .module.search_sysfile_dirs (subj))
+
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.readwrite_procfile_files (subj))
+       (call .net.search_sysctlfile_dirs (subj))
+
+       (call .netifd.search_miscfile_dirs (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .odhcp6c.writeinherited_fifo_files (subj))
+
+       (call .pppd.writeinherited_fifo_files (subj))
+       (call .pppd.dontaudit_readwrite_packet_sockets (subj))
+
+       ;; this is due to it trying to create "contrack" file in /proc/net
+       (call .proc.getattr_filesystems (subj))
+       (call .proc.dontaudit_associate_filesystems (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (optional fw3_opt_nftables
+                 (call .nftables.subj_type_transition (subj)))
+
+       (optional fw3_opt_rcfirewall
+                 (call .rcfirewall.use_fds (subj)))
+
+       (optional fw3_opt_ucode
+                 (call .ucode.subj_type_transition (subj)))
+
+       (optional fw3_opt_xtables
+                 (call .xtables.manage_runtimetmpfile_files (subj))
+                 (call .xtables.obj_type_transition_runtimetmpfile (subj))
+                 ;; /etc/firewall.user
+                 (call .xtables.subj_type_transition (subj))))

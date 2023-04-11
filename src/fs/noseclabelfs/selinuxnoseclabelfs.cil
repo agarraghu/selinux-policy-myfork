@@ -1,0 +1,25 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .selinux
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/sys/fs/selinux(/.*)?"
+     any
+     ())
+
+    (genfscon
+     "selinuxfs"
+     "/"
+     fs_context)
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .fs.noseclabel.obj_template))

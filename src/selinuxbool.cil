@@ -1,0 +1,493 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .selinux
+
+    ;;
+    ;; Policy
+    ;;
+
+    (block bool
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro get_all_selinuxbools ((type ARG1))
+                  (call read_all_files (ARG1))
+                  (call .selinux.list_fs_dirs (ARG1)))
+
+           (macro set_all_selinuxbools ((type ARG1))
+                  (allow ARG1 .selinux (security (setbool)))
+
+                  (allow ARG1 exceptloadpolicy.obj_typeattr
+                         (file (append write)))
+
+                  (call read_all_files (ARG1))
+
+                  (call .selinux.list_fs_dirs (ARG1))
+                  (call .selinux.readwrite_fs_files (ARG1))
+
+                  (tunableif
+                   .load_policy
+                   (true
+                    (allow ARG1 load_policy.selinuxbool
+                           (file (append write))))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           (allow unconfined.subj_typeattr exceptloadpolicy.obj_typeattr
+                  readwrite_file)
+
+           (call load_policy.set_selinuxbools (unconfined.subj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   selinuxbool_file_context
+                   (.u
+                    .r
+                    selinuxbool
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   selinuxbool)
+
+                  (call .selinux.bool.obj_type (selinuxbool)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool addname_dir))
+
+                  (macro append_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool append_blk_file))
+
+                  (macro append_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool append_chr_file))
+
+                  (macro append_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool append_fifo_file))
+
+                  (macro append_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool append_file))
+
+                  (macro appendinherited_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool appendinherited_blk_file))
+
+                  (macro appendinherited_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool appendinherited_chr_file))
+
+                  (macro appendinherited_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool appendinherited_fifo_file))
+
+                  (macro appendinherited_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool appendinherited_file))
+
+                  (macro create_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (create))))
+
+                  (macro create_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_blk_file))
+
+                  (macro create_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_chr_file))
+
+                  (macro create_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool create_dir))
+
+                  (macro create_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_fifo_file))
+
+                  (macro create_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_file))
+
+                  (macro create_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_lnk_file))
+
+                  (macro create_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool create_sock_file))
+
+                  (macro deletename_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool deletename_dir))
+
+                  (macro delete_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (delete))))
+
+                  (macro delete_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_blk_file))
+
+                  (macro delete_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_chr_file))
+
+                  (macro delete_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool delete_dir))
+
+                  (macro delete_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_fifo_file))
+
+                  (macro delete_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_file))
+
+                  (macro delete_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_lnk_file))
+
+                  (macro delete_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool delete_sock_file))
+
+                  (macro execute_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool execute_file))
+
+                  (macro get_selinuxbools ((type ARG1))
+                         (call read_selinuxbool_files (ARG1))
+                         (call .selinux.list_fs_dirs (ARG1)))
+
+                  (macro list_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool list_dir))
+
+                  (macro listinherited_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool listinherited_dir))
+
+                  (macro manage_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (manage))))
+
+                  (macro manage_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_blk_file))
+
+                  (macro manage_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_chr_file))
+
+                  (macro manage_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool manage_dir))
+
+                  (macro manage_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_fifo_file))
+
+                  (macro manage_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_file))
+
+                  (macro manage_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_lnk_file))
+
+                  (macro manage_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool manage_sock_file))
+
+                  (macro mapexecute_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool mapexecute_chr_file))
+
+                  (macro mapexecute_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool mapexecute_file))
+
+                  (macro mounton_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (mounton))))
+
+                  (macro mounton_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_blk_file))
+
+                  (macro mounton_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_chr_file))
+
+                  (macro mounton_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_dir))
+
+                  (macro mounton_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_fifo_file))
+
+                  (macro mounton_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_file))
+
+                  (macro mounton_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_lnk_file))
+
+                  (macro mounton_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool mounton_sock_file))
+
+                  (macro read_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (read))))
+
+                  (macro read_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_blk_file))
+
+                  (macro read_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_chr_file))
+
+                  (macro read_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_fifo_file))
+
+                  (macro read_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_file))
+
+                  (macro readinherited_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool readinherited_blk_file))
+
+                  (macro readinherited_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool readinherited_chr_file))
+
+                  (macro readinherited_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool readinherited_fifo_file))
+
+                  (macro readinherited_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool readinherited_file))
+
+                  (macro readinherited_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool readinherited_sock_file))
+
+                  (macro read_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_lnk_file))
+
+                  (macro read_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool read_sock_file))
+
+                  (macro readwrite_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (readwrite))))
+
+                  (macro readwrite_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_blk_file))
+
+                  (macro readwrite_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_chr_file))
+
+                  (macro readwrite_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_dir))
+
+                  (macro readwrite_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_fifo_file))
+
+                  (macro readwrite_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_file))
+
+                  (macro readwriteinherited_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_dir))
+
+                  (macro readwriteinherited_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_file))
+
+                  (macro readwriteinherited_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwriteinherited_sock_file))
+
+                  (macro readwrite_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_lnk_file))
+
+                  (macro readwrite_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool readwrite_sock_file))
+
+                  (macro relabel_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (relabel))))
+
+                  (macro relabel_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_blk_file))
+
+                  (macro relabel_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_chr_file))
+
+                  (macro relabel_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_dir))
+
+                  (macro relabel_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_fifo_file))
+
+                  (macro relabel_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_file))
+
+                  (macro relabel_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_lnk_file))
+
+                  (macro relabel_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabel_sock_file))
+
+                  (macro relabelfrom_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_blk_file))
+
+                  (macro relabelfrom_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_chr_file))
+
+                  (macro relabelfrom_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_dir))
+
+                  (macro relabelfrom_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_fifo_file))
+
+                  (macro relabelfrom_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_file))
+
+                  (macro relabelfrom_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_lnk_file))
+
+                  (macro relabelfrom_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelfrom_sock_file))
+
+                  (macro relabelto_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (relabelto))))
+
+                  (macro relabelto_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_blk_file))
+
+                  (macro relabelto_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_chr_file))
+
+                  (macro relabelto_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_dir))
+
+                  (macro relabelto_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_fifo_file))
+
+                  (macro relabelto_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_file))
+
+                  (macro relabelto_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_lnk_file))
+
+                  (macro relabelto_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool relabelto_sock_file))
+
+                  (macro rename_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (rename))))
+
+                  (macro rename_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_blk_file))
+
+                  (macro rename_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_chr_file))
+
+                  (macro rename_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool rename_dir))
+
+                  (macro rename_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_fifo_file))
+
+                  (macro rename_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_file))
+
+                  (macro rename_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_lnk_file))
+
+                  (macro rename_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool rename_sock_file))
+
+                  (macro search_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool search_dir))
+
+                  (macro selinuxbool_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 selinuxbool ARG3 ARG4 ARG2)
+                         (call addname_selinuxbool_dirs (ARG1)))
+
+                  (macro set_selinuxbools ((type ARG1))
+                         (allow ARG1 .selinux (security (setbool)))
+
+                         (call readwrite_selinuxbool_files (ARG1))
+
+                         (call .selinux.list_fs_dirs (ARG1))
+                         (call .selinux.readwrite_fs_files (ARG1)))
+
+                  (macro write_selinuxbool ((type ARG1))
+                         (allow ARG1 selinuxbool (allfiles (write))))
+
+                  (macro write_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_blk_file))
+
+                  (macro write_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_chr_file))
+
+                  (macro write_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool write_dir))
+
+                  (macro write_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_fifo_file))
+
+                  (macro write_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_file))
+
+                  (macro writeinherited_selinuxbool_blk_files ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_blk_file))
+
+                  (macro writeinherited_selinuxbool_chr_files ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_chr_file))
+
+                  (macro writeinherited_selinuxbool_dirs ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_dir))
+
+                  (macro writeinherited_selinuxbool_fifo_files ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_fifo_file))
+
+                  (macro writeinherited_selinuxbool_files ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_file))
+
+                  (macro writeinherited_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool writeinherited_sock_file))
+
+                  (macro write_selinuxbool_lnk_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_lnk_file))
+
+                  (macro write_selinuxbool_sock_files ((type ARG1))
+                         (allow ARG1 selinuxbool write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .selinux.bool.obj_base_template)
+                  (blockinherit .selinux.bool.obj_macro_template))
+
+           (block exceptloadpolicy
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .file.obj_all_macro_template)
+
+                  (typeattributeset
+                   obj_typeattr
+                   (and
+                    bool.obj_typeattr
+                    (not
+                     load_policy.selinuxbool))))))

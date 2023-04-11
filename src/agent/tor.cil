@@ -1,0 +1,157 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .tor.subj_type_transition (subj)))
+
+(in .file
+    (call .tor.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .tor.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .tor.obj_type_transition_logtmpfile (unconfined.subj_typeattr))
+    (call .tor.obj_type_transition_statetmpfile (unconfined.subj_typeattr))
+    (call .tor.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block tor
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/tor"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/tor/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/lib/tor"
+        dir
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/lib/tor/.*"
+        any
+        statetmpfile_file_context)
+
+       (filecon
+        "/tmp/log/tor"
+        dir
+        logtmpfile_file_context)
+       (filecon
+        "/tmp/log/tor/.*"
+        any
+        logtmpfile_file_context)
+
+       (filecon
+        "/tmp/torrc"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/torrc\..*"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/usr/bin/tor"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro map_statetmpfile_files ((type ARG1))
+              (allow ARG1 statetmpfile (file (map))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "tor")))
+
+       (macro obj_type_transition_logtmpfile ((type ARG1))
+              (call .tmpfile.logtmpfile_obj_type_transition
+                    (ARG1 logtmpfile dir "tor")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "torrc")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile dir "tor")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tor")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.log.obj_template)
+       (blockinherit .tmpfile.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (allow subj self (capability (setgid setuid)))
+       (allow subj self (process (getsched)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read)))
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call read_tmpfile_files (subj))
+
+       (call manage_statetmpfile_dirs (subj))
+       (call manage_statetmpfile_files (subj))
+       (call map_statetmpfile_files (subj))
+
+       (call manage_logtmpfile_dirs (subj))
+       (call manage_logtmpfile_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .meminfo.read_procfile_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .random.read_sysctlfile_files (subj))
+       (call .random.search_sysctlfile_dirs (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .recvsend_invalid_netpackets (subj))
+
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_logtmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .net.port.tcp_bind_all_netports (subj))
+       (call .net.port.tcp_connect_all_netports (subj))
+
+       (optional tor_opt_netpacket
+                 (call .net.packet.recvsend_all_netpackets (subj)))
+
+       (optional tor_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj))))

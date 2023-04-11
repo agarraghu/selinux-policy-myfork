@@ -1,0 +1,57 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ifup.subj_type_transition (subj)))
+
+(in .file
+    (call .ifup.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block ifup
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ifup"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ifup")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .wifi.subj_type_transition (subj))
+
+       (optional ifup_opt_rcnetwork
+                 (call .rcnetwork.use_fds (subj))))

@@ -1,0 +1,52 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .ssl.obj_type_transition_certfile (unconfined.subj_typeattr)))
+
+(block ssl
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/ssl"
+        dir
+        certfile_file_context)
+       (filecon
+        "/etc/ssl/.*"
+        any
+        certfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_certfile_files ((type ARG1))
+              (allow ARG1 certfile (file (getattr))))
+
+       (macro obj_type_transition_certfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile dir "ssl")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.cert.obj_template)
+
+       (call .file.cert.exception.obj_type (certfile))
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (call read_certfile_files (subj_typeattr))
+              (call read_certfile_lnk_files (subj_typeattr))
+              (call list_certfile_dirs (subj_typeattr))))

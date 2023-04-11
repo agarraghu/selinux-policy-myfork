@@ -1,0 +1,54 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rctinyproxy.subj_type_transition (subj)))
+
+(in .file
+    (call .rctinyproxy.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rctinyproxy
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/tinyproxy"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "tinyproxy")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .tinyproxy.create_conftmpfile_files (subj))
+       (call .tinyproxy.obj_type_transition_conftmpfile (subj))
+       (call .tinyproxy.write_conftmpfile_files (subj))
+
+       (call .tinyproxy.create_logtmpfile_files (subj))
+       (call .tinyproxy.obj_type_transition_logtmpfile (subj))
+       (call .tinyproxy.readwrite_logtmpfile_files (subj))
+       (call .tinyproxy.setattr_logtmpfile_files (subj))
+
+       (call .tmpfile.create_conftmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_conftmpfile (subj))
+       (call .tmpfile.setattr_conftmpfile_dirs (subj))
+
+       (optional rctinyproxy_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+       (optional rctinyproxy_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

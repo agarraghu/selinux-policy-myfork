@@ -1,0 +1,34 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .wget.rootfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(in wget
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/\.wget-hsts"
+     file
+     miscfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro rootfile_obj_type_transition_miscfile ((type ARG1))
+           (call .sys.rootfile_obj_type_transition
+                 (ARG1 miscfile file ".wget-hsts")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .file.misc.obj_template)
+
+    (call .xattr.associate_filesystems (miscfile)))

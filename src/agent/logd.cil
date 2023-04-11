@@ -1,0 +1,75 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .logd.subj_type_transition (subj)))
+
+(in .file
+    (call .logd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .logd.tmp_obj_type_transition_miscfile (unconfined.subj_typeattr)))
+
+(block logd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/log"
+        socket
+        miscfile_file_context)
+
+       (filecon
+        "/usr/bin/logd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_miscfile_sock_files ((type ARG1))
+              (allow ARG1 miscfile (sock_file (getattr))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "logd")))
+
+       (macro tmp_obj_type_transition_miscfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile sock_file "log")))
+
+       (macro unix_dgram_send ((type ARG1))
+              (call sendto_unix_dgram_sockets (ARG1))
+              (call write_miscfile_sock_files (ARG1)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.misc.obj_template)
+
+       (allow subj self (capability (setgid setuid)))
+       (allow subj self (capability2 (syslog)))
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call manage_miscfile_sock_files (subj))
+       (call tmp_obj_type_transition_miscfile (subj))
+
+       (call .sys.modifyringbuffer (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .kmsg.read_procfile_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj)))

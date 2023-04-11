@@ -1,0 +1,56 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ntpdhotplug.subj_type_transition (subj)))
+
+(in .file
+    (call .ntpdhotplug.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block ntpdhotplug
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ntpd-hotplug"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ntpd-hotplug")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (call .sys.dontaudit_readwrite_udp_sockets (subj))
+
+       (call .hotplugcall.nnptransition (subj))
+       (call .hotplugcall.subj_type_transition (subj))
+
+       (call .jshn.nnptransition (subj))
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .ubus.nnptransition (subj))
+       (call .ubus.subj_type_transition (subj)))

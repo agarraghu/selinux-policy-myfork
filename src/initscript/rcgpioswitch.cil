@@ -1,0 +1,40 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcgpioswitch.subj_type_transition (subj)))
+
+(in .file
+    (call .rcgpioswitch.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcgpioswitch
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/gpio_switch"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "gpio_switch")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .gpio.search_sysfile_dirs (subj))
+       (call .gpio.write_sysfile_files (subj)))

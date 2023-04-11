@@ -1,0 +1,56 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcdropbear.subj_type_transition (subj)))
+
+(in .file
+    (call .rcdropbear.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcdropbear
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/dropbear"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "dropbear")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (kill sys_ptrace)))
+
+       (call .dropbear.manage_certfile_dirs (subj))
+       (call .dropbear.manage_certfile_files (subj))
+       (call .dropbear.read_runtimetmpfile_files (subj))
+       (call .dropbear.relabel_certfile_files (subj))
+       (call .dropbear.sigkill (subj))
+       (call .dropbear.signal (subj))
+       (call .dropbear.subj_type_transition (subj))
+       (call .dropbear.tmp_obj_type_transition_certfile (subj dir "*"))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .selinux.setfscreate.subj_type (subj))
+
+       (call .subj.read_state_all (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.list_runtimetmpfile_dirs (subj)))

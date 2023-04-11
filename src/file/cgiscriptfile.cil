@@ -1,0 +1,474 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/www/cgi-bin"
+     dir
+     cgiscriptfile_file_context)
+    (filecon
+     "/www/cgi-bin/.*"
+     any
+     cgiscriptfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_cgiscriptfile ((type ARG1))
+           (call .www.miscfile_obj_type_transition
+                 (ARG1 cgiscriptfile dir "cgi-bin")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit cgiscript.obj_template)
+
+    (call obj_type_transition_cgiscriptfile (unconfined.subj_typeattr))
+
+    (block cgiscript
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro entrypoint_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (entrypoint))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call exec.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   cgiscriptfile_file_context
+                   (.u
+                    .r
+                    cgiscriptfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   cgiscriptfile)
+
+                  (call .file.cgiscript.obj_type (cgiscriptfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile addname_dir))
+
+                  (macro append_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile append_blk_file))
+
+                  (macro append_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile append_chr_file))
+
+                  (macro append_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile append_fifo_file))
+
+                  (macro append_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile append_file))
+
+                  (macro appendinherited_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile appendinherited_blk_file))
+
+                  (macro appendinherited_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile appendinherited_chr_file))
+
+                  (macro appendinherited_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile appendinherited_fifo_file))
+
+                  (macro appendinherited_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile appendinherited_file))
+
+                  (macro cgiscriptfile_subj_type_transition ((type ARG1)(type ARG2))
+                         (typetransition ARG1 cgiscriptfile process "*" ARG2))
+
+                  (macro cgiscriptfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 cgiscriptfile ARG3 ARG4 ARG2)
+                         (call addname_cgiscriptfile_dirs (ARG1)))
+
+                  (macro create_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (create))))
+
+                  (macro create_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_blk_file))
+
+                  (macro create_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_chr_file))
+
+                  (macro create_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_dir))
+
+                  (macro create_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_fifo_file))
+
+                  (macro create_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_file))
+
+                  (macro create_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_lnk_file))
+
+                  (macro create_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile create_sock_file))
+
+                  (macro deletename_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile deletename_dir))
+
+                  (macro delete_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (delete))))
+
+                  (macro delete_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_blk_file))
+
+                  (macro delete_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_chr_file))
+
+                  (macro delete_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_dir))
+
+                  (macro delete_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_fifo_file))
+
+                  (macro delete_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_file))
+
+                  (macro delete_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_lnk_file))
+
+                  (macro delete_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile delete_sock_file))
+
+                  (macro entrypoint_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile (file (entrypoint))))
+
+                  (macro execute_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile execute_file))
+
+                  (macro list_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile list_dir))
+
+                  (macro listinherited_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile listinherited_dir))
+
+                  (macro manage_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (manage))))
+
+                  (macro manage_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_blk_file))
+
+                  (macro manage_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_chr_file))
+
+                  (macro manage_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_dir))
+
+                  (macro manage_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_fifo_file))
+
+                  (macro manage_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_file))
+
+                  (macro manage_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_lnk_file))
+
+                  (macro manage_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile manage_sock_file))
+
+                  (macro mapexecute_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mapexecute_chr_file))
+
+                  (macro mapexecute_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mapexecute_file))
+
+                  (macro mounton_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (mounton))))
+
+                  (macro mounton_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_blk_file))
+
+                  (macro mounton_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_chr_file))
+
+                  (macro mounton_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_dir))
+
+                  (macro mounton_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_fifo_file))
+
+                  (macro mounton_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_file))
+
+                  (macro mounton_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_lnk_file))
+
+                  (macro mounton_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile mounton_sock_file))
+
+                  (macro read_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (read))))
+
+                  (macro read_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_blk_file))
+
+                  (macro read_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_chr_file))
+
+                  (macro read_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_fifo_file))
+
+                  (macro read_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_file))
+
+                  (macro readinherited_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readinherited_blk_file))
+
+                  (macro readinherited_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readinherited_chr_file))
+
+                  (macro readinherited_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readinherited_fifo_file))
+
+                  (macro readinherited_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readinherited_file))
+
+                  (macro readinherited_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readinherited_sock_file))
+
+                  (macro read_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_lnk_file))
+
+                  (macro read_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile read_sock_file))
+
+                  (macro readwrite_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (readwrite))))
+
+                  (macro readwrite_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_blk_file))
+
+                  (macro readwrite_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_chr_file))
+
+                  (macro readwrite_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_dir))
+
+                  (macro readwrite_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_fifo_file))
+
+                  (macro readwrite_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_file))
+
+                  (macro readwriteinherited_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_file))
+
+                  (macro readwriteinherited_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwriteinherited_sock_file))
+
+                  (macro readwrite_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_lnk_file))
+
+                  (macro readwrite_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile readwrite_sock_file))
+
+                  (macro relabel_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (relabel))))
+
+                  (macro relabel_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_blk_file))
+
+                  (macro relabel_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_chr_file))
+
+                  (macro relabel_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_dir))
+
+                  (macro relabel_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_fifo_file))
+
+                  (macro relabel_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_file))
+
+                  (macro relabel_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_lnk_file))
+
+                  (macro relabel_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabel_sock_file))
+
+                  (macro relabelfrom_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_dir))
+
+                  (macro relabelfrom_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_file))
+
+                  (macro relabelfrom_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelfrom_sock_file))
+
+                  (macro relabelto_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (relabelto))))
+
+                  (macro relabelto_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_blk_file))
+
+                  (macro relabelto_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_chr_file))
+
+                  (macro relabelto_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_dir))
+
+                  (macro relabelto_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_fifo_file))
+
+                  (macro relabelto_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_file))
+
+                  (macro relabelto_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_lnk_file))
+
+                  (macro relabelto_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile relabelto_sock_file))
+
+                  (macro rename_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (rename))))
+
+                  (macro rename_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_blk_file))
+
+                  (macro rename_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_chr_file))
+
+                  (macro rename_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_dir))
+
+                  (macro rename_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_fifo_file))
+
+                  (macro rename_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_file))
+
+                  (macro rename_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_lnk_file))
+
+                  (macro rename_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile rename_sock_file))
+
+                  (macro search_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile search_dir))
+
+                  (macro write_cgiscriptfile ((type ARG1))
+                         (allow ARG1 cgiscriptfile (allfiles (write))))
+
+                  (macro write_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_blk_file))
+
+                  (macro write_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_chr_file))
+
+                  (macro write_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_dir))
+
+                  (macro write_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_fifo_file))
+
+                  (macro write_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_file))
+
+                  (macro writeinherited_cgiscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_blk_file))
+
+                  (macro writeinherited_cgiscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_chr_file))
+
+                  (macro writeinherited_cgiscriptfile_dirs ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_dir))
+
+                  (macro writeinherited_cgiscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_fifo_file))
+
+                  (macro writeinherited_cgiscriptfile_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_file))
+
+                  (macro writeinherited_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile writeinherited_sock_file))
+
+                  (macro write_cgiscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_lnk_file))
+
+                  (macro write_cgiscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 cgiscriptfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.cgiscript.obj_base_template)
+                  (blockinherit .file.cgiscript.obj_macro_template))))

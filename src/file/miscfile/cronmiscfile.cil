@@ -1,0 +1,57 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .cron.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .cron.spooltmpfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block cron
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/crontabs"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/etc/crontabs/.*"
+        any
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/spool/cron"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/tmp/spool/cron/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro conffile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile dir "crontabs")))
+
+       (macro getattr_miscfile_files ((type ARG1))
+              (allow ARG1 miscfile (file (getattr))))
+
+       (macro spooltmpfile_obj_type_transition_miscfile ((type ARG1))
+              (call .tmpfile.spooltmpfile_obj_type_transition
+                    (ARG1 miscfile dir "cron")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.misc.obj_template)
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .xattr.associate_filesystems (miscfile)))

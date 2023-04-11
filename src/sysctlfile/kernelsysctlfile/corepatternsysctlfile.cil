@@ -1,0 +1,27 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block corepattern
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "proc"
+        "/sys/kernel/core_pattern"
+        sysctlfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_sysctlfile_files ((type ARG1))
+              (allow ARG1 sysctlfile (file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysctlfile.kernel.obj_template))

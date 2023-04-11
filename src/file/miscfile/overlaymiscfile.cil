@@ -1,0 +1,83 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call overlay.obj_type_transition_miscfile (unconfined.subj_typeattr))
+    (call overlay.tmp_obj_type_transition_miscfile (unconfined.subj_typeattr)))
+
+(block overlay
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/overlay"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/overlay/.*"
+        any
+        miscfile_file_context)
+       (filecon
+        "/overlay/work/work/.*"
+        any
+        ())
+
+       (filecon
+        "/rwm"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/rwm/.*"
+        any
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/overlay"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/tmp/overlay/.*"
+        any
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/root/work"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/tmp/root/work/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro mounton_miscfile_dirs ((type ARG1))
+              (allow ARG1 miscfile (dir (getattr mounton))))
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile dir "overlay"))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile dir "rwm")))
+
+       (macro tmp_obj_type_transition_miscfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile dir "overlay"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile dir "work")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .sys.mountpoint.obj_type (miscfile))
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .xattr.associate_filesystems (miscfile)))

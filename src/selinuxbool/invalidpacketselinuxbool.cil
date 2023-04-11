@@ -1,0 +1,35 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable recv_send_invalid_packets true)
+
+(tunableif .recv_send_invalid_packets
+           (true
+            (call .recvsend_invalid_netpackets
+                  (.recvsendpacket.subj_typeattr))))
+
+(block recv_send_invalid_packets
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/recv_send_invalid_packets"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))
+
+(block recvsendpacket
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template))

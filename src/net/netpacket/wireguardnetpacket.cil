@@ -1,0 +1,13 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .wireguard
+
+    (block client
+
+           (blockinherit .net.packet.obj_template))
+
+    (block server
+
+           (blockinherit .net.packet.obj_template)))

@@ -1,0 +1,56 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .nvme.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .nvme.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block nvme
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/nvme[0-9]+"
+        char
+        stordev_file_context)
+       (filecon
+        "/dev/nvme[0-9]n[^/]+"
+        block
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "nvme0"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p7"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev blk_file "nvme0n1p9")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

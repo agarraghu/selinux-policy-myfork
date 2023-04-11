@@ -1,0 +1,149 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ucode.subj_type_transition (subj)))
+
+(in .file
+    (call .ucode.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .ucode.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block ucode
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ucode"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/share/ucode"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/ucode/.*"
+        any
+        datafile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro dontaudit_readinherited_datafile_files ((type ARG1))
+              (dontaudit ARG1 datafile (file (read))))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "ucode")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ucode")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.data.obj_template)
+
+       (allow subj self create_unix_stream_socket)
+
+       (call list_datafile_dirs (subj))
+       (call read_datafile_files (subj))
+
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .agent.exec.getattr_all_files (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .file.read_conffile_lnk_files (subj))
+       (call .file.search_conffile_dirs (subj))
+
+       (call .hotplugcall.use_fds (subj))
+
+       (call .leds.list_sysfile_dirs (subj))
+
+       (call .module.search_sysfile_dirs (subj))
+
+       (call .netifd.use_fds (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .osrelease.read_miscfile_files (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shadow.read_authfile_files (subj))
+       (call .shadow.read.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmp.list_fs_dirs (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.list_conffile_dirs (subj))
+       (call .uci.list_tmpfile_dirs (subj))
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+
+       (call .version.read_procfile_files (subj))
+
+       (call .www.search_miscfile_dirs (subj))
+
+       (optional ucode_cgiscriptfile
+                 (call .file.search_cgiscriptfile_dirs (subj)))
+
+       (optional ucode_opt_fw3
+                 (call .fw3.dontaudit_writeinherited_runtimetmpfile_files
+                       (subj))
+                 (call .fw3.manage_runtimetmpfile_files (subj))
+                 (call .fw3.obj_type_transition_runtimetmpfile
+                       (subj "fw4.state"))
+                 (call .fw3.read_datafile_files (subj))
+                 (call .fw3.search_datafile_dirs (subj))
+                 (call .fw3.use_fds (subj))
+                 (call .fw3.writeinherited_fifo_files (subj)))
+
+       (optional ucode_opt_initscript
+                 (call .initscript.use_all_fds (subj)))
+
+       (optional ucode_opt_luci
+                 (call .luci.cgi.read_cgiscriptfile_files (subj))
+                 (call .luci.cgi.use_fds (subj))
+                 (call .luci.list_datafile_dirs (subj))
+                 (call .luci.read_datafile_files (subj))
+                 ;; /tmp/luci-indexcache.3f7fdf37.json
+                 (call .luci.manage_tmpfile_files (subj))
+                 (call .luci.obj_type_transition_tmpfile (subj file "*")))
+
+       (optional ucode_opt_nftables
+                 (call .nftables.subj_type_transition (subj)))
+
+       (optional ucode_opt_odhcp6c
+                 (call .odhcp6c.writeinherited_fifo_files (subj)))
+
+       (optional ucode_opt_pppd
+                 (call .pppd.use_fds (subj))
+                 (call .pppd.writeinherited_fifo_files (subj)))
+
+       (optional ucode_opt_uhttpd
+                 (call .uhttpd.use_fds (subj))
+                 (call .uhttpd.readwriteinherited_fifo_files (subj))))

@@ -1,0 +1,52 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .raw.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .raw.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(block raw
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/raw/.+"
+        char
+        stordev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_stordev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "rawctl"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw3"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw4"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw5"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw6"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw8"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 stordev chr_file "raw9")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.stor.obj_template))

@@ -1,0 +1,37 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable
+ recvfrom_sendto_invalid_associations
+ true)
+
+(tunableif .recvfrom_sendto_invalid_associations
+           (true
+            (call .recvfromsendto_invalid_associations
+                  (.recvfromsendtoassoc.subj_typeattr))))
+
+(block recvfrom_sendto_invalid_associations
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/recvfrom_sendto_invalid_associations"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))
+
+(block recvfromsendtoassoc
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template))

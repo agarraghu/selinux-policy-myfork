@@ -1,0 +1,107 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .logread.subj_type_transition (subj)))
+
+(in .file
+    (call .logread.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .logread.obj_type_transition_logtmpfile
+          (unconfined.subj_typeattr file "system.log"))
+    (call .logread.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr file "logread.1.pid")))
+
+(block logread
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/log/system\.log"
+        file
+        logtmpfile_file_context)
+
+       (filecon
+        "/tmp/run/logread\.[0-9]+\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/logread"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "logread")))
+
+       (macro obj_type_transition_logtmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.logtmpfile_obj_type_transition
+                    (ARG1 logtmpfile ARG2 ARG3)))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.log.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call manage_logtmpfile_files (subj))
+       (call obj_type_transition_logtmpfile (subj file "*"))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj file "*"))
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .file.read_conffile_lnk_files (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+       (call .logd.readinherited_fifo_files (subj))
+
+       (call .net.egress_netifs (subj))
+       ;; support ncat -4 -l 5555
+       (call .net.port.unreserved.tcp_connect_all_netports (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .syslog.tcp_connect_netports (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (optional logread_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional logread_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj)))
+
+       (optional logread_opt_syslognetpacket
+                 (call .syslog.client.recvsend_netpackets (subj)))
+
+       (optional logread_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

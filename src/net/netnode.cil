@@ -1,0 +1,176 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ node)
+
+(sidcontext
+ node
+ (.u
+  .r
+  .net.netnode
+  (systemlow
+   systemlow)))
+
+(tunableif (or .recv_invalid_peers .recvfrom_sendto_invalid_associations)
+               (true
+                (call .net.node.recvfromsendto_all_netnodes (.invalid))))
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .net.node.obj_template)
+
+    (call node.dccp_bind_all_netnodes (unconfined.subj_typeattr))
+    (call node.icmp_bind_all_netnodes (unconfined.subj_typeattr))
+    (call node.rawip_bind_all_netnodes (unconfined.subj_typeattr))
+    (call node.recvfromsendto_all_netnodes (unconfined.subj_typeattr))
+    (call node.sctp_bind_all_netnodes (unconfined.subj_typeattr))
+    (call node.tcp_bind_all_netnodes (unconfined.subj_typeattr))
+    (call node.udp_bind_all_netnodes (unconfined.subj_typeattr))
+
+    (call .dccp_bind_invalid_netnodes (unconfined.subj_typeattr))
+    (call .icmp_bind_invalid_netnodes (unconfined.subj_typeattr))
+    (call .rawip_bind_invalid_netnodes (unconfined.subj_typeattr))
+    (call .recvfromsendto_invalid_netnodes (unconfined.subj_typeattr))
+    (call .sctp_bind_invalid_netnodes (unconfined.subj_typeattr))
+    (call .tcp_bind_invalid_netnodes (unconfined.subj_typeattr))
+    (call .udp_bind_invalid_netnodes (unconfined.subj_typeattr))
+
+    (block node
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netnode_context
+                   (.u
+                    .r
+                    netnode
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netnode)
+
+                  (call .net.node.obj_type (netnode)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (dccp_socket (node_bind))))
+
+                  (macro icmp_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (icmp_socket (node_bind))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  (macro rawip_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (rawip_socket (node_bind))))
+
+                  (macro recvfrom_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (node (recvfrom))))
+
+                  (macro recvfromsendto_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (node (recvfrom sendto))))
+
+                  (macro sctp_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (sctp_socket (node_bind))))
+
+                  (macro sendto_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (node (sendto))))
+
+                  (macro tcp_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (tcp_socket (node_bind))))
+
+                  (macro udp_bind_all_netnodes ((type ARG1))
+                         (allow ARG1 obj_typeattr (udp_socket (node_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute
+                   obj_typeattr))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro dccp_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (dccp_socket (node_bind))))
+
+                  (macro icmp_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (icmp_socket (node_bind))))
+
+                  (macro rawip_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (rawip_socket (node_bind))))
+
+                  (macro recvfrom_netnodes ((type ARG1))
+                         (allow ARG1 netnode (node (recvfrom))))
+
+                  (macro recvfromsendto_netnodes ((type ARG1))
+                         (allow ARG1 netnode (node (recvfrom sendto))))
+
+                  (macro sctp_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (sctp_socket (node_bind))))
+
+                  (macro sendto_netnodes ((type ARG1))
+                         (allow ARG1 netnode (node (sendto))))
+
+                  (macro tcp_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (tcp_socket (node_bind))))
+
+                  (macro udp_bind_netnodes ((type ARG1))
+                         (allow ARG1 netnode (udp_socket (node_bind))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.node.obj_base_template)
+                  (blockinherit .net.node.obj_macro_template))))

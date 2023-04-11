@@ -1,0 +1,182 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .dropbear.subj_type_transition (subj)))
+
+(in .file
+    (call .dropbear.conffile_obj_type_transition_certfile
+          (unconfined.subj_typeattr))
+    (call .dropbear.tmp_obj_type_transition_certfile
+          (unconfined.subj_typeattr dir "dropbear"))
+    (call .dropbear.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .dropbear.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr file "dropbear.1.pid"))
+    (call .dropbear.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr file "dropbear.2.pid"))
+    (call .dropbear.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr file "dropbear.3.pid")))
+
+(block dropbear
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/dropbear"
+        dir
+        certfile_file_context)
+       (filecon
+        "/etc/dropbear/.*"
+        any
+        certfile_file_context)
+
+       (filecon
+        "/tmp/dropbear"
+        dir
+        certfile_file_context)
+       (filecon
+        "/tmp/dropbear/.*"
+        any
+        certfile_file_context)
+
+       (filecon
+        "/tmp/run/dropbear\.[0-9]+\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/dropbear"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr execute))))
+
+       (macro conffile_obj_type_transition_certfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 certfile dir "dropbear")))
+
+       (macro tmp_obj_type_transition_certfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 certfile ARG2 ARG3)))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "dropbear")))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.cert.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (setgid setuid)))
+       (allow subj self (process (setrlimit)))
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call manage_certfile_files (subj))
+       (call readwrite_certfile_dirs (subj))
+       (call tmp_obj_type_transition_certfile (subj file "*"))
+
+       (call execute_execfile_files (subj))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj file "*"))
+
+       (call .sys.obj_type_transition_ptydev (subj))
+       (call .sys.readwrite_ptydev_chr_files (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.setattr_ptydev_chr_files (subj))
+       (call .sys.transition (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+       (call .sys.dontaudit_noatsecure (subj))
+       (call .sys.dontaudit_rlimitinh (subj))
+       (call .sys.dontaudit_siginh (subj))
+
+       (call .file.manage_homefile_dirs (subj))
+       (call .file.manage_homefile_files (subj))
+       (call .file.manage_homefile_lnk_files (subj))
+       (call .file.search_conffile_dirs (subj))
+
+       (call .interrupts.read_procfile_files (subj))
+
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .loadavg.read_procfile_files (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.port.unreserved.tcp_bind_all_netports (subj))
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .ptmx.readwrite_nodedev_chr_files (subj))
+
+       (call .random.read_sysctlfile_files (subj))
+       (call .random.readwrite_nodedev_chr_files (subj))
+       (call .random.search_sysctlfile_dirs (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .shadow.read_authfile_files (subj))
+       (call .shadow.read.subj_type (subj))
+
+       (call .shell.execfile_subj_type_transition (subj .sys.subj))
+       (call .shell.mapexecute_execfile_files (subj))
+       (call .shell.read_execfile_files (subj))
+
+       (call .shells.read_conffile_files (subj))
+
+       (call .ssh.tcp_bind_netports (subj))
+       (call .ssh.tcp_connect_netports (subj))
+
+       (call .subj.interactivefd.subj_type (subj))
+
+       (call .timerlist.read_procfile_files (subj))
+
+       (call .tmp.associate_filesystems (certfile))
+       (call .tmp.deletename_fs_dirs (subj))
+       ;; scp tmpfs files created by sys.subj out
+       (call .tmp.read_fs_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (call .vmstat.read_procfile_files (subj))
+
+       (optional dropbear_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional dropbear_opt_rcdropbear
+                 (call .rcdropbear.use_fds (subj)))
+
+       (optional dropbear_opt_sshnetpacket
+                 (call .ssh.client.recvsend_netpackets (subj))
+                 (call .ssh.server.recvsend_netpackets (subj))))

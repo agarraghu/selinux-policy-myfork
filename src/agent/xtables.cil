@@ -1,0 +1,212 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .xtables.subj_type_transition (subj)))
+
+(in .file
+    (call .xtables.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .xtables.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(block xtables
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/xtables\.lock"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/ip6tables"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-translate"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/ip6tables-legacy"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-legacy-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-legacy-save"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/ip6tables-nft"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-nft-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip6tables-nft-save"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/iptables"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-translate"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/iptables-legacy"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-legacy-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-legacy-save"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/iptables-nft"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-nft-restore"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/iptables-nft-save"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/bin/xtables-legacy-multi"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/xtables-nft-multi"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro auditexecute_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (execute getattr))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-legacy"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-legacy-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-legacy-save"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-nft"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-nft-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-nft-save"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip6tables-translate"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-legacy"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-legacy-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-legacy-save"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-nft"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-nft-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-nft-save"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-restore"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "iptables-translate"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "xtables-legacy-multi"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "xtables-nft-multi")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "xtables.lock")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (net_admin net_raw)))
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call .sys.requestmodule (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.packet.relabelto_all_netpackets (subj))
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .proc.getattr_filesystems (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (optional xtables_opt_acme
+                 (call .acme.readwriteinherited_fifo_files (subj)))
+
+       (optional xtables_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional xtables_opt_fw3
+                 (call .fw3.use_fds (subj))
+                 ;; /tmp/run/fw3.lock
+                 (call .fw3.dontaudit_writeinherited_runtimetmpfile_files
+                       (subj)))
+
+       (optional xtables_opt_rcfirewall
+                 (call .rcfirewall.use_fds (subj)))
+
+       (optional xtables_opt_sqm
+                 (call .sqm.readwriteinherited_fifo_files (subj))))

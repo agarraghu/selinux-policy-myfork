@@ -1,0 +1,117 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .kmodloader.subj_type_transition (subj)))
+
+(in .file
+    (call .kmodloader.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .kmodloader.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block kmodloader
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/modules-boot\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/modules-boot\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/etc/modules\.conf"
+        file
+        conffile_file_context)
+       (filecon
+        "/etc/modules\.conf\..*"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/etc/modules\.d"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/modules\.d/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/kmodloader"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "modules-boot.d"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "modules.d"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "modules.conf")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "kmodloader")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+
+       (allow subj self (capability (sys_admin)))
+       (allow subj self (capability2 (syslog)))
+       (allow subj self create_unix_dgram_socket)
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+       (call read_conffile_lnk_files (subj))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       (call .sys.readringbuffer (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_keyrings (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .file.list_modulesfile_dirs (subj))
+       (call .file.modules.load_all_files (subj))
+       (call .file.modules.map_all_files (subj))
+       (call .file.modules.read_all_files (subj))
+       (call .file.search_conffile_dirs (subj))
+
+       (call .firmware.read_miscfile_files (subj))
+       (call .firmware.search_miscfile_dirs (subj))
+
+       (call .kmsg.readwrite_nodedev_chr_files (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .modules.read_procfile_files (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (optional kmodloader_opt_rcboot
+                 (call .rcboot.use_fds (subj)))
+
+       (optional kmodloader_opt_rcsqm
+                 (call .rcsqm.use_fds (subj)))
+
+       (optional kmodloader_opt_sqm
+                 (call .sqm.appendinherited_runtimetmpfile_files (subj))))

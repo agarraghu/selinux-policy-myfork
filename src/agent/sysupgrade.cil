@@ -1,0 +1,93 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .sysupgrade.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .sysupgrade.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .sysupgrade.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block sysupgrade
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/backup"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/backup/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/etc/sysupgrade\.conf"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/tmp/sysupgrade"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/sysupgrade\.conffiles"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/sysupgrade\.meta"
+        file
+        tmpfile_file_context)
+
+       ;; fwtool and validate_firmware_image should probably be targeted instead
+       (filecon
+        "/usr/bin/fwtool"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/sysupgrade"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/validate_firmware_image"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "backup"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "sysupgrade.conf")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "fwtool"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "sysupgrade"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "validate_firmware_image")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "sysupgrade"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "sysupgrade.conffiles"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "sysupgrade.img"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "sysupgrade.meta")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.exec.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (call .sys.mountpoint.obj_type (conffile)))

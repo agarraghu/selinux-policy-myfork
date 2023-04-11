@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call mnt.obj_type_transition_miscfile (unconfined.subj_typeattr)))
+
+(block mnt
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/mnt"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/mnt/.*"
+        any
+        ())
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_miscfile_dirs ((type ARG1))
+              (allow ARG1 miscfile (dir (getattr))))
+
+       (macro mounton_miscfile_dirs ((type ARG1))
+              (allow ARG1 miscfile (dir (getattr mounton))))
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile dir "mnt")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .sys.mountpoint.obj_type (miscfile))
+
+       (call .xattr.associate_filesystems (miscfile)))

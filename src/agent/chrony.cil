@@ -1,0 +1,245 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .chronyc.subj_type_transition (subj))
+    (call .chronyd.subj_type_transition (subj)))
+
+(in .file
+    (call .chrony.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .chrony.obj_type_transition_conftmpfile (unconfined.subj_typeattr))
+    (call .chrony.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr))
+    (call .chronyc.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .chronyd.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(in .hotplugcall
+    (call .chrony.manage_runtimetmpfile_dirs (subj))
+    (call .chrony.manage_runtimetmpfile_files (subj))
+    (call .chrony.obj_type_transition_runtimetmpfile (subj))
+    (call .chronyc.subj_type_transition (subj)))
+
+(block chrony
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/chrony"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/chrony/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/etc/chrony\.conf"
+        file
+        conftmpfile_file_context)
+       (filecon
+        "/tmp/etc/chrony\.d"
+        dir
+        conftmpfile_file_context)
+       (filecon
+        "/tmp/etc/chrony\.d/.*"
+        any
+        conftmpfile_file_context)
+
+       (filecon
+        "/tmp/run/chrony"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/chrony/.*"
+        any
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/chrony-dhcp"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/chrony-dhcp/.*"
+        any
+        runtimetmpfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "chrony")))
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile dir "chrony.d"))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile file "chrony.conf")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "chrony"))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "chrony-dhcp")))
+
+       (macro setattr_conffile_files ((type ARG1))
+              (allow ARG1 conffile (file (setattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.conf.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template))
+
+(block chronyc
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/chronyc"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "chronyc")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (dac_override dac_read_search)))
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+
+       (call .chrony.manage_runtimetmpfile_sock_files (subj))
+       (call .chrony.read_conffile_files (subj))
+       (call .chrony.readwrite_runtimetmpfile_dirs (subj))
+       (call .chrony.search_conffile_dirs (subj))
+
+       (call .chronyd.sendto_unix_dgram_sockets (subj))
+
+       (call .cpuinfo.read_procfile_files (subj))
+
+       (call .hotplugcall.readinherited_fifo_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .netifd.readinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (optional chronyc_opt_chronycmdnetpacket
+                 (call .chronycmd.client.recvsend_netpackets (subj)))
+
+       (optional chronyc_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj))))
+
+(block chronyd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/chronyd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "chronyd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self
+              (capability (chown dac_override dac_read_search fsetid setgid
+                                 setuid sys_time)))
+       (allow subj self (process (setcap)))
+       (allow subj self create_unix_dgram_socket)
+
+       (call .cpuinfo.read_procfile_files (subj))
+
+       (call .chrony.append_conffile_files (subj))
+       (call .chrony.list_conftmpfile_dirs (subj))
+       (call .chrony.manage_runtimetmpfile_dirs (subj))
+       (call .chrony.manage_runtimetmpfile_files (subj))
+       (call .chrony.manage_runtimetmpfile_sock_files (subj))
+       (call .chrony.obj_type_transition_runtimetmpfile (subj))
+       (call .chrony.read_conffile_files (subj))
+       (call .chrony.read_conftmpfile_files (subj))
+       (call .chrony.search_conffile_dirs (subj))
+       (call .chrony.setattr_conffile_files (subj))
+
+       (call .chronyc.sendto_unix_dgram_sockets (subj))
+
+       (call .chronycmd.udp_bind_netports (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .ntp.udp_bind_netports (subj))
+
+       (call .ntpnts.tcp_bind_netports (subj))
+       (call .ntpnts.tcp_connect_netports (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+
+       (optional chronyd_opt_acme
+                 (call .acme.read_conffile_files (subj))
+                 (call .acme.read_conffile_lnk_files (subj))
+                 (call .acme.search_conffile_dirs (subj)))
+
+       (optional chronyd_opt_chronycmdnetpacket
+                 (call .chronycmd.server.recvsend_netpackets (subj)))
+
+       (optional chronyd_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional chronyd_opt_ntpnetpacket
+                 (call .ntp.client.recvsend_netpackets (subj))
+                 (call .ntp.server.recvsend_netpackets (subj)))
+
+       (optional chronyd_opt_ntpntsnetpacket
+                 (call .ntpnts.client.recvsend_netpackets (subj))
+                 (call .ntpnts.server.recvsend_netpackets (subj)))
+
+       (optional chronyd_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj))))

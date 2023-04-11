@@ -1,0 +1,82 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ubusd.subj_type_transition (subj)))
+
+(in .file
+    (call .ubusd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .ubusd.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(block ubusd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/ubus"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/ubus/.*"
+        any
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/ubus\.sock"
+        socket
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/ubusd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubusd")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile dir "ubus"))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile sock_file "ubus.sock")))
+
+       (macro unix_stream_connect ((type ARG1))
+              (call connectto_unix_stream_sockets (ARG1))
+              (call search_runtimetmpfile_dirs (ARG1))
+              (call write_runtimetmpfile_sock_files (ARG1)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_stream_socket)
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call manage_runtimetmpfile_sock_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call .acl.list_datafile_dirs (subj))
+       (call .acl.read_datafile_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .logd.readinherited_fifo_files (subj))
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj)))

@@ -1,0 +1,383 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .mtd.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .dev.stor
+    (call .mtd.obj_type_transition_stordev (unconfined.subj_typeattr)))
+
+(in .mtd
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/dev/mtd[0-9]+"
+     char
+     stordev_file_context)
+    (filecon
+     "/dev/mtd[0-9]+ro"
+     char
+     stordev_file_context)
+    (filecon
+     "/dev/mtdblock[0-9]+"
+     block
+     stordev_file_context)
+
+    (filecon
+     "/dev/ubi[0-9]+_[0-9]+"
+     char
+     stordev_file_context)
+    (filecon
+     "/dev/ubi_ctrl"
+     char
+     stordev_file_context)
+    (filecon
+     "/dev/ubiblock[0-9]+_[0-9]+"
+     block
+     stordev_file_context)
+    (filecon
+     "/dev/ubiblock[0-9]+_[0-9]+p[0-9]+"
+     block
+     stordev_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_stordev ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd0ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd1ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd2ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd3ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd4ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd5ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd6ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd7ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd8ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd9ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd10"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd10ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd11"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd11ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd12"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd12ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd13"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd13ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd14"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd14ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd15"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "mtd15ro"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock0p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock0p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock1p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock1p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock2p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock2p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock3p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock3p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock4p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock4p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock5p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock5p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock10"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock11"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock12"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock13"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock14"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "mtdblock15"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi_ctrl"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi0_9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi1_9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev chr_file "ubi2_9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_0p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_0p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_1p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_1p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_2p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_2p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_3p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_3p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_4p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_4p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_5p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_5p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock0_9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_0p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_0p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_1p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_1p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_2p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_2p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_3p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_3p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_4p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_4p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_5p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_5p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock1_9"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_0"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_0p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_0p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_1p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_1p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_2p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_2p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_3"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_3p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_3p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_4"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_4p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_4p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_5"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_5p1"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_5p2"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_6"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_7"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_8"))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 stordev blk_file "ubiblock2_9")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .dev.stor.obj_template))

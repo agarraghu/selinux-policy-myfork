@@ -1,0 +1,70 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .fs
+    (call .tmp.rootfile_obj_type_transition_fs (unconfined.subj_typeattr)))
+
+(block tmp
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev"
+        dir
+        fs_context)
+       (filecon
+        "/dev/.*"
+        any
+        ())
+
+       (filecon
+        "/tmp"
+        dir
+        fs_context)
+       (filecon
+        "/tmp/.*"
+        any
+        ())
+
+       ;; compatibility
+       (fsuse
+        trans
+        "devtmpfs"
+        fs_context)
+       (fsuse
+        trans
+        "ramfs"
+        fs_context)
+       (fsuse
+        trans
+        "tmpfs"
+        fs_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro rootfile_obj_type_transition_fs ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 fs dir "dev"))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 fs dir "tmp")))
+
+       (macro dontaudit_getattr_fs_chr_files ((type ARG1))
+              (dontaudit ARG1 fs (chr_file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .fs.obj_file_macro_template)
+       (blockinherit .fs.seclabel.obj_template)
+
+       (allow fs self (filesystem (associate)))
+
+       (call .sys.mountpoint.obj_type (fs))
+
+       (call .xattr.associate_filesystems (fs)))

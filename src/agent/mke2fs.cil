@@ -1,0 +1,92 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .mke2fs.subj_type_transition (subj)))
+
+(in .file
+    (call .mke2fs.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .mke2fs.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block mke2fs
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/e2fsck\.conf"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/usr/bin/mke2fs"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "e2fsck.conf")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "mke2fs")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+
+       (allow subj self create_unix_stream_socket)
+
+       (call read_conffile_files (subj))
+
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dev.search_sysfile_dirs (subj))
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+
+       (call .ext4.read_sysfile_files (subj))
+       (call .ext4.search_sysfile_dirs (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .fs.search_sysfile_dirs (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (optional mke2fs_opt_dmstordev
+                 (call .dm.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_hdstordev
+                 (call .hd.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_loopstordev
+                 (call .loop.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_mmcstordev
+                 (call .mmc.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_nvmestordev
+                 (call .nvme.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_sdstordev
+                 (call .sd.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_vdstordev
+                 (call .vd.readwrite_stordev_blk_files (subj)))
+
+       (optional mke2fs_opt_zramstordev
+                 (call .zram.readwrite_stordev_blk_files (subj))))

@@ -1,0 +1,38 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .www.rootfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block www
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/www"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/www/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro rootfile_obj_type_transition_miscfile ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile dir "www")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

@@ -1,0 +1,168 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(sid
+ security)
+
+(sidcontext
+ security
+ (.u
+  .r
+  .selinux
+  (systemlow
+   systemlow)))
+
+(type
+ selinux)
+
+(call .sys.type (selinux))
+
+(block selinux
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro checkcontext ((type ARG1))
+              (allow ARG1 .selinux (security (check_context)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro computeav ((type ARG1))
+              (allow ARG1 self create_netlink_selinux_socket)
+              (allow ARG1 .selinux (security (compute_av)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro computecreate ((type ARG1))
+              (allow ARG1 .selinux (security (compute_create)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro computemember ((type ARG1))
+              (allow ARG1 .selinux (security (compute_member)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro computerelabel ((type ARG1))
+              (allow ARG1 .selinux (security (compute_relabel)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro computeuser ((type ARG1))
+              (allow ARG1 .selinux (security (compute_user)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro readpolicy ((type ARG1))
+              (allow ARG1 .selinux (security (read_policy)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.read_fs_files (ARG1)))
+
+       (macro setcheckreqprot ((type ARG1))
+              (allow ARG1 .selinux (security (setcheckreqprot)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (macro validatetrans ((type ARG1))
+              (allow ARG1 .selinux (security (validate_trans)))
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1)))
+
+       (block linked
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (call getattr_filesystems (subj_typeattr))
+              (call read_conffile_files (subj_typeattr))
+              (call search_conffile_dirs (subj_typeattr))
+
+              (call .sys.search_fs_dirs (subj_typeattr))
+
+              (call .file.search_conffile_dirs (subj_typeattr))
+
+              (call .fs.search_sysfile_dirs (subj_typeattr)))
+
+       (block loadpolicy
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr .selinux (security (load_policy))))
+
+       (block setenforce
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr .selinux (security (setenforce))))
+
+       (block setfscreate
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allow subj_typeattr self (process (setfscreate))))
+
+       (block setsecparam
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr .selinux (security (setsecparam))))
+
+       (block unconfined
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allow subj_typeattr .selinux
+                     (security (not (load_policy setenforce setsecparam))))
+
+              (call loadpolicy.subj_type (subj_typeattr))
+              (call setenforce.subj_type (subj_typeattr))
+              (call setsecparam.subj_type (subj_typeattr))))

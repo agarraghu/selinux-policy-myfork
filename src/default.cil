@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(defaultrole
+  anon_inode
+  source)
+(defaultrole
+  blk_file
+  source)
+(defaultrole
+  chr_file
+  source)
+(defaultrole
+  dir
+  source)
+(defaultrole
+  fifo_file
+  source)
+(defaultrole
+  file
+  source)
+(defaultrole
+  lnk_file
+  source)
+(defaultrole
+  msg
+  source)
+(defaultrole
+  sock_file
+  source)

@@ -1,0 +1,20 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block core
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "proc"
+        "/sys/net/core"
+        sysctlfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysctlfile.net.obj_template))

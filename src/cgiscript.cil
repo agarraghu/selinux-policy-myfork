@@ -1,0 +1,60 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block cgiscript
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .subj.subj_all_macro_template)
+
+       (call .agent.subj_type (subj_typeattr))
+
+       (block exec
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .file.obj_all_macro_template)
+
+              (call .agent.exec.obj_type (obj_typeattr)))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block base_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro subj_type_transition ((type ARG1))
+                     (allow ARG1 subj (process (transition)))
+                     (dontaudit ARG1 subj
+                                (process (noatsecure siginh rlimitinh)))
+
+                     (allow subj ARG1 (process (sigchld)))
+
+                     (call cgiscriptfile_subj_type_transition (ARG1 subj))
+                     (call mapexecute_cgiscriptfile_files (ARG1))
+                     (call read_cgiscriptfile_files (ARG1)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract base_template)
+
+              (blockinherit .file.cgiscript.obj_template)
+              (blockinherit .subj.common.subj_template)
+
+              (call entrypoint_cgiscriptfile_files (subj))
+              (call mapexecute_cgiscriptfile_files (subj))
+              (call read_cgiscriptfile_files (subj))
+
+              (call .cgiscript.exec.obj_type (cgiscriptfile))
+              (call .cgiscript.subj_type (subj))))

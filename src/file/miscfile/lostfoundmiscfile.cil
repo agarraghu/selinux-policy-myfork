@@ -1,0 +1,67 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .lostfound.mntmiscfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .lostfound.obj_type_transition_miscfile (unconfined.subj_typeattr))
+    (call .lostfound.overlaymiscfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block lostfound
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/lost\+found"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/lost\+found/.*"
+        any
+        ())
+
+       (filecon
+        "/mnt(/.*)?/lost\+found"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/mnt(/.*)?/lost\+found/.*"
+        any
+        ())
+
+       (filecon
+        "/overlay/lost\+found"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/overlay/lost\+found/.*"
+        any
+        ())
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro mntmiscfile_obj_type_transition_miscfile ((type ARG1))
+              (call .mnt.miscfile_obj_type_transition
+                    (ARG1 miscfile dir "lost+found")))
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile dir "lost+found")))
+
+       (macro overlaymiscfile_obj_type_transition_miscfile ((type ARG1))
+              (call .overlay.miscfile_obj_type_transition
+                    (ARG1 miscfile dir "lost+found")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

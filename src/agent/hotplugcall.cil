@@ -1,0 +1,163 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .hotplugcall.subj_type_transition (subj)))
+
+(in .file
+    (call .hotplugcall.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block hotplugcall
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/hotplug-call"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "hotplug-call")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (process (getsched)))
+       (allow subj self create_unix_dgram_socket)
+
+       (call .sys.list_rootfile_dirs (subj))
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+       (call .sys.dontaudit_readwrite_udp_sockets (subj))
+
+       (call .block.read_sysfile_lnk_files (subj))
+       (call .block.search_sysfile_dirs (subj))
+
+       (call .class.read_sysfile_lnk_files (subj))
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .cpuinfo.read_procfile_files (subj))
+
+       (call .dev.stor.read.subj_type (subj))
+
+       (call .devices.create_sysfile_files (subj))
+       (call .devices.readwrite_sysfile_files (subj))
+       (call .devices.addname_sysfile_dirs (subj))
+
+       (call .file.initscript.execute_all_files (subj))
+       (call .file.read_conffile_lnk_files (subj))
+       (call .file.search_initscriptfile_dirs (subj))
+
+       (call .firmware.addname_miscfile_dirs (subj))
+       (call .firmware.create_miscfile_files (subj))
+       (call .firmware.readwrite_miscfile_files (subj))
+
+       (call .fw3.subj_type_transition (subj))
+       (call .fw3.use_fds (subj))
+       (call .fw3.writeinherited_runtimetmpfile_files (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .hotplug.list_conffile_dirs (subj))
+       (call .hotplug.read_conffile_files (subj))
+
+       (call .ifstatus.subj_type_transition (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .jsonfilter.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .mtd.read_procfile_files (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .netifd.read_miscfile_files (subj))
+       (call .netifd.search_miscfile_dirs (subj))
+       (call .netifd.readinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .ntpdhotplug.use_fds (subj))
+
+       (call .preinit.read_tmpfile_files (subj))
+       (call .preinit.search_tmpfile_dirs (subj))
+
+       (call .rccommon.read_conffile_files (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .sysctl.list_conffile_dirs (subj))
+       (call .sysctl.read_conffile_files (subj))
+
+       (call .tmp.list_fs_dirs (subj))
+
+       (call .tmpfile.addname_locktmpfile_dirs (subj))
+       (call .tmpfile.manage_locktmpfile_files (subj))
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .wifi.subj_type_transition (subj))
+
+       (optional hotplugcall_opt_blockmount
+                 (call .blockmount.subj_type_transition (subj)))
+
+       (optional hotplugcall_opt_dnsmasq
+                 (call .dnsmasq.manage_statetmpfile_files (subj))
+                 (call .dnsmasq.obj_type_transition_statetmpfile (subj)))
+
+       (optional hotplugcall_opt_initscript
+                 (call .initscript.use_all_fds (subj)))
+
+       (optional hotplugcall_opt_mtdstordev
+                 (call .mtd.read_stordev_blk_files (subj))
+                 (call .mtd.read_stordev_chr_files (subj)))
+
+       (optional hotplugcall_opt_rcunbound
+                 (call .rcunbound.subj_type_transition (subj)))
+
+       (optional hotplugcall_opt_ucode
+                 (call .ucode.subj_type_transition (subj)))
+
+       (optional hotplugcall_opt_unbound
+                 ;; bad permissions on /tmp/lib/unbound
+                 (allow subj self (capability (dac_override dac_read_search)))
+
+                 (call .unbound.read_miscfile_files (subj))
+                 (call .unbound.search_miscfile_dirs (subj))
+
+                 (call .unbound.manage_statetmpfile_files (subj))
+                 (call .unbound.readwrite_statetmpfile_dirs (subj)))
+
+       (optional hotplugcall_opt_zramsysfile
+                 (call .zram.create_sysfile_files (subj))
+                 (call .zram.readwrite_sysfile_files (subj))
+                 (call .zram.addname_sysfile_dirs (subj))))

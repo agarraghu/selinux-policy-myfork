@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .failsafe.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block failsafe
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/\.failsafe"
+        file
+        tmpfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file ".failsafe")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .tmpfile.obj_template))

@@ -1,0 +1,130 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .mountroot.subj_type_transition (subj)))
+
+(in .file
+    (call .mountroot.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .mountroot.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block mountroot
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/\.switch_jffs2"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/sysupgrade\.tar"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/usr/bin/mount_root"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "mount_root")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file ".switch_jffs2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "sysupgrade.tar")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.obj_template)
+
+       ;; mknod is caused by "cp", probably copying over a devnode. bug?
+       (allow subj self
+              (capability (chown dac_override dac_read_search fowner fsetid
+                                 mknod sys_admin)))
+       (allow subj self (capability2 (syslog)))
+       (allow subj self create_unix_dgram_socket)
+
+       (call manage_tmpfile_files (subj))
+       (call obj_type_transition_tmpfile (subj))
+
+       (call .sys.readringbuffer (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.setsched (subj)) ;; might be able to dontaudit this (could be mount related)
+       (call .sys.writeinherited_fifo_files (subj))
+       (call .sys.mountpoint.mounton_all_dirs (subj))
+
+       ;; the big hammer
+       (call .agent.exec.execute_all_files (subj))
+
+       (call .block.read_sysfile_lnk_files (subj))
+       (call .block.search_sysfile_dirs (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .dev.getattr_all_chr_files (subj))
+       (call .dev.stor.readwrite_all_blk_files (subj))
+       (call .dev.stor.readwrite_all_chr_files (subj))
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       ;; this is probably a bug: /boot/boot
+       (call .dos.manage_fs_dirs (subj))
+       (call .dos.manage_fs_files (subj))
+       (call .dos.relabel_fs_files (subj))
+
+       ;; the big hammer
+       (call .file.unconfined.subj_type (subj))
+
+       (call .filesystems.read_procfile_files (subj))
+
+       (call .fs.seclabel.getattr_all_filesystems (subj))
+
+       (call .kmsg.readwrite_nodedev_chr_files (subj))
+
+       (call .mke2fs.subj_type_transition (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .mkfsf2fs.subj_type_transition (subj))
+
+       (call .proc.list_fs_dirs (subj))
+       (call .pts.search_fs_dirs (subj))
+
+       (call .selinux.checkcontext (subj))
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .sys.read_fs_lnk_files (subj))
+
+       (call .sysctl.list_conffile_dirs (subj))
+       (call .sysctl.read_conffile_files (subj))
+
+       (call .tmp.getattr_filesystems (subj))
+       (call .tmp.manage_fs_dirs (subj))
+       (call .tmp.manage_fs_lnk_files (subj))
+       (call .tmp.mount_filesystems (subj))
+       ;; the big hammer
+       (call .tmp.dontaudit_getattr_fs_chr_files (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (call .xattr.getattr_filesystems (subj))
+       (call .xattr.mount_filesystems (subj))
+       (call .xattr.remount_filesystems (subj))
+       (call .xattr.unmount_filesystems (subj))
+
+       (optional mountroot_opt_blockmount
+                 (call .blockmount.subj_type_transition (subj))))

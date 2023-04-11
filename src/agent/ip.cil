@@ -1,0 +1,123 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ip.subj_type_transition (subj)))
+
+(in .file
+    (call .ip.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .ip.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr dir "netns")))
+
+(in .netifd
+    (call .ip.subj_type_transition (subj)))
+
+(block ip
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/netns"
+        dir
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/netns/.*"
+        any
+        ())
+
+       (filecon
+        "/usr/bin/bridge"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/devlink"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip-full"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ip-tiny"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/tc"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/tc-tiny"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "bridge"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "devlink"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip-full"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ip-tiny"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tc"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tc-tiny")))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       (macro watch_runtimetmpfile_dirs ((type ARG1))
+              (allow ARG1 runtimetmpfile (dir (watch))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (net_admin)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_netlink_xfrm_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read nlmsg_write)))
+
+       (call manage_runtimetmpfile_dirs (subj))
+       (call mounton_runtimetmpfile_dirs (subj))
+       (call obj_type_transition_runtimetmpfile (subj dir "*"))
+       (call watch_runtimetmpfile_dirs (subj))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .iproute2.list_conffile_dirs (subj))
+       (call .iproute2.read_conffile_files (subj))
+
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .ns.read_fs_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (optional ip_opt_rcsqm
+                 (call .rcsqm.use_fds (subj))))

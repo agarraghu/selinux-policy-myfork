@@ -1,0 +1,40 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcfirewall.subj_type_transition (subj)))
+
+(in .file
+    (call .rcfirewall.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcfirewall
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/firewall"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "firewall")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .fw3.subj_type_transition (subj))
+
+       (optional rcfirewall_opt_cgiio
+                 (call .cgiio.writeinherited_fifo_files (subj))))

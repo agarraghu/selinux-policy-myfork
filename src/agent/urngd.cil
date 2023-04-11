@@ -1,0 +1,46 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .urngd.subj_type_transition (subj)))
+
+(in .file
+    (call .urngd.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block urngd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/urngd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "urngd")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (sys_admin)))
+       (allow subj self (capability2 (syslog)))
+
+       (call .sys.readringbuffer (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .kmsg.readwrite_nodedev_chr_files (subj))
+
+       (call .random.readwrite_nodedev_chr_files (subj)))

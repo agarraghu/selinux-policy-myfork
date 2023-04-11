@@ -1,0 +1,2536 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+;;
+;; Classmaps
+;;
+
+(classmap
+ allfiles
+ (create delete manage mounton read readwrite relabel relabelfrom relabelto
+         rename write))
+
+(classmap
+ blkfiles
+ (append create delete manage mounton read readwrite relabel relabelfrom
+         relabelto rename write))
+(classmap
+ chrfiles
+ (append create delete manage mapexecute mounton read readwrite relabel
+         relabelfrom relabelto rename write))
+(classmap
+ dirs
+ (create delete list manage mounton readwrite relabel relabelfrom relabelto
+         rename write))
+(classmap
+ fifofiles
+ (append create delete manage mounton read readwrite relabel relabelfrom
+         relabelto rename write))
+(classmap
+ files
+ (append create delete execute manage mapexecute mounton read readwrite relabel
+         relabelfrom relabelto rename write))
+(classmap
+ lnkfiles
+ (create delete manage mounton read readwrite relabel relabelfrom relabelto
+         rename write))
+(classmap
+ sockfiles
+ (create delete manage mounton read readwrite relabel relabelfrom relabelto
+         rename write))
+
+(classmapping
+ allfiles
+ create
+ addname_dir)
+(classmapping
+ allfiles
+ create
+ create_blk_file)
+(classmapping
+ allfiles
+ create
+ create_chr_file)
+(classmapping
+ allfiles
+ create
+ create_dir)
+(classmapping
+ allfiles
+ create
+ create_fifo_file)
+(classmapping
+ allfiles
+ create
+ create_file)
+(classmapping
+ allfiles
+ create
+ create_lnk_file)
+(classmapping
+ allfiles
+ create
+ create_sock_file)
+(classmapping
+ allfiles
+ create
+ read_lnk_file)
+
+(classmapping
+ allfiles
+ delete
+ deletename_dir)
+(classmapping
+ allfiles
+ delete
+ delete_blk_file)
+(classmapping
+ allfiles
+ delete
+ delete_chr_file)
+(classmapping
+ allfiles
+ delete
+ delete_dir)
+(classmapping
+ allfiles
+ delete
+ delete_fifo_file)
+(classmapping
+ allfiles
+ delete
+ delete_file)
+(classmapping
+ allfiles
+ delete
+ delete_lnk_file)
+(classmapping
+ allfiles
+ delete
+ delete_sock_file)
+(classmapping
+ allfiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ allfiles
+ manage
+ manage_blk_file)
+(classmapping
+ allfiles
+ manage
+ manage_chr_file)
+(classmapping
+ allfiles
+ manage
+ manage_dir)
+(classmapping
+ allfiles
+ manage
+ manage_fifo_file)
+(classmapping
+ allfiles
+ manage
+ manage_file)
+(classmapping
+ allfiles
+ manage
+ manage_lnk_file)
+(classmapping
+ allfiles
+ manage
+ manage_sock_file)
+(classmapping
+ allfiles
+ manage
+ read_lnk_file)
+
+(classmapping
+ allfiles
+ mounton
+ mounton_blk_file)
+(classmapping
+ allfiles
+ mounton
+ mounton_chr_file)
+(classmapping
+ allfiles
+ mounton
+ mounton_dir)
+(classmapping
+ allfiles
+ mounton
+ mounton_fifo_file)
+(classmapping
+ allfiles
+ mounton
+ mounton_file)
+(classmapping
+ allfiles
+ mounton
+ mounton_lnk_file)
+(classmapping
+ allfiles
+ mounton
+ mounton_sock_file)
+(classmapping
+ allfiles
+ mounton
+ read_lnk_file)
+(classmapping
+ allfiles
+ mounton
+ search_dir)
+
+(classmapping
+ allfiles
+ read
+ list_dir)
+(classmapping
+ allfiles
+ read
+ read_blk_file)
+(classmapping
+ allfiles
+ read
+ read_chr_file)
+(classmapping
+ allfiles
+ read
+ read_fifo_file)
+(classmapping
+ allfiles
+ read
+ read_file)
+(classmapping
+ allfiles
+ read
+ read_lnk_file)
+(classmapping
+ allfiles
+ read
+ read_sock_file)
+
+(classmapping
+ allfiles
+ readwrite
+ readwrite_blk_file)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_chr_file)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_dir)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_fifo_file)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_file)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_lnk_file)
+(classmapping
+ allfiles
+ readwrite
+ readwrite_sock_file)
+
+(classmapping
+ allfiles
+ relabel
+ relabel_blk_file)
+(classmapping
+ allfiles
+ relabel
+ relabel_chr_file)
+(classmapping
+ allfiles
+ relabel
+ relabel_dir)
+(classmapping
+ allfiles
+ relabel
+ relabel_fifo_file)
+(classmapping
+ allfiles
+ relabel
+ relabel_file)
+(classmapping
+ allfiles
+ relabel
+ relabel_lnk_file)
+(classmapping
+ allfiles
+ relabel
+ relabel_sock_file)
+(classmapping
+ allfiles
+ relabel
+ read_lnk_file)
+(classmapping
+ allfiles
+ relabel
+ search_dir)
+
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_blk_file)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_chr_file)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_dir)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_fifo_file)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_file)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_lnk_file)
+(classmapping
+ allfiles
+ relabelfrom
+ relabelfrom_sock_file)
+(classmapping
+ allfiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ allfiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ allfiles
+ relabelto
+ relabelto_blk_file)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_chr_file)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_dir)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_fifo_file)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_file)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_lnk_file)
+(classmapping
+ allfiles
+ relabelto
+ relabelto_sock_file)
+(classmapping
+ allfiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ allfiles
+ relabelto
+ search_dir)
+
+(classmapping
+ allfiles
+ rename
+ rename_blk_file)
+(classmapping
+ allfiles
+ rename
+ rename_chr_file)
+(classmapping
+ allfiles
+ rename
+ rename_dir)
+(classmapping
+ allfiles
+ rename
+ rename_fifo_file)
+(classmapping
+ allfiles
+ rename
+ rename_file)
+(classmapping
+ allfiles
+ rename
+ rename_lnk_file)
+(classmapping
+ allfiles
+ rename
+ rename_sock_file)
+(classmapping
+ allfiles
+ rename
+ read_lnk_file)
+(classmapping
+ allfiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ allfiles
+ write
+ write_blk_file)
+(classmapping
+ allfiles
+ write
+ write_chr_file)
+(classmapping
+ allfiles
+ write
+ write_dir)
+(classmapping
+ allfiles
+ write
+ write_fifo_file)
+(classmapping
+ allfiles
+ write
+ write_file)
+(classmapping
+ allfiles
+ write
+ write_lnk_file)
+(classmapping
+ allfiles
+ write
+ write_sock_file)
+(classmapping
+ allfiles
+ write
+ read_lnk_file)
+
+(classmapping
+ blkfiles
+ append
+ append_blk_file)
+(classmapping
+ blkfiles
+ append
+ read_lnk_file)
+(classmapping
+ blkfiles
+ append
+ search_dir)
+
+(classmapping
+ blkfiles
+ create
+ addname_dir)
+(classmapping
+ blkfiles
+ create
+ create_blk_file)
+(classmapping
+ blkfiles
+ create
+ read_lnk_file)
+
+(classmapping
+ blkfiles
+ delete
+ deletename_dir)
+(classmapping
+ blkfiles
+ delete
+ delete_blk_file)
+(classmapping
+ blkfiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ blkfiles
+ manage
+ readwrite_dir)
+(classmapping
+ blkfiles
+ manage
+ manage_blk_file)
+(classmapping
+ blkfiles
+ manage
+ read_lnk_file)
+
+(classmapping
+ blkfiles
+ mounton
+ mounton_blk_file)
+(classmapping
+ blkfiles
+ mounton
+ read_lnk_file)
+(classmapping
+ blkfiles
+ mounton
+ search_dir)
+
+(classmapping
+ blkfiles
+ read
+ read_blk_file)
+(classmapping
+ blkfiles
+ read
+ read_lnk_file)
+(classmapping
+ blkfiles
+ read
+ search_dir)
+
+(classmapping
+ blkfiles
+ readwrite
+ readwrite_blk_file)
+(classmapping
+ blkfiles
+ readwrite
+ read_lnk_file)
+(classmapping
+ blkfiles
+ readwrite
+ search_dir)
+
+(classmapping
+ blkfiles
+ relabel
+ relabel_blk_file)
+(classmapping
+ blkfiles
+ relabel
+ read_lnk_file)
+(classmapping
+ blkfiles
+ relabel
+ search_dir)
+
+(classmapping
+ blkfiles
+ relabelfrom
+ relabelfrom_blk_file)
+(classmapping
+ blkfiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ blkfiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ blkfiles
+ relabelto
+ relabelto_blk_file)
+(classmapping
+ blkfiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ blkfiles
+ relabelto
+ search_dir)
+
+(classmapping
+ blkfiles
+ rename
+ rename_blk_file)
+(classmapping
+ blkfiles
+ rename
+ read_lnk_file)
+(classmapping
+ blkfiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ blkfiles
+ write
+ write_blk_file)
+(classmapping
+ blkfiles
+ write
+ read_lnk_file)
+(classmapping
+ blkfiles
+ write
+ search_dir)
+
+(classmapping
+ chrfiles
+ append
+ append_chr_file)
+(classmapping
+ chrfiles
+ append
+ read_lnk_file)
+(classmapping
+ chrfiles
+ append
+ search_dir)
+
+(classmapping
+ chrfiles
+ create
+ addname_dir)
+(classmapping
+ chrfiles
+ create
+ create_chr_file)
+(classmapping
+ chrfiles
+ create
+ read_lnk_file)
+
+(classmapping
+ chrfiles
+ delete
+ deletename_dir)
+(classmapping
+ chrfiles
+ delete
+ delete_chr_file)
+(classmapping
+ chrfiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ chrfiles
+ manage
+ readwrite_dir)
+(classmapping
+ chrfiles
+ manage
+ manage_chr_file)
+(classmapping
+ chrfiles
+ manage
+ read_lnk_file)
+
+(classmapping
+ chrfiles
+ mapexecute
+ mapexecute_chr_file)
+(classmapping
+ chrfiles
+ mapexecute
+ read_lnk_file)
+(classmapping
+ chrfiles
+ mapexecute
+ search_dir)
+
+(classmapping
+ chrfiles
+ mounton
+ mounton_chr_file)
+(classmapping
+ chrfiles
+ mounton
+ read_lnk_file)
+(classmapping
+ chrfiles
+ mounton
+ search_dir)
+
+(classmapping
+ chrfiles
+ read
+ read_chr_file)
+(classmapping
+ chrfiles
+ read
+ read_lnk_file)
+(classmapping
+ chrfiles
+ read
+ search_dir)
+
+(classmapping
+ chrfiles
+ readwrite
+ readwrite_chr_file)
+(classmapping
+ chrfiles
+ readwrite
+ read_lnk_file)
+(classmapping
+ chrfiles
+ readwrite
+ search_dir)
+
+(classmapping
+ chrfiles
+ relabel
+ relabel_chr_file)
+(classmapping
+ chrfiles
+ relabel
+ read_lnk_file)
+(classmapping
+ chrfiles
+ relabel
+ search_dir)
+
+(classmapping
+ chrfiles
+ relabelfrom
+ relabelfrom_chr_file)
+(classmapping
+ chrfiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ chrfiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ chrfiles
+ relabelto
+ relabelto_chr_file)
+(classmapping
+ chrfiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ chrfiles
+ relabelto
+ search_dir)
+
+(classmapping
+ chrfiles
+ rename
+ rename_chr_file)
+(classmapping
+ chrfiles
+ rename
+ read_lnk_file)
+(classmapping
+ chrfiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ chrfiles
+ write
+ write_chr_file)
+(classmapping
+ chrfiles
+ write
+ read_lnk_file)
+(classmapping
+ chrfiles
+ write
+ search_dir)
+
+(classmapping
+ dirs
+ create
+ addname_dir)
+(classmapping
+ dirs
+ create
+ create_dir)
+(classmapping
+ dirs
+ create
+ read_lnk_file)
+
+(classmapping
+ dirs
+ delete
+ deletename_dir)
+(classmapping
+ dirs
+ delete
+ delete_dir)
+(classmapping
+ dirs
+ delete
+ read_lnk_file)
+
+(classmapping
+ dirs
+ list
+ list_dir)
+(classmapping
+ dirs
+ list
+ read_lnk_file)
+
+(classmapping
+ dirs
+ manage
+ manage_dir)
+(classmapping
+ dirs
+ manage
+ read_lnk_file)
+
+(classmapping
+ dirs
+ mounton
+ mounton_dir)
+(classmapping
+ dirs
+ mounton
+ read_lnk_file)
+(classmapping
+ dirs
+ mounton
+ search_dir)
+
+(classmapping
+ dirs
+ readwrite
+ readwrite_dir)
+(classmapping
+ dirs
+ readwrite
+ read_lnk_file)
+
+(classmapping
+ dirs
+ relabel
+ relabel_dir)
+(classmapping
+ dirs
+ relabel
+ read_lnk_file)
+(classmapping
+ dirs
+ relabel
+ search_dir)
+
+(classmapping
+ dirs
+ relabelfrom
+ relabelfrom_dir)
+(classmapping
+ dirs
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ dirs
+ relabelfrom
+ search_dir)
+
+(classmapping
+ dirs
+ relabelto
+ relabelto_dir)
+(classmapping
+ dirs
+ relabelto
+ read_lnk_file)
+(classmapping
+ dirs
+ relabelto
+ search_dir)
+
+(classmapping
+ dirs
+ rename
+ rename_dir)
+(classmapping
+ dirs
+ rename
+ read_lnk_file)
+(classmapping
+ dirs
+ rename
+ readwrite_dir)
+
+(classmapping
+ dirs
+ write
+ write_dir)
+(classmapping
+ dirs
+ write
+ read_lnk_file)
+
+(classmapping
+ fifofiles
+ append
+ append_fifo_file)
+(classmapping
+ fifofiles
+ append
+ read_lnk_file)
+(classmapping
+ fifofiles
+ append
+ search_dir)
+
+(classmapping
+ fifofiles
+ create
+ addname_dir)
+(classmapping
+ fifofiles
+ create
+ create_fifo_file)
+(classmapping
+ fifofiles
+ create
+ read_lnk_file)
+
+(classmapping
+ fifofiles
+ delete
+ deletename_dir)
+(classmapping
+ fifofiles
+ delete
+ delete_fifo_file)
+(classmapping
+ fifofiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ fifofiles
+ manage
+ readwrite_dir)
+(classmapping
+ fifofiles
+ manage
+ manage_fifo_file)
+(classmapping
+ fifofiles
+ manage
+ read_lnk_file)
+
+(classmapping
+ fifofiles
+ mounton
+ mounton_fifo_file)
+(classmapping
+ fifofiles
+ mounton
+ read_lnk_file)
+(classmapping
+ fifofiles
+ mounton
+ search_dir)
+
+(classmapping
+ fifofiles
+ read
+ read_fifo_file)
+(classmapping
+ fifofiles
+ read
+ read_lnk_file)
+(classmapping
+ fifofiles
+ read
+ search_dir)
+
+(classmapping
+ fifofiles
+ readwrite
+ readwrite_fifo_file)
+(classmapping
+ fifofiles
+ readwrite
+ read_lnk_file)
+(classmapping
+ fifofiles
+ readwrite
+ search_dir)
+
+(classmapping
+ fifofiles
+ relabel
+ relabel_fifo_file)
+(classmapping
+ fifofiles
+ relabel
+ read_lnk_file)
+(classmapping
+ fifofiles
+ relabel
+ search_dir)
+
+(classmapping
+ fifofiles
+ relabelfrom
+ relabelfrom_fifo_file)
+(classmapping
+ fifofiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ fifofiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ fifofiles
+ relabelto
+ relabelto_fifo_file)
+(classmapping
+ fifofiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ fifofiles
+ relabelto
+ search_dir)
+
+(classmapping
+ fifofiles
+ rename
+ rename_fifo_file)
+(classmapping
+ fifofiles
+ rename
+ read_lnk_file)
+(classmapping
+ fifofiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ fifofiles
+ write
+ write_fifo_file)
+(classmapping
+ fifofiles
+ write
+ read_lnk_file)
+(classmapping
+ fifofiles
+ write
+ search_dir)
+
+(classmapping
+ files
+ append
+ append_file)
+(classmapping
+ files
+ append
+ read_lnk_file)
+(classmapping
+ files
+ append
+ search_dir)
+
+(classmapping
+ files
+ create
+ addname_dir)
+(classmapping
+ files
+ create
+ create_file)
+(classmapping
+ files
+ create
+ read_lnk_file)
+
+(classmapping
+ files
+ delete
+ deletename_dir)
+(classmapping
+ files
+ delete
+ delete_file)
+(classmapping
+ files
+ delete
+ read_lnk_file)
+
+(classmapping
+ files
+ execute
+ execute_file)
+(classmapping
+ files
+ execute
+ read_lnk_file)
+(classmapping
+ files
+ execute
+ search_dir)
+
+(classmapping
+ files
+ manage
+ readwrite_dir)
+(classmapping
+ files
+ manage
+ manage_file)
+(classmapping
+ files
+ manage
+ read_lnk_file)
+
+(classmapping
+ files
+ mapexecute
+ mapexecute_file)
+(classmapping
+ files
+ mapexecute
+ read_lnk_file)
+(classmapping
+ files
+ mapexecute
+ search_dir)
+
+(classmapping
+ files
+ mounton
+ mounton_file)
+(classmapping
+ files
+ mounton
+ read_lnk_file)
+(classmapping
+ files
+ mounton
+ search_dir)
+
+(classmapping
+ files
+ read
+ read_file)
+(classmapping
+ files
+ read
+ read_lnk_file)
+(classmapping
+ files
+ read
+ search_dir)
+
+(classmapping
+ files
+ readwrite
+ readwrite_file)
+(classmapping
+ files
+ readwrite
+ read_lnk_file)
+(classmapping
+ files
+ readwrite
+ search_dir)
+
+(classmapping
+ files
+ relabel
+ relabel_file)
+(classmapping
+ files
+ relabel
+ read_lnk_file)
+(classmapping
+ files
+ relabel
+ search_dir)
+
+(classmapping
+ files
+ relabelfrom
+ relabelfrom_file)
+(classmapping
+ files
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ files
+ relabelfrom
+ search_dir)
+
+(classmapping
+ files
+ relabelto
+ relabelto_file)
+(classmapping
+ files
+ relabelto
+ read_lnk_file)
+(classmapping
+ files
+ relabelto
+ search_dir)
+
+(classmapping
+ files
+ rename
+ rename_file)
+(classmapping
+ files
+ rename
+ read_lnk_file)
+(classmapping
+ files
+ rename
+ readwrite_dir)
+
+(classmapping
+ files
+ write
+ write_file)
+(classmapping
+ files
+ write
+ read_lnk_file)
+(classmapping
+ files
+ write
+ search_dir)
+
+(classmapping
+ lnkfiles
+ create
+ addname_dir)
+(classmapping
+ lnkfiles
+ create
+ create_lnk_file)
+(classmapping
+ lnkfiles
+ create
+ read_lnk_file)
+
+(classmapping
+ lnkfiles
+ delete
+ deletename_dir)
+(classmapping
+ lnkfiles
+ delete
+ delete_lnk_file)
+(classmapping
+ lnkfiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ lnkfiles
+ manage
+ readwrite_dir)
+(classmapping
+ lnkfiles
+ manage
+ manage_lnk_file)
+
+(classmapping
+ lnkfiles
+ mounton
+ mounton_lnk_file)
+(classmapping
+ lnkfiles
+ mounton
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ mounton
+ search_dir)
+
+(classmapping
+ lnkfiles
+ read
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ read
+ search_dir)
+
+(classmapping
+ lnkfiles
+ readwrite
+ readwrite_lnk_file)
+(classmapping
+ lnkfiles
+ readwrite
+ search_dir)
+
+(classmapping
+ lnkfiles
+ relabel
+ relabel_lnk_file)
+(classmapping
+ lnkfiles
+ relabel
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ relabel
+ search_dir)
+
+(classmapping
+ lnkfiles
+ relabelfrom
+ relabelfrom_lnk_file)
+(classmapping
+ lnkfiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ lnkfiles
+ relabelto
+ relabelto_lnk_file)
+(classmapping
+ lnkfiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ relabelto
+ search_dir)
+
+(classmapping
+ lnkfiles
+ rename
+ rename_lnk_file)
+(classmapping
+ lnkfiles
+ rename
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ lnkfiles
+ write
+ write_lnk_file)
+(classmapping
+ lnkfiles
+ write
+ read_lnk_file)
+(classmapping
+ lnkfiles
+ write
+ search_dir)
+
+(classmapping
+ sockfiles
+ create
+ addname_dir)
+(classmapping
+ sockfiles
+ create
+ create_sock_file)
+(classmapping
+ sockfiles
+ create
+ read_lnk_file)
+
+(classmapping
+ sockfiles
+ delete
+ deletename_dir)
+(classmapping
+ sockfiles
+ delete
+ delete_sock_file)
+(classmapping
+ sockfiles
+ delete
+ read_lnk_file)
+
+(classmapping
+ sockfiles
+ manage
+ readwrite_dir)
+(classmapping
+ sockfiles
+ manage
+ manage_sock_file)
+(classmapping
+ sockfiles
+ manage
+ read_lnk_file)
+
+(classmapping
+ sockfiles
+ mounton
+ mounton_sock_file)
+(classmapping
+ sockfiles
+ mounton
+ read_lnk_file)
+(classmapping
+ sockfiles
+ mounton
+ search_dir)
+
+(classmapping
+ sockfiles
+ read
+ read_sock_file)
+(classmapping
+ sockfiles
+ read
+ read_lnk_file)
+(classmapping
+ sockfiles
+ read
+ search_dir)
+
+(classmapping
+ sockfiles
+ readwrite
+ readwrite_sock_file)
+(classmapping
+ sockfiles
+ readwrite
+ read_lnk_file)
+(classmapping
+ sockfiles
+ readwrite
+ search_dir)
+
+(classmapping
+ sockfiles
+ relabel
+ relabel_sock_file)
+(classmapping
+ sockfiles
+ relabel
+ read_lnk_file)
+(classmapping
+ sockfiles
+ relabel
+ search_dir)
+
+(classmapping
+ sockfiles
+ relabelfrom
+ relabelfrom_sock_file)
+(classmapping
+ sockfiles
+ relabelfrom
+ read_lnk_file)
+(classmapping
+ sockfiles
+ relabelfrom
+ search_dir)
+
+(classmapping
+ sockfiles
+ relabelto
+ relabelto_sock_file)
+(classmapping
+ sockfiles
+ relabelto
+ read_lnk_file)
+(classmapping
+ sockfiles
+ relabelto
+ search_dir)
+
+(classmapping
+ sockfiles
+ rename
+ rename_sock_file)
+(classmapping
+ sockfiles
+ rename
+ read_lnk_file)
+(classmapping
+ sockfiles
+ rename
+ readwrite_dir)
+
+(classmapping
+ sockfiles
+ write
+ write_sock_file)
+(classmapping
+ sockfiles
+ write
+ read_lnk_file)
+(classmapping
+ sockfiles
+ write
+ search_dir)
+
+;;
+;; Classperms
+;;
+
+(classpermission addname_dir)
+(classpermission append_blk_file)
+(classpermission append_chr_file)
+(classpermission append_fifo_file)
+(classpermission append_file)
+(classpermission appendinherited_blk_file)
+(classpermission appendinherited_chr_file)
+(classpermission appendinherited_fifo_file)
+(classpermission appendinherited_file)
+(classpermission create_blk_file)
+(classpermission create_chr_file)
+(classpermission create_dir)
+(classpermission create_fifo_file)
+(classpermission create_file)
+(classpermission create_lnk_file)
+(classpermission create_sock_file)
+(classpermission delete_blk_file)
+(classpermission delete_chr_file)
+(classpermission delete_dir)
+(classpermission delete_fifo_file)
+(classpermission delete_file)
+(classpermission delete_lnk_file)
+(classpermission delete_sock_file)
+(classpermission deletename_dir)
+(classpermission execute_file)
+(classpermission list_dir)
+(classpermission listinherited_dir)
+(classpermission manage_blk_file)
+(classpermission manage_chr_file)
+(classpermission manage_dir)
+(classpermission manage_fifo_file)
+(classpermission manage_file)
+(classpermission manage_lnk_file)
+(classpermission manage_sock_file)
+(classpermission mapexecute_chr_file)
+(classpermission mapexecute_file)
+(classpermission mounton_blk_file)
+(classpermission mounton_chr_file)
+(classpermission mounton_dir)
+(classpermission mounton_fifo_file)
+(classpermission mounton_file)
+(classpermission mounton_lnk_file)
+(classpermission mounton_sock_file)
+(classpermission read_blk_file)
+(classpermission read_chr_file)
+(classpermission read_fifo_file)
+(classpermission read_file)
+(classpermission read_lnk_file)
+(classpermission read_sock_file)
+(classpermission readinherited_blk_file)
+(classpermission readinherited_chr_file)
+(classpermission readinherited_fifo_file)
+(classpermission readinherited_file)
+(classpermission readinherited_sock_file)
+(classpermission readwrite_blk_file)
+(classpermission readwrite_chr_file)
+(classpermission readwrite_dir)
+(classpermission readwrite_fifo_file)
+(classpermission readwrite_file)
+(classpermission readwrite_lnk_file)
+(classpermission readwrite_sock_file)
+(classpermission readwriteinherited_blk_file)
+(classpermission readwriteinherited_chr_file)
+(classpermission readwriteinherited_dir)
+(classpermission readwriteinherited_fifo_file)
+(classpermission readwriteinherited_file)
+(classpermission readwriteinherited_sock_file)
+(classpermission relabel_blk_file)
+(classpermission relabel_chr_file)
+(classpermission relabel_dir)
+(classpermission relabel_fifo_file)
+(classpermission relabel_file)
+(classpermission relabel_lnk_file)
+(classpermission relabel_sock_file)
+(classpermission relabelfrom_blk_file)
+(classpermission relabelfrom_chr_file)
+(classpermission relabelfrom_dir)
+(classpermission relabelfrom_fifo_file)
+(classpermission relabelfrom_file)
+(classpermission relabelfrom_lnk_file)
+(classpermission relabelfrom_sock_file)
+(classpermission relabelto_blk_file)
+(classpermission relabelto_chr_file)
+(classpermission relabelto_dir)
+(classpermission relabelto_fifo_file)
+(classpermission relabelto_file)
+(classpermission relabelto_lnk_file)
+(classpermission relabelto_sock_file)
+(classpermission rename_blk_file)
+(classpermission rename_chr_file)
+(classpermission rename_dir)
+(classpermission rename_fifo_file)
+(classpermission rename_file)
+(classpermission rename_lnk_file)
+(classpermission rename_sock_file)
+(classpermission search_dir)
+(classpermission write_blk_file)
+(classpermission write_chr_file)
+(classpermission write_dir)
+(classpermission write_fifo_file)
+(classpermission write_file)
+(classpermission write_lnk_file)
+(classpermission write_sock_file)
+(classpermission writeinherited_blk_file)
+(classpermission writeinherited_chr_file)
+(classpermission writeinherited_dir)
+(classpermission writeinherited_fifo_file)
+(classpermission writeinherited_file)
+(classpermission writeinherited_sock_file)
+
+(classpermissionset
+ addname_dir
+ (dir
+  (add_name getattr ioctl lock open read search write)))
+
+(classpermissionset
+ append_blk_file
+ (blk_file
+  (append getattr ioctl lock open)))
+(classpermissionset
+ append_chr_file
+ (chr_file
+  (append getattr ioctl lock open)))
+(classpermissionset
+ append_fifo_file
+ (fifo_file (append getattr ioctl lock open)))
+(classpermissionset
+ append_file
+ (file
+  (append getattr ioctl lock open)))
+
+(classpermissionset
+ appendinherited_blk_file
+ (blk_file
+  (append getattr ioctl lock)))
+(classpermissionset
+ appendinherited_chr_file
+ (chr_file
+  (append getattr ioctl lock)))
+(classpermissionset
+ appendinherited_fifo_file
+ (fifo_file (append getattr ioctl lock)))
+(classpermissionset
+ appendinherited_file
+ (file
+  (append getattr ioctl lock)))
+
+(classpermissionset
+ create_blk_file
+ (blk_file
+  (create getattr)))
+(classpermissionset
+ create_chr_file
+ (chr_file
+  (create getattr)))
+(classpermissionset
+ create_dir
+ (dir
+  (create getattr)))
+(classpermissionset
+ create_fifo_file
+ (fifo_file
+  (create getattr)))
+(classpermissionset
+ create_file
+ (file
+  (create getattr)))
+(classpermissionset
+ create_lnk_file
+ (lnk_file
+  (create getattr)))
+(classpermissionset
+ create_sock_file
+ (sock_file
+  (create getattr)))
+
+(classpermissionset
+ deletename_dir
+ (dir
+  (getattr ioctl lock open read remove_name search write)))
+
+(classpermissionset
+ delete_blk_file
+ (blk_file
+  (getattr unlink)))
+(classpermissionset
+ delete_chr_file
+ (chr_file
+  (getattr unlink)))
+(classpermissionset
+ delete_dir
+ (dir
+  (getattr rmdir)))
+(classpermissionset
+ delete_fifo_file
+ (fifo_file
+  (getattr unlink)))
+(classpermissionset
+ delete_file
+ (file
+  (getattr unlink)))
+(classpermissionset
+ delete_lnk_file
+ (lnk_file
+  (getattr unlink)))
+(classpermissionset
+ delete_sock_file
+ (sock_file
+  (getattr unlink)))
+
+(classpermissionset
+ execute_file
+ (file
+  (execute execute_no_trans getattr ioctl map open read)))
+
+(classpermissionset
+ list_dir
+ (dir
+  (getattr ioctl lock open read search)))
+(classpermissionset
+ listinherited_dir
+ (dir
+  (getattr ioctl lock read search)))
+
+(classpermissionset
+ manage_blk_file
+ (blk_file
+  (append create getattr ioctl link lock open read rename setattr unlink
+          write)))
+(classpermissionset
+ manage_chr_file
+ (chr_file
+  (append create getattr ioctl link lock open read rename setattr unlink
+          write)))
+(classpermissionset
+ manage_dir
+ (dir
+  (add_name create getattr ioctl link lock open read setattr remove_name
+            rename reparent rmdir search write)))
+(classpermissionset
+ manage_fifo_file
+ (fifo_file
+  (append create getattr ioctl link lock open read rename setattr unlink
+          write)))
+(classpermissionset
+ manage_file
+ (file
+  (append create getattr ioctl link lock open read rename setattr unlink
+          write)))
+(classpermissionset
+ manage_lnk_file
+ (lnk_file
+  (append create getattr link lock read rename setattr unlink write)))
+(classpermissionset
+ manage_sock_file
+ (sock_file
+  (append create getattr ioctl link lock open read rename setattr unlink
+          write)))
+
+(classpermissionset
+ mapexecute_chr_file
+ (chr_file
+  (execute map)))
+(classpermissionset
+ mapexecute_file
+ (file
+  (execute map)))
+
+(classpermissionset
+ mounton_blk_file
+ (blk_file
+  (getattr mounton)))
+(classpermissionset
+ mounton_chr_file
+ (chr_file
+  (getattr mounton)))
+(classpermissionset
+ mounton_dir
+ (dir
+  (getattr mounton)))
+(classpermissionset
+ mounton_fifo_file
+ (fifo_file
+  (getattr mounton)))
+(classpermissionset
+ mounton_file
+ (file
+  (getattr mounton)))
+(classpermissionset
+ mounton_lnk_file
+ (lnk_file
+  (getattr mounton)))
+(classpermissionset
+ mounton_sock_file
+ (sock_file
+  (getattr mounton)))
+
+(classpermissionset
+ read_blk_file
+ (blk_file
+  (getattr ioctl lock open read)))
+(classpermissionset
+ read_chr_file
+ (chr_file
+  (getattr ioctl lock open read)))
+(classpermissionset
+ read_fifo_file
+ (fifo_file
+  (getattr ioctl lock open read)))
+(classpermissionset
+ read_file
+ (file
+  (getattr ioctl lock open read)))
+(classpermissionset
+ read_lnk_file
+ (lnk_file
+  (getattr lock read)))
+(classpermissionset
+ read_sock_file
+ (sock_file
+  (getattr ioctl lock open read)))
+
+(classpermissionset
+ readinherited_blk_file
+ (blk_file
+  (getattr ioctl lock read)))
+(classpermissionset
+ readinherited_chr_file
+ (chr_file
+  (getattr ioctl lock read)))
+(classpermissionset
+ readinherited_fifo_file
+ (fifo_file
+  (getattr ioctl lock read)))
+(classpermissionset
+ readinherited_file
+ (file
+  (getattr ioctl lock read)))
+(classpermissionset
+ readinherited_sock_file
+ (sock_file
+  (getattr ioctl lock read)))
+
+(classpermissionset
+ readwrite_blk_file
+ (blk_file
+  (append getattr ioctl lock open read write)))
+(classpermissionset
+ readwrite_chr_file
+ (chr_file
+  (append getattr ioctl lock open read write)))
+(classpermissionset
+ readwrite_dir
+ (dir
+  (add_name getattr ioctl lock open read remove_name search write)))
+(classpermissionset
+ readwrite_fifo_file
+ (fifo_file
+  (append getattr ioctl lock open read write)))
+(classpermissionset
+ readwrite_file
+ (file
+  (append getattr ioctl lock open read write)))
+(classpermissionset
+ readwrite_lnk_file
+ (lnk_file
+  (append getattr lock read write)))
+(classpermissionset
+ readwrite_sock_file
+ (sock_file
+  (append getattr ioctl lock open read write)))
+
+(classpermissionset
+ readwriteinherited_blk_file
+ (blk_file
+  (append getattr ioctl lock read write)))
+(classpermissionset
+ readwriteinherited_chr_file
+ (chr_file
+  (append getattr ioctl lock read write)))
+(classpermissionset
+ readwriteinherited_dir
+ (dir
+  (add_name getattr ioctl lock read remove_name search write)))
+(classpermissionset
+ readwriteinherited_fifo_file
+ (fifo_file
+  (append getattr ioctl lock read write)))
+(classpermissionset
+ readwriteinherited_file
+ (file
+  (append getattr ioctl lock read write)))
+(classpermissionset
+ readwriteinherited_sock_file
+ (sock_file
+  (append getattr ioctl lock read write)))
+
+(classpermissionset
+ relabel_blk_file
+ (blk_file
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_chr_file
+ (chr_file
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_dir
+ (dir
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_fifo_file
+ (fifo_file
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_file
+ (file
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_lnk_file
+ (lnk_file
+  (getattr relabelfrom relabelto)))
+(classpermissionset
+ relabel_sock_file
+ (sock_file
+  (getattr relabelfrom relabelto)))
+
+(classpermissionset
+ relabelfrom_blk_file
+ (blk_file
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_chr_file
+ (chr_file
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_dir
+ (dir
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_fifo_file
+ (fifo_file
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_file
+ (file
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_lnk_file
+ (lnk_file
+  (getattr relabelfrom)))
+(classpermissionset
+ relabelfrom_sock_file
+ (sock_file
+  (getattr relabelfrom)))
+
+(classpermissionset
+ relabelto_blk_file
+ (blk_file
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_chr_file
+ (chr_file
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_dir
+ (dir
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_fifo_file
+ (fifo_file
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_file
+ (file
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_lnk_file
+ (lnk_file
+  (getattr relabelto)))
+(classpermissionset
+ relabelto_sock_file
+ (sock_file
+  (getattr relabelto)))
+
+(classpermissionset
+ rename_blk_file
+ (blk_file
+  (getattr rename)))
+(classpermissionset
+ rename_chr_file
+ (chr_file
+  (getattr rename)))
+(classpermissionset
+ rename_dir
+ (dir
+  (getattr rename)))
+(classpermissionset
+ rename_fifo_file
+ (fifo_file
+  (getattr rename)))
+(classpermissionset
+ rename_file
+ (file
+  (getattr rename)))
+(classpermissionset
+ rename_lnk_file
+ (lnk_file
+  (getattr rename)))
+(classpermissionset
+ rename_sock_file
+ (sock_file
+  (getattr rename)))
+
+(classpermissionset
+ search_dir
+ (dir
+  (getattr search)))
+
+(classpermissionset
+ write_blk_file
+ (blk_file
+  (append getattr ioctl lock open write)))
+(classpermissionset
+ write_chr_file
+ (chr_file
+  (append getattr ioctl lock open write)))
+(classpermissionset
+ write_dir
+ (dir
+  (add_name getattr ioctl lock open remove_name search write)))
+(classpermissionset
+ write_fifo_file
+ (fifo_file
+  (append getattr ioctl lock open write)))
+(classpermissionset
+ write_file
+ (file
+  (append getattr ioctl lock open write)))
+(classpermissionset
+ write_lnk_file
+ (lnk_file
+  (append getattr lock write)))
+(classpermissionset
+ write_sock_file
+ (sock_file
+  (append getattr ioctl lock open write)))
+(classpermissionset
+ writeinherited_blk_file
+ (blk_file (append getattr ioctl lock write)))
+(classpermissionset
+ writeinherited_chr_file
+ (chr_file
+  (append getattr ioctl lock write)))
+(classpermissionset
+ writeinherited_dir
+ (dir
+  (add_name getattr ioctl lock remove_name search write)))
+(classpermissionset
+ writeinherited_fifo_file
+ (fifo_file
+  (append getattr ioctl lock write)))
+(classpermissionset
+ writeinherited_file
+ (file
+  (append getattr ioctl lock write)))
+(classpermissionset
+ writeinherited_sock_file
+ (sock_file
+  (append getattr ioctl lock write)))
+
+(block file
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_all_sock_files ((type ARG1))
+              (allow ARG1 obj_typeattr (sock_file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit obj_all_macro_template)
+
+       (call .sys.type (obj_typeattr))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block obj_all_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr addname_dir))
+
+              (macro append_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_blk_file))
+
+              (macro append_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_chr_file))
+
+              (macro append_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_fifo_file))
+
+              (macro append_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr append_file))
+
+              (macro appendinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_blk_file))
+
+              (macro appendinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_chr_file))
+
+              (macro appendinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_fifo_file))
+
+              (macro appendinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr appendinherited_file))
+
+              (macro create_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (create))))
+
+              (macro create_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typattr create_blk_file))
+
+              (macro create_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_chr_file))
+
+              (macro create_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr create_dir))
+
+              (macro create_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_fifo_file))
+
+              (macro create_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_file))
+
+              (macro create_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_lnk_file))
+
+              (macro create_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr create_sock_file))
+
+              (macro deletename_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr deletename_dir))
+
+              (macro delete_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (delete))))
+
+              (macro delete_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_blk_file))
+
+              (macro delete_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_chr_file))
+
+              (macro delete_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_dir))
+
+              (macro delete_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_fifo_file))
+
+              (macro delete_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_file))
+
+              (macro delete_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_lnk_file))
+
+              (macro delete_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr delete_sock_file))
+
+              (macro execute_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr execute_file))
+
+              (macro getattr_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr (file (getattr))))
+
+              (macro getattr_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr (lnk_file (getattr))))
+
+              (macro list_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr list_dir))
+
+              (macro listinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr listinherited_dir))
+
+              (macro manage_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (manage))))
+
+              (macro manage_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_blk_file))
+
+              (macro manage_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_chr_file))
+
+              (macro manage_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_dir))
+
+              (macro manage_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_fifo_file))
+
+              (macro manage_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_file))
+
+              (macro manage_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_lnk_file))
+
+              (macro manage_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr manage_sock_file))
+
+              (macro mapexecute_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mapexecute_chr_file))
+
+              (macro mapexecute_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mapexecute_file))
+
+              (macro mounton_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (mounton))))
+
+              (macro mounton_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_blk_file))
+
+              (macro mounton_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_chr_file))
+
+              (macro mounton_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_dir))
+
+              (macro mounton_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_fifo_file))
+
+              (macro mounton_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_file))
+
+              (macro mounton_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_lnk_file))
+
+              (macro mounton_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr mounton_sock_file))
+
+              (macro obj_type ((type ARG1))
+                     (typeattributeset obj_typeattr ARG1))
+
+              (macro read_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (read))))
+
+              (macro read_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_blk_file))
+
+              (macro read_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_chr_file))
+
+              (macro read_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_fifo_file))
+
+              (macro read_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_file))
+
+              (macro read_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_lnk_file))
+
+              (macro read_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr read_sock_file))
+
+              (macro readinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_blk_file))
+
+              (macro readinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_chr_file))
+
+              (macro readinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_fifo_file))
+
+              (macro readinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_file))
+
+              (macro readinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readinherited_sock_file))
+
+              (macro readwrite_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (readwrite))))
+
+              (macro readwrite_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_blk_file))
+
+              (macro readwrite_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_chr_file))
+
+              (macro readwrite_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_dir))
+
+              (macro readwrite_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_fifo_file))
+
+              (macro readwrite_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_file))
+
+              (macro readwrite_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_lnk_file))
+
+              (macro readwrite_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwrite_sock_file))
+
+              (macro readwriteinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_blk_file))
+
+              (macro readwriteinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_chr_file))
+
+              (macro readwriteinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_dir))
+
+              (macro readwriteinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_file))
+
+              (macro readwriteinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr readwriteinherited_sock_file))
+
+              (macro relabel_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabel))))
+
+              (macro relabel_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_blk_file))
+
+              (macro relabel_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_chr_file))
+
+              (macro relabel_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_dir))
+
+              (macro relabel_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_fifo_file))
+
+              (macro relabel_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_file))
+
+              (macro relabel_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_lnk_file))
+
+              (macro relabel_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabel_sock_file))
+
+              (macro relabelfrom_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabelfrom))))
+
+              (macro relabelfrom_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_blk_file))
+
+              (macro relabelfrom_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_chr_file))
+
+              (macro relabelfrom_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_dir))
+
+              (macro relabelfrom_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_fifo_file))
+
+              (macro relabelfrom_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_file))
+
+              (macro relabelfrom_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_lnk_file))
+
+              (macro relabelfrom_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelfrom_sock_file))
+
+              (macro relabelto_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (relabelto))))
+
+              (macro relabelto_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_blk_file))
+
+              (macro relabelto_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_chr_file))
+
+              (macro relabelto_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_dir))
+
+              (macro relabelto_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_fifo_file))
+
+              (macro relabelto_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_file))
+
+              (macro relabelto_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_lnk_file))
+
+              (macro relabelto_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr relabelto_sock_file))
+
+              (macro rename_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (rename))))
+
+              (macro rename_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_blk_file))
+
+              (macro rename_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_chr_file))
+
+              (macro rename_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_dir))
+
+              (macro rename_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_fifo_file))
+
+              (macro rename_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_file))
+
+              (macro rename_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_lnk_file))
+
+              (macro rename_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr rename_sock_file))
+
+              (macro search_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr search_dir))
+
+              (macro write_all ((type ARG1))
+                     (allow ARG1 obj_typeattr (allfiles (write))))
+
+              (macro write_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_blk_file))
+
+              (macro write_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_chr_file))
+
+              (macro write_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr write_dir))
+
+              (macro write_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_fifo_file))
+
+              (macro write_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_file))
+
+              (macro write_all_lnk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_lnk_file))
+
+              (macro write_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr write_sock_file))
+
+              (macro writeinherited_all_blk_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_blk_file))
+
+              (macro writeinherited_all_chr_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_chr_file))
+
+              (macro writeinherited_all_dirs ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_dir))
+
+              (macro writeinherited_all_fifo_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_fifo_file))
+
+              (macro writeinherited_all_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_file))
+
+              (macro writeinherited_all_sock_files ((type ARG1))
+                     (allow ARG1 obj_typeattr writeinherited_sock_file))
+
+              (macro dontaudit_manage_all_dirs ((type ARG1))
+                     (dontaudit ARG1 obj_typeattr manage_dir))
+
+              (macro dontaudit_manage_all_files ((type ARG1))
+                     (dontaudit ARG1 obj_typeattr manage_file))
+
+              (macro dontaudit_manage_all_lnk_files ((type ARG1))
+                     (dontaudit ARG1 obj_typeattr manage_lnk_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_all_macro_template)
+
+              (typeattribute
+               obj_typeattr))
+
+       (block except
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit obj_all_macro_template)
+
+              (typeattributeset
+               obj_typeattr
+               (and
+                file.obj_typeattr
+                (not
+                 (exception.obj_typeattr)))))
+
+       (block exception
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit obj_all_macro_template)
+
+              (call file.obj_type (obj_typeattr)))
+
+       (block unconfined
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allow subj_typeattr obj_typeattr
+                     (blk_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (chr_file (not (execmod mounton))))
+              (allow subj_typeattr obj_typeattr (dir (not execmod)))
+              (allow subj_typeattr obj_typeattr
+                     (fifo_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (file (not (entrypoint execmod))))
+              (allow subj_typeattr obj_typeattr
+                     (lnk_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (sock_file (not (execmod map mounton))))
+
+              (call .execute_invalid_files (subj_typeattr))
+              (call .execute_unlabeled_files (subj_typeattr))
+              (call .manage_invalid (subj_typeattr))
+              (call .manage_unlabeled (subj_typeattr))
+              (call .mapexecute_invalid_chr_files (subj_typeattr))
+              (call .mapexecute_unlabeled_chr_files (subj_typeattr))
+              (call .mapexecute_invalid_files (subj_typeattr))
+              (call .mapexecute_unlabeled_files (subj_typeattr))
+              (call .mounton_invalid (subj_typeattr))
+              (call .mounton_unlabeled (subj_typeattr))
+              (call .relabelfrom_invalid (subj_typeattr))
+              (call .relabelfrom_unlabeled (subj_typeattr))))

@@ -1,0 +1,165 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .tinyproxy.subj_type_transition (subj)))
+
+(in .file
+    (call .tinyproxy.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .tinyproxy.obj_type_transition_conftmpfile
+          (unconfined.subj_typeattr))
+    (call .tinyproxy.obj_type_transition_datafile (unconfined.subj_typeattr))
+    (call .tinyproxy.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .tinyproxy.obj_type_transition_logtmpfile
+          (unconfined.subj_typeattr)))
+
+(block tinyproxy
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/tinyproxy"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/tinyproxy/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/etc/tinyproxy\.conf"
+        file
+        conftmpfile_file_context)
+       (filecon
+        "/tmp/etc/tinyproxy\.conf\..*"
+        file
+        conftmpfile_file_context)
+
+       (filecon
+        "/usr/share/tinyproxy"
+        dir
+        datafile_file_context)
+       (filecon
+        "/usr/share/tinyproxy/.*"
+        any
+        datafile_file_context)
+
+       (filecon
+        "/tmp/log/tinyproxy\.log"
+        file
+        logtmpfile_file_context)
+       (filecon
+        "/tmp/log/tinyproxy\.log\..*"
+        file
+        logtmpfile_file_context)
+
+       (filecon
+        "/tmp/tinyproxy\.shared\..*"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/usr/bin/tinyproxy"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_conffile_files ((type ARG1))
+              (allow ARG1 conffile (file (getattr))))
+
+       (macro map_tmpfile_files ((type ARG1))
+              (allow ARG1 tmpfile (file (map))))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "tinyproxy")))
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile file "tinyproxy.conf")))
+
+       (macro obj_type_transition_datafile ((type ARG1))
+              (call .file.datafile_obj_type_transition
+                    (ARG1 datafile dir "tinyproxy")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "tinyproxy")))
+
+       (macro obj_type_transition_logtmpfile ((type ARG1))
+              (call .tmpfile.logtmpfile_obj_type_transition
+                    (ARG1 logtmpfile file "tinyproxy.log")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "*")))
+
+       (macro setattr_logtmpfile_files ((type ARG1))
+              (allow ARG1 logtmpfile (file (setattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.data.obj_template)
+       (blockinherit .tmpfile.conf.obj_template)
+       (blockinherit .tmpfile.log.obj_template)
+       (blockinherit .tmpfile.obj_template)
+
+       (allow subj self (capability (setgid setuid)))
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+
+       (call read_conffile_files (subj))
+       (call search_conffile_dirs (subj))
+
+       (call read_conftmpfile_files (subj))
+
+       (call read_datafile_files (subj))
+       (call search_datafile_dirs (subj))
+
+       (call append_logtmpfile_files (subj))
+       (call read_logtmpfile_files (subj))
+
+       (call manage_tmpfile_files (subj))
+       (call map_tmpfile_files (subj))
+       (call obj_type_transition_tmpfile (subj))
+
+       (call .http.tcp_connect_netports (subj))
+
+       (call .httpproxy.tcp_bind_netports (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_logtmpfile_dirs (subj))
+
+       (optional tinyproxy_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional tinyproxy_opt_httpnetpacket
+                 (call .http.client.recvsend_netpackets (subj)))
+
+       (optional tinyproxy_opt_httpproxynetpacket
+                 (call .httpproxy.server.recvsend_netpackets (subj))))

@@ -1,0 +1,142 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .pppd.subj_type_transition (subj)))
+
+(in .file
+    (call .pppd.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .pppd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .pppd.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block pppd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/ppp"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/ppp/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/run/ppp-.*\.pid"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/pppoe-.*\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/pppd"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/pppd"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/pppd/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macro
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "pppd")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "ppp")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "pppd")))
+
+       (macro obj_type_transition_runtimetmpfile
+              ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile ARG2 ARG3)))
+
+       (macro dontaudit_readwrite_packet_sockets ((type ARG1))
+              (dontaudit ARG1 subj readwrite_packet_socket))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (net_admin net_raw setgid setuid)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_packet_socket)
+       (allow subj self create_pppox_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self (netlink_route_socket (nlmsg_write)))
+
+       (call read_conffile_files (subj))
+       (call read_conffile_lnk_files (subj))
+       (call search_conffile_dirs (subj))
+
+       (call mapexecute_miscfile_files (subj))
+       (call read_miscfile_files (subj))
+       (call search_miscfile_dirs (subj))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj file "*"))
+
+       (call .sys.requestmodule (subj))
+
+       ;; /dev/ttyUSBN used by pppd to send AT commands to modem
+       (call .dev.readwrite_ttydev_chr_files (subj))
+
+       (call .fw3.subj_type_transition (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+
+       (call .netifd.execute_miscfile_files (subj))
+       (call .netifd.search_miscfile_dirs (subj))
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .ppp.readwrite_nodedev_chr_files (subj))
+
+       (call .resolv.manage_tmpfile_files (subj))
+       (call .resolv.obj_type_transition_tmpfile (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .xattr.associate_filesystems (miscfile)))

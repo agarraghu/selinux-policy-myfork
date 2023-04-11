@@ -1,0 +1,104 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcdnsmasq.subj_type_transition (subj)))
+
+(in .file
+    (call .rcdnsmasq.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcdnsmasq
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/dnsmasq"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "dnsmasq")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (chown net_raw sys_ptrace)))
+       (allow subj self create_packet_socket)
+       (allow subj self create_rawip_socket)
+
+       (call .devstatus.subj_type_transition (subj))
+
+       (call .dnsmasq.create_runtimetmpfile_dirs (subj))
+       (call .dnsmasq.create_tmpfile_dirs (subj))
+       (call .dnsmasq.create_tmpfile_files (subj))
+       (call .dnsmasq.getattr_conffile_files (subj))
+       (call .dnsmasq.getattr_datafile_files (subj))
+       (call .dnsmasq.readwrite_tmpfile_files (subj))
+       (call .dnsmasq.search_datafile_dirs (subj))
+       (call .dnsmasq.setattr_runtimetmpfile_dirs (subj))
+       (call .dnsmasq.subj_type_transition (subj))
+       (call .dnsmasq.obj_type_transition_runtimetmpfile (subj))
+       (call .dnsmasq.obj_type_transition_tmpfile (subj file "dhcp.leases"))
+       (call .dnsmasq.obj_type_transition_tmpfile (subj dir "dnsmasq.d"))
+
+       (call .hotplug.getattr_conffile_files (subj))
+       (call .hotplug.list_conffile_dirs (subj))
+
+       (call .ipv6.getattr_sysctlfile_dirs (subj))
+
+       (call .ipcalc.subj_type_transition (subj))
+
+       (call .net.search_sysctlfile_dirs (subj))
+
+       (call .odhcpd.getattr_execfile_files (subj))
+
+       (call .osrelease.read_miscfile_files (subj))
+
+       (call .proc.list_fs_dirs (subj))
+
+       (call .rcodhcpd.execute_initscriptfile_files (subj))
+
+       (call .resolv.addname_tmpfile_dirs (subj))
+       (call .resolv.manage_tmpfile_files (subj))
+       (call .resolv.obj_type_transition_tmpfile (subj))
+
+       (call .subj.read_state_all (subj))
+
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+       (call .tmp.manage_fs_lnk_files (subj))
+
+       (call .tmpfile.addname_statetmpfile_dirs (subj))
+       (call .tmpfile.create_conftmpfile_dirs (subj))
+       (call .tmpfile.create_hoststmpfile_dirs (subj))
+       (call .tmpfile.create_runtimetmpfile_dirs (subj))
+       (call .tmpfile.create_statetmpfile_dirs (subj))
+       (call .tmpfile.manage_conftmpfile_files (subj))
+       (call .tmpfile.manage_hoststmpfile_files (subj))
+       (call .tmpfile.manage_runtimetmpfile_files (subj))
+       (call .tmpfile.readwrite_conftmpfile_dirs (subj))
+       (call .tmpfile.readwrite_hoststmpfile_dirs (subj))
+       (call .tmpfile.readwrite_runtimetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_conftmpfile (subj))
+       (call .tmpfile.obj_type_transition_hoststmpfile (subj))
+       (call .tmpfile.obj_type_transition_runtimetmpfile (subj))
+       (call .tmpfile.obj_type_transition_statetmpfile (subj))
+
+       (optional rcdnsmasq_opt_rcsysntpd
+                 (call .rcsysntpd.execute_initscriptfile_files (subj)))
+
+       (optional rcdnsmasq_opt_rcunbound
+                 (call .rcunbound.use_fds (subj))))

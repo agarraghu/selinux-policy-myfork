@@ -1,0 +1,24 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in fuse
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (genfscon
+     "fuse"
+     "/"
+     fs_context)
+    (genfscon
+     "fusectl"
+     "/"
+     fs_context)
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .fs.noseclabel.obj_template))

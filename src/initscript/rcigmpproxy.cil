@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcigmpproxy.subj_type_transition (subj)))
+
+(in .file
+    (call .rcigmpproxy.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcigmpproxy
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/igmpproxy"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "igmpproxy")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .file.addname_conffile_dirs (subj))
+       (call .file.create_conffile_lnk_files (subj))
+
+       (call .igmpproxy.manage_conftmpfile_files (subj))
+       (call .igmpproxy.obj_type_transition_conftmpfile (subj))
+
+       (call .tmpfile.create_conftmpfile_dirs (subj))
+       (call .tmpfile.deletename_conftmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_conftmpfile (subj)))

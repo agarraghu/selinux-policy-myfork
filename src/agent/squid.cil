@@ -1,0 +1,285 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .squid.sslcrtd.subj_type_transition (subj))
+    (call .squid.subj_type_transition (subj)))
+
+(in .file
+    (call .squid.helper.libfile_obj_type_transition_execfile
+          (unconfined.subj_typeattr))
+    (call .squid.obj_type_transition_certfile (unconfined.subj_typeattr))
+    (call .squid.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .squid.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .squid.obj_type_transition_runtimetmpfile (unconfined.subj_typeattr))
+    (call .squid.obj_type_transition_tmpfile
+          (unconfined.subj_typeattr dir "squid"))
+    (call .squid.sslcrtd.libfile_obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(block squid
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/squid"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/squid/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/etc/squid/ssl_cert"
+        dir
+        certfile_file_context)
+       (filecon
+        "/etc/squid/ssl_cert/.*"
+        any
+        certfile_file_context)
+
+       (filecon
+        "/tmp/squid"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/squid/.*"
+        any
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/run/squid\.pid"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/squid"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro map_tmpfile_files ((type ARG1))
+              (allow ARG1 tmpfile (file (map))))
+
+       (macro obj_type_transition_certfile ((type ARG1))
+              (call .squid.conffile_obj_type_transition
+                    (ARG1 certfile dir "ssl_cert")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "squid")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "squid")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "squid.pid")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.cert.obj_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (allow subj self (capability (setgid setuid)))
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+
+       (call read_certfile_files (subj))
+       (call search_certfile_dirs (subj))
+
+       (call read_conffile_files (subj))
+       (call search_conffile_dirs (subj))
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       (call manage_tmpfile_files (subj))
+       (call map_tmpfile_files (subj))
+       (call obj_type_transition_tmpfile (subj file "*"))
+       (call search_tmpfile_dirs (subj))
+
+       (call helper.execute_execfile_files (subj))
+
+       (call sslcrtd.subj_type_transition (subj))
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+
+       (call .file.read_datafile_files (subj))
+       (call .file.search_datafile_dirs (subj))
+
+       (call .http.tcp_connect_netports (subj))
+
+       (call .httpproxy.tcp_bind_netports (subj))
+
+       (call .locale.read.subj_type (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .tmp.deletename_fs_dirs (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj))
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+
+       (optional squid_opt_dnsnetpacket
+                 (call .dns.local.client.recvsend_netpackets (subj)))
+
+       (optional squid_opt_httpnetpacket
+                 (call .http.client.recvsend_netpackets (subj)))
+
+       (optional squid_opt_httpproxynetpacket
+                 (call .httpproxy.server.recvsend_netpackets (subj)))
+
+       (optional squid_opt_rcsquid
+                 (call .rcsquid.use_fds (subj)))
+
+       (optional squid_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj)))
+
+       (optional squid_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj)))
+
+       (block helper
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/lib/squid/cachemgr\.cgi"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/diskd"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/helper-mux"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/log_db_daemon"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/log_file_daemon"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/security_fake_certverify"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/storeid_file_rewrite"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/url_fake_rewrite"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/url_fake_rewrite\.sh"
+               file
+               execfile_file_context)
+              (filecon
+               "/usr/lib/squid/url_lfs_rewrite"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro libfile_obj_type_transition_execfile ((type ARG1))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "cachemgr.cgi"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "diskd"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "helper-mux"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "log_db_daemon"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "log_file_daemon"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "security_fake_certverify"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "storeid_file_rewrite"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "url_fake_rewrite"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "url_fake_rewrite.sh"))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "url_lfs_rewrite")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .file.exec.obj_template))
+
+       (block sslcrtd
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/lib/squid/security_file_certgen"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro libfile_obj_type_transition_execfile ((type ARG1))
+                     (call .file.libfile_obj_type_transition
+                           (ARG1 execfile file "security_file_certgen")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+
+              (allow subj self (capability (dac_override dac_read_search)))
+
+              (call manage_tmpfile_dirs (subj))
+              (call manage_tmpfile_files (subj))
+
+              (call .file.search_conffile_dirs (subj))
+
+              (optional squid_sslcrtd_opt_rcsquid
+                        (call .rcsquid.use_fds (subj)))))

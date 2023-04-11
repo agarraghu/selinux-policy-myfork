@@ -1,0 +1,139 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .selinux.defaultcontext.obj_type_transition_conffile
+          (unconfined.subj_typeattr))
+    (call .selinux.filecontext.obj_type_transition_conffile
+          (unconfined.subj_typeattr))
+    (call .selinux.obj_type_transition_conffile (unconfined.subj_typeattr)))
+
+(in .selinux
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/etc/selinux"
+     dir
+     conffile_file_context)
+    (filecon
+     "/etc/selinux/.*"
+     any
+     conffile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_conffile ((type ARG1))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 conffile dir "selinux")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit conf.obj_template)
+
+    (block conf
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.conf.obj_template)
+
+                  (call .selinux.conf.obj_type (conffile))))
+
+    (block defaultcontext
+
+           ;;
+           ;; Contexts
+           ;;
+
+           (filecon
+            "/etc/selinux/([^/]*/)?contexts"
+            dir
+            conffile_file_context)
+           (filecon
+            "/etc/selinux/([^/]*/)?contexts/.*"
+            any
+            conffile_file_context)
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro obj_type_transition_conffile ((type ARG1))
+                  (call selinux.conffile_obj_type_transition
+                        (ARG1 conffile dir "contexts")))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit conf.obj_template))
+
+    (block filecontext
+
+           ;;
+           ;; Contexts
+           ;;
+
+
+           (filecon
+            "/etc/selinux/([^/]*/)?contexts/files"
+            dir
+            conffile_file_context)
+           (filecon
+            "/etc/selinux/([^/]*/)?contexts/files/.*"
+            any
+            conffile_file_context)
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro map_conffile_files ((type ARG1))
+                  (allow ARG1 conffile (file (map))))
+
+           (macro obj_type_transition_conffile ((type ARG1))
+                  (call filecontext.conffile_obj_type_transition
+                        (ARG1 conffile dir "files")))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit conf.obj_template)
+
+           (block read
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (call defaultcontext.search_conffile_dirs (subj_typeattr))
+                  (call filecontext.map_conffile_files (subj_typeattr))
+                  (call filecontext.read_conffile_files (subj_typeattr))
+                  (call filecontext.search_conffile_dirs (subj_typeattr))
+                  (call selinux.search_conffile_dirs (subj_typeattr)))))

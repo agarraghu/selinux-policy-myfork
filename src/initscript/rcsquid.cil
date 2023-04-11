@@ -1,0 +1,55 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcsquid.subj_type_transition (subj)))
+
+(in .file
+    (call .rcsquid.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rcsquid
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/squid"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "squid")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (chown dac_override dac_read_search)))
+
+       (call .squid.read_conffile_files (subj))
+       (call .squid.search_conffile_dirs (subj))
+
+       (call .squid.manage_tmpfile_dirs (subj))
+       (call .squid.manage_tmpfile_files (subj))
+       (call .squid.obj_type_transition_tmpfile (subj dir "squid"))
+
+       (call .squid.sslcrtd.subj_type_transition (subj))
+       (call .squid.subj_type_transition (subj))
+
+       (call .www.search_miscfile_dirs (subj))
+
+       (optional rcsquid_opt_luci
+                 (call .luci.cgi.use_fds (subj)))
+
+       (optional rcsquid_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

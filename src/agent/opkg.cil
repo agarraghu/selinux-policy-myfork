@@ -1,0 +1,220 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .opkg.call.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .opkg.key.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .opkg.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .opkg.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .opkg.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .opkg.obj_type_transition_statetmpfile (unconfined.subj_typeattr))
+    (call .opkg.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block opkg
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/opkg"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/opkg/.*"
+        any
+        conffile_file_context)
+       (filecon
+        "/etc/opkg\.conf"
+        file
+        conffile_file_context)
+
+       (filecon
+        "/tmp/opkg\.err"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/opkg\.lock"
+        file
+        tmpfile_file_context)
+       (filecon
+        "/tmp/opkg\.out"
+        file
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/opkg-lists"
+        dir
+        tmpfile_file_context)
+       (filecon
+        "/tmp/opkg-lists/.*"
+        any
+        tmpfile_file_context)
+
+       (filecon
+        "/tmp/usr/lib/opkg"
+        dir
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/usr/lib/opkg/.*"
+        any
+        statetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/opkg"
+        file
+        execfile_file_context)
+
+       ;; should probably target this instead
+       (filecon
+        "/usr/bin/usign"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/opkg"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/opkg/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "opkg")))
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "opkg"))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile file "opkg.conf")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "opkg"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "usign")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile dir "opkg")))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "Packages.gz"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "Packages.sig"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile dir "opkg-lists"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "opkg.err"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "opkg.lock"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file "opkg.out")))
+
+       (macro dontaudit_writeinherited_tmpfile_files ((type ARG1))
+              (dontaudit ARG1 tmpfile writeinherited_file))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .file.exec.obj_template)
+       (blockinherit .file.misc.obj_template)
+       (blockinherit .tmpfile.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile))
+
+       (block call
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/bin/opkg-call"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "opkg-call")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+
+              (call list_conffile_dirs (subj))
+              (call read_conffile_files (subj))
+
+              (call read_miscfile_files (subj))
+              (call search_miscfile_dirs (subj))
+
+              (call list_tmpfile_dirs (subj))
+              (call manage_tmpfile_files (subj))
+              (call obj_type_transition_tmpfile (subj))
+
+              ;; opkg is "trusted"
+              (call opkg.execfile_subj_type_transition (subj .sys.subj))
+              (call opkg.mapexecute_execfile_files (subj))
+              (call opkg.read_execfile_files (subj))
+
+              (call .sys.transition (subj))
+              (call .sys.dontaudit_noatsecure (subj))
+              (call .sys.dontaudit_rlimitinh (subj))
+              (call .sys.dontaudit_siginh (subj))
+
+              (call .jshn.subj_type_transition (subj))
+
+              (call .libubox.read_datafile_files (subj))
+              (call .libubox.search_datafile_dirs (subj))
+
+              (call .selinux.linked.subj_type (subj))
+
+              (call .shell.execute_execfile_files (subj))
+
+              (call .tmp.deletename_fs_dirs (subj))
+
+              (optional opkg_call_opt_cgiio
+                        (call .cgiio.writeinherited_fifo_files (subj))))
+
+       (block key
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/bin/opkg-key"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "opkg-key")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)))

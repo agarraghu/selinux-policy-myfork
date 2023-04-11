@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .login.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block login
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/login\.sh"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "login.sh")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.exec.obj_template))

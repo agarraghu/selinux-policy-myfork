@@ -1,0 +1,38 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .syscfg.obj_type_transition_miscfile (unconfined.subj_typeattr)))
+
+(block syscfg
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/syscfg"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/tmp/syscfg/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_miscfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile dir "syscfg")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .xattr.associate_filesystems (miscfile)))

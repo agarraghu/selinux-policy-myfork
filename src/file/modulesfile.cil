@@ -1,0 +1,478 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/usr/lib/modules"
+     dir
+     modulesfile_file_context)
+    (filecon
+     "/usr/lib/modules/.*"
+     any
+     modulesfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_modulesfile ((type ARG1))
+           (call .file.libfile_obj_type_transition
+                 (ARG1 modulesfile dir "modules")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit modules.obj_template)
+
+    (call obj_type_transition_modulesfile (unconfined.subj_typeattr))
+
+    (call modules.load_all_files (unconfined.subj_typeattr))
+
+    (block modules
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro load_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (system (module_load))))
+
+           (macro map_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (map))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call file.obj_type (obj_typeattr))
+
+           (call .xattr.associate_filesystems (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   modulesfile_file_context
+                   (.u
+                    .r
+                    modulesfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   modulesfile)
+
+                  (call .file.modules.obj_type (modulesfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile addname_dir))
+
+                  (macro append_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile append_blk_file))
+
+                  (macro append_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile append_chr_file))
+
+                  (macro append_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile append_fifo_file))
+
+                  (macro append_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile append_file))
+
+                  (macro appendinherited_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile appendinherited_blk_file))
+
+                  (macro appendinherited_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile appendinherited_chr_file))
+
+                  (macro appendinherited_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile appendinherited_fifo_file))
+
+                  (macro appendinherited_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile appendinherited_file))
+
+                  (macro create_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (create))))
+
+                  (macro create_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile create_blk_file))
+
+                  (macro create_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile create_chr_file))
+
+                  (macro create_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile create_dir))
+
+                  (macro create_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile create_fifo_file))
+
+                  (macro create_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile create_file))
+
+                  (macro create_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile create_lnk_file))
+
+                  (macro create_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile create_sock_file))
+
+                  (macro deletename_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile deletename_dir))
+
+                  (macro delete_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (delete))))
+
+                  (macro delete_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_blk_file))
+
+                  (macro delete_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_chr_file))
+
+                  (macro delete_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile delete_dir))
+
+                  (macro delete_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_fifo_file))
+
+                  (macro delete_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_file))
+
+                  (macro delete_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_lnk_file))
+
+                  (macro delete_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile delete_sock_file))
+
+                  (macro execute_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile execute_file))
+
+                  (macro list_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile list_dir))
+
+                  (macro listinherited_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile listinherited_dir))
+
+                  (macro load_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile (system (module_load))))
+
+                  (macro manage_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (manage))))
+
+                  (macro manage_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_blk_file))
+
+                  (macro manage_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_chr_file))
+
+                  (macro manage_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile manage_dir))
+
+                  (macro manage_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_fifo_file))
+
+                  (macro manage_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_file))
+
+                  (macro manage_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_lnk_file))
+
+                  (macro manage_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile manage_sock_file))
+
+                  (macro mapexecute_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile mapexecute_chr_file))
+
+                  (macro mapexecute_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile mapexecute_file))
+
+                  (macro modulesfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 modulesfile ARG3 ARG4 ARG2)
+                         (call addname_modulesfile_dirs (ARG1)))
+
+                  (macro mounton_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (mounton))))
+
+                  (macro mounton_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_blk_file))
+
+                  (macro mounton_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_chr_file))
+
+                  (macro mounton_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile mounton_dir))
+
+                  (macro mounton_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_fifo_file))
+
+                  (macro mounton_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_file))
+
+                  (macro mounton_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_lnk_file))
+
+                  (macro mounton_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile mounton_sock_file))
+
+                  (macro read_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (read))))
+
+                  (macro read_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile read_blk_file))
+
+                  (macro read_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile read_chr_file))
+
+                  (macro read_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile read_fifo_file))
+
+                  (macro read_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile read_file))
+
+                  (macro readinherited_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile readinherited_blk_file))
+
+                  (macro readinherited_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile readinherited_chr_file))
+
+                  (macro readinherited_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile readinherited_fifo_file))
+
+                  (macro readinherited_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile readinherited_file))
+
+                  (macro readinherited_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile readinherited_sock_file))
+
+                  (macro read_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile read_lnk_file))
+
+                  (macro read_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile read_sock_file))
+
+                  (macro readwrite_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (readwrite))))
+
+                  (macro readwrite_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_blk_file))
+
+                  (macro readwrite_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_chr_file))
+
+                  (macro readwrite_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_dir))
+
+                  (macro readwrite_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_fifo_file))
+
+                  (macro readwrite_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_file))
+
+                  (macro readwriteinherited_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_file))
+
+                  (macro readwriteinherited_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile readwriteinherited_sock_file))
+
+                  (macro readwrite_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_lnk_file))
+
+                  (macro readwrite_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile readwrite_sock_file))
+
+                  (macro relabel_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (relabel))))
+
+                  (macro relabel_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_blk_file))
+
+                  (macro relabel_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_chr_file))
+
+                  (macro relabel_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile relabel_dir))
+
+                  (macro relabel_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_fifo_file))
+
+                  (macro relabel_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_file))
+
+                  (macro relabel_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_lnk_file))
+
+                  (macro relabel_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile relabel_sock_file))
+
+                  (macro relabelfrom_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_dir))
+
+                  (macro relabelfrom_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_file))
+
+                  (macro relabelfrom_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelfrom_sock_file))
+
+                  (macro relabelto_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (relabelto))))
+
+                  (macro relabelto_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_blk_file))
+
+                  (macro relabelto_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_chr_file))
+
+                  (macro relabelto_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_dir))
+
+                  (macro relabelto_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_fifo_file))
+
+                  (macro relabelto_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_file))
+
+                  (macro relabelto_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_lnk_file))
+
+                  (macro relabelto_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile relabelto_sock_file))
+
+                  (macro rename_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (rename))))
+
+                  (macro rename_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_blk_file))
+
+                  (macro rename_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_chr_file))
+
+                  (macro rename_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile rename_dir))
+
+                  (macro rename_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_fifo_file))
+
+                  (macro rename_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_file))
+
+                  (macro rename_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_lnk_file))
+
+                  (macro rename_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile rename_sock_file))
+
+                  (macro search_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile search_dir))
+
+                  (macro write_modulesfile ((type ARG1))
+                         (allow ARG1 modulesfile (allfiles (write))))
+
+                  (macro write_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile write_blk_file))
+
+                  (macro write_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile write_chr_file))
+
+                  (macro write_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile write_dir))
+
+                  (macro write_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile write_fifo_file))
+
+                  (macro write_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile write_file))
+
+                  (macro writeinherited_modulesfile_blk_files ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_blk_file))
+
+                  (macro writeinherited_modulesfile_chr_files ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_chr_file))
+
+                  (macro writeinherited_modulesfile_dirs ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_dir))
+
+                  (macro writeinherited_modulesfile_fifo_files ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_fifo_file))
+
+                  (macro writeinherited_modulesfile_files ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_file))
+
+                  (macro writeinherited_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile writeinherited_sock_file))
+
+                  (macro write_modulesfile_lnk_files ((type ARG1))
+                         (allow ARG1 modulesfile write_lnk_file))
+
+                  (macro write_modulesfile_sock_files ((type ARG1))
+                         (allow ARG1 modulesfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.modules.obj_base_template)
+                  (blockinherit .file.modules.obj_macro_template))))

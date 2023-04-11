@@ -1,0 +1,465 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_conftmpfile (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/etc"
+     dir
+     conftmpfile_file_context)
+    (filecon
+     "/tmp/etc/.*"
+     any
+     conftmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_conftmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 conftmpfile dir "etc")))
+
+    (macro setattr_conftmpfile_dirs ((type ARG1))
+           (allow ARG1 conftmpfile (dir (setattr))))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit conf.obj_template)
+
+    (block conf
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   conftmpfile_file_context
+                   (.u
+                    .r
+                    conftmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   conftmpfile)
+
+                  (call .tmpfile.conf.obj_type (conftmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile addname_dir))
+
+                  (macro append_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile append_blk_file))
+
+                  (macro append_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile append_chr_file))
+
+                  (macro append_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile append_fifo_file))
+
+                  (macro append_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile append_file))
+
+                  (macro appendinherited_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile appendinherited_file))
+
+                  (macro conftmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 conftmpfile ARG3 ARG4 ARG2)
+                         (call addname_conftmpfile_dirs (ARG1)))
+
+                  (macro create_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (create))))
+
+                  (macro create_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_blk_file))
+
+                  (macro create_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_chr_file))
+
+                  (macro create_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile create_dir))
+
+                  (macro create_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_fifo_file))
+
+                  (macro create_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_file))
+
+                  (macro create_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_lnk_file))
+
+                  (macro create_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile create_sock_file))
+
+                  (macro deletename_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile deletename_dir))
+
+                  (macro delete_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (delete))))
+
+                  (macro delete_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_blk_file))
+
+                  (macro delete_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_chr_file))
+
+                  (macro delete_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile delete_dir))
+
+                  (macro delete_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_fifo_file))
+
+                  (macro delete_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_file))
+
+                  (macro delete_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_lnk_file))
+
+                  (macro delete_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile delete_sock_file))
+
+                  (macro execute_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile execute_file))
+
+                  (macro list_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile list_dir))
+
+                  (macro listinherited_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile listinherited_dir))
+
+                  (macro manage_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (manage))))
+
+                  (macro manage_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_blk_file))
+
+                  (macro manage_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_chr_file))
+
+                  (macro manage_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile manage_dir))
+
+                  (macro manage_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_fifo_file))
+
+                  (macro manage_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_file))
+
+                  (macro manage_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_lnk_file))
+
+                  (macro manage_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile manage_sock_file))
+
+                  (macro mapexecute_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile mapexecute_file))
+
+                  (macro mounton_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (mounton))))
+
+                  (macro mounton_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_blk_file))
+
+                  (macro mounton_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_chr_file))
+
+                  (macro mounton_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_dir))
+
+                  (macro mounton_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_fifo_file))
+
+                  (macro mounton_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_file))
+
+                  (macro mounton_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_lnk_file))
+
+                  (macro mounton_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile mounton_sock_file))
+
+                  (macro read_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (read))))
+
+                  (macro read_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_blk_file))
+
+                  (macro read_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_chr_file))
+
+                  (macro read_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_fifo_file))
+
+                  (macro read_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_file))
+
+                  (macro readinherited_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile readinherited_blk_file))
+
+                  (macro readinherited_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile readinherited_chr_file))
+
+                  (macro readinherited_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile readinherited_fifo_file))
+
+                  (macro readinherited_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile readinherited_file))
+
+                  (macro readinherited_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile readinherited_sock_file))
+
+                  (macro read_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_lnk_file))
+
+                  (macro read_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile read_sock_file))
+
+                  (macro readwrite_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_blk_file))
+
+                  (macro readwrite_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_chr_file))
+
+                  (macro readwrite_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_dir))
+
+                  (macro readwrite_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_fifo_file))
+
+                  (macro readwrite_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_file))
+
+                  (macro readwriteinherited_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_lnk_file))
+
+                  (macro readwrite_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile readwrite_sock_file))
+
+                  (macro relabel_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (relabel))))
+
+                  (macro relabel_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_blk_file))
+
+                  (macro relabel_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_chr_file))
+
+                  (macro relabel_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_dir))
+
+                  (macro relabel_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_fifo_file))
+
+                  (macro relabel_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_file))
+
+                  (macro relabel_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_lnk_file))
+
+                  (macro relabel_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabel_sock_file))
+
+                  (macro relabelfrom_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_file))
+
+                  (macro relabelfrom_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_blk_file))
+
+                  (macro relabelto_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_chr_file))
+
+                  (macro relabelto_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_dir))
+
+                  (macro relabelto_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_fifo_file))
+
+                  (macro relabelto_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_file))
+
+                  (macro relabelto_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_lnk_file))
+
+                  (macro relabelto_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile relabelto_sock_file))
+
+                  (macro rename_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (rename))))
+
+                  (macro rename_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_blk_file))
+
+                  (macro rename_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_chr_file))
+
+                  (macro rename_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile rename_dir))
+
+                  (macro rename_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_fifo_file))
+
+                  (macro rename_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_file))
+
+                  (macro rename_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_lnk_file))
+
+                  (macro rename_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile rename_sock_file))
+
+                  (macro search_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile search_dir))
+
+                  (macro write_conftmpfile ((type ARG1))
+                         (allow ARG1 conftmpfile (allfiles (write))))
+
+                  (macro write_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_blk_file))
+
+                  (macro write_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_chr_file))
+
+                  (macro write_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile write_dir))
+
+                  (macro write_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_fifo_file))
+
+                  (macro write_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_file))
+
+                  (macro writeinherited_conftmpfile_blk_files ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_conftmpfile_chr_files ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_conftmpfile_dirs ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_dir))
+
+                  (macro writeinherited_conftmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_conftmpfile_files ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_file))
+
+                  (macro writeinherited_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile writeinherited_sock_file))
+
+                  (macro write_conftmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_lnk_file))
+
+                  (macro write_conftmpfile_sock_files ((type ARG1))
+                         (allow ARG1 conftmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.conf.obj_base_template)
+                  (blockinherit .tmpfile.conf.obj_macro_template))))

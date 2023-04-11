@@ -1,0 +1,480 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/etc/init\.d"
+     dir
+     initscriptfile_file_context)
+    (filecon
+     "/etc/init\.d/.*"
+     any
+     initscriptfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_initscriptfile ((type ARG1))
+           (call .file.conffile_obj_type_transition
+                 (ARG1 initscriptfile dir "init.d")))
+
+    (macro dontaudit_auditexecuteaccess_initscriptfile_files ((type ARG1))
+           (dontaudit ARG1 initscriptfile (file (getattr execute))))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit initscript.obj_template)
+
+    (call obj_type_transition_initscriptfile (unconfined.subj_typeattr))
+
+    (block initscript
+
+           ;;
+           ;; Macros
+           ;;
+
+           (macro entrypoint_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (entrypoint))))
+
+           (macro getattr_all_files ((type ARG1))
+                  (allow ARG1 obj_typeattr (file (getattr))))
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call exec.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   initscriptfile_file_context
+                   (.u
+                    .r
+                    initscriptfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   initscriptfile)
+
+                  (call .file.initscript.obj_type (initscriptfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile addname_dir))
+
+                  (macro append_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile append_blk_file))
+
+                  (macro append_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile append_chr_file))
+
+                  (macro append_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile append_fifo_file))
+
+                  (macro append_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile append_file))
+
+                  (macro appendinherited_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile appendinherited_blk_file))
+
+                  (macro appendinherited_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile appendinherited_chr_file))
+
+                  (macro appendinherited_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile appendinherited_fifo_file))
+
+                  (macro appendinherited_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile appendinherited_file))
+
+                  (macro create_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (create))))
+
+                  (macro create_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_blk_file))
+
+                  (macro create_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_chr_file))
+
+                  (macro create_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile create_dir))
+
+                  (macro create_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_fifo_file))
+
+                  (macro create_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_file))
+
+                  (macro create_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_lnk_file))
+
+                  (macro create_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile create_sock_file))
+
+                  (macro deletename_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile deletename_dir))
+
+                  (macro delete_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (delete))))
+
+                  (macro delete_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_blk_file))
+
+                  (macro delete_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_chr_file))
+
+                  (macro delete_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile delete_dir))
+
+                  (macro delete_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_fifo_file))
+
+                  (macro delete_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_file))
+
+                  (macro delete_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_lnk_file))
+
+                  (macro delete_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile delete_sock_file))
+
+                  (macro entrypoint_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile (file (entrypoint))))
+
+                  (macro initscriptfile_subj_type_transition ((type ARG1)(type ARG2))
+                         (typetransition ARG1 initscriptfile process "*" ARG2))
+
+                  (macro initscriptfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 initscriptfile ARG3 ARG4 ARG2)
+                         (call addname_initscriptfile_dirs (ARG1)))
+
+                  (macro execute_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile execute_file))
+
+                  (macro list_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile list_dir))
+
+                  (macro listinherited_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile listinherited_dir))
+
+                  (macro manage_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (manage))))
+
+                  (macro manage_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_blk_file))
+
+                  (macro manage_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_chr_file))
+
+                  (macro manage_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile manage_dir))
+
+                  (macro manage_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_fifo_file))
+
+                  (macro manage_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_file))
+
+                  (macro manage_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_lnk_file))
+
+                  (macro manage_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile manage_sock_file))
+
+                  (macro mapexecute_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile mapexecute_chr_file))
+
+                  (macro mapexecute_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile mapexecute_file))
+
+                  (macro mounton_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (mounton))))
+
+                  (macro mounton_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_blk_file))
+
+                  (macro mounton_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_chr_file))
+
+                  (macro mounton_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_dir))
+
+                  (macro mounton_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_fifo_file))
+
+                  (macro mounton_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_file))
+
+                  (macro mounton_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_lnk_file))
+
+                  (macro mounton_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile mounton_sock_file))
+
+                  (macro read_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (read))))
+
+                  (macro read_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_blk_file))
+
+                  (macro read_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_chr_file))
+
+                  (macro read_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_fifo_file))
+
+                  (macro read_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_file))
+
+                  (macro readinherited_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile readinherited_blk_file))
+
+                  (macro readinherited_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile readinherited_chr_file))
+
+                  (macro readinherited_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile readinherited_fifo_file))
+
+                  (macro readinherited_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile readinherited_file))
+
+                  (macro readinherited_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile readinherited_sock_file))
+
+                  (macro read_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_lnk_file))
+
+                  (macro read_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile read_sock_file))
+
+                  (macro readwrite_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (readwrite))))
+
+                  (macro readwrite_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_blk_file))
+
+                  (macro readwrite_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_chr_file))
+
+                  (macro readwrite_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_dir))
+
+                  (macro readwrite_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_fifo_file))
+
+                  (macro readwrite_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_file))
+
+                  (macro readwriteinherited_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_file))
+
+                  (macro readwriteinherited_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwriteinherited_sock_file))
+
+                  (macro readwrite_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_lnk_file))
+
+                  (macro readwrite_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile readwrite_sock_file))
+
+                  (macro relabel_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (relabel))))
+
+                  (macro relabel_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_blk_file))
+
+                  (macro relabel_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_chr_file))
+
+                  (macro relabel_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_dir))
+
+                  (macro relabel_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_fifo_file))
+
+                  (macro relabel_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_file))
+
+                  (macro relabel_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_lnk_file))
+
+                  (macro relabel_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabel_sock_file))
+
+                  (macro relabelfrom_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_dir))
+
+                  (macro relabelfrom_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_file))
+
+                  (macro relabelfrom_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelfrom_sock_file))
+
+                  (macro relabelto_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (relabelto))))
+
+                  (macro relabelto_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_blk_file))
+
+                  (macro relabelto_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_chr_file))
+
+                  (macro relabelto_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_dir))
+
+                  (macro relabelto_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_fifo_file))
+
+                  (macro relabelto_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_file))
+
+                  (macro relabelto_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_lnk_file))
+
+                  (macro relabelto_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile relabelto_sock_file))
+
+                  (macro rename_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (rename))))
+
+                  (macro rename_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_blk_file))
+
+                  (macro rename_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_chr_file))
+
+                  (macro rename_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile rename_dir))
+
+                  (macro rename_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_fifo_file))
+
+                  (macro rename_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_file))
+
+                  (macro rename_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_lnk_file))
+
+                  (macro rename_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile rename_sock_file))
+
+                  (macro search_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile search_dir))
+
+                  (macro write_initscriptfile ((type ARG1))
+                         (allow ARG1 initscriptfile (allfiles (write))))
+
+                  (macro write_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_blk_file))
+
+                  (macro write_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_chr_file))
+
+                  (macro write_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile write_dir))
+
+                  (macro write_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_fifo_file))
+
+                  (macro write_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_file))
+
+                  (macro writeinherited_initscriptfile_blk_files ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_blk_file))
+
+                  (macro writeinherited_initscriptfile_chr_files ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_chr_file))
+
+                  (macro writeinherited_initscriptfile_dirs ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_dir))
+
+                  (macro writeinherited_initscriptfile_fifo_files ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_fifo_file))
+
+                  (macro writeinherited_initscriptfile_files ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_file))
+
+                  (macro writeinherited_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile writeinherited_sock_file))
+
+                  (macro write_initscriptfile_lnk_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_lnk_file))
+
+                  (macro write_initscriptfile_sock_files ((type ARG1))
+                         (allow ARG1 initscriptfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.initscript.obj_base_template)
+                  (blockinherit .file.initscript.obj_macro_template))))

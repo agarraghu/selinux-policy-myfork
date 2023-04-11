@@ -1,0 +1,77 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .kcore.readwrite.subj_type (unconfined.subj_typeattr)))
+
+(block kcore
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "proc"
+        "/kcore"
+        procfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_procfile_files ((type ARG1))
+              (allow ARG1 procfile (file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .procfile.obj_template)
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr procfile (file (read))))
+
+       (block readwrite
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (call read.subj_type (subj_typeattr))
+              (call write.subj_type (subj_typeattr)))
+
+       (block write
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr procfile (file (append write)))))

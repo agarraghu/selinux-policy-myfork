@@ -1,0 +1,23 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block zramctl
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "sysfs"
+        "/class/zram-control"
+        sysfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysfile.class.obj_template)
+
+       (optional zramctl_opt_sandbox
+                 (call .file.sandboxexception.obj_type (sysfile))))

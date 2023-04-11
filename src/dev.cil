@@ -1,0 +1,44 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block dev
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_all_chr_files ((type ARG1))
+              (allow ARG1 obj_typeattr (chr_file (getattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.obj_all_macro_template)
+
+       (call .sys.type (obj_typeattr))
+
+       (call tmp.associate_filesystems (obj_typeattr))
+
+       (block unconfined
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (allow subj_typeattr obj_typeattr
+                     (blk_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr (chr_file (not execmod)))
+              (allow subj_typeattr obj_typeattr
+                     (dir (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (fifo_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (file (not (entrypoint execmod mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (lnk_file (not (execmod map mounton))))
+              (allow subj_typeattr obj_typeattr
+                     (sock_file (not (execmod map mounton))))))

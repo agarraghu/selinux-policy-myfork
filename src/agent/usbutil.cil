@@ -1,0 +1,60 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .usbutil.subj_type_transition (subj)))
+
+(in .file
+    (call .usbutil.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block usbutil
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/lsusb"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/usbreset"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "lsusb"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "usbreset")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self create_netlink_kobject_uevent_socket)
+
+       (call .sys.getattr_filesystems (subj))
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_fs_dirs (subj))
+
+       (call .bus.list_sysfile_dirs (subj))
+       (call .bus.read_sysfile_lnk_files (subj))
+
+       (call .debug.search_fs_dirs (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .tmp.list_fs_dirs (subj))
+
+       (call .usb.write_nodedev_chr_files (subj)))

@@ -1,0 +1,54 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .selinux.obj_type_transition_secfile (unconfined.subj_typeattr))
+    (call .selinux.read.subj_type (unconfined.subj_typeattr)))
+
+(in .selinux
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/etc/selinux/([^/]*/)?policy"
+     dir
+     secfile_file_context)
+    (filecon
+     "/etc/selinux/([^/]*/)?policy/.*"
+     any
+     secfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_secfile ((type ARG1))
+           (call selinux.conffile_obj_type_transition
+                 (ARG1 secfile file "policy")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .file.sec.obj_template)
+
+    (block read
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .subj.subj_all_macro_template)
+
+           (typeattribute
+            not_subj_typeattr)
+
+           (typeattributeset
+            not_subj_typeattr
+            (not
+             subj_typeattr))
+
+           (neverallow not_subj_typeattr secfile (file (read)))))

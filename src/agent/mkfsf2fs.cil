@@ -1,0 +1,82 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .mkfsf2fs.subj_type_transition (subj)))
+
+(in .file
+    (call .mkfsf2fs.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block mkfsf2fs
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/mkfs\.f2fs"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "mkfs.f2fs")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self (capability (sys_rawio)))
+       (allow subj self create_unix_stream_socket)
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.search_fs_dirs (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dev.read_sysfile_lnk_files (subj))
+       (call .dev.search_sysfile_dirs (subj))
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .file.read_conffile_lnk_files (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .version.read_procfile_files (subj))
+
+       (call .watchdog.dontaudit_writeinherited_nodedev_chr_files (subj))
+
+       (optional mkfsf2fs_opt_dmstordev
+                 (call .dm.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_loopstordev
+                 (call .loop.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_mmcstordev
+                 (call .mmc.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_nvmestordev
+                 (call .nvme.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_sdstordev
+                 (call .sd.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_vdstordev
+                 (call .vd.readwrite_stordev_blk_files (subj)))
+
+       (optional mkfsf2fs_opt_zramblocksysfile
+                 (call .zram.read_sysfile_files (subj))
+                 (call .zram.search_sysfile_dirs (subj)))
+
+       (optional mkfsf2fs_opt_zramstordev
+                 (call .zram.readwrite_stordev_blk_files (subj))))

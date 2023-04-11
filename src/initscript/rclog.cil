@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rclog.subj_type_transition (subj)))
+
+(in .file
+    (call .rclog.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rclog
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/log"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "log")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .kernel.read_sysctlfile_files (subj))
+       (call .kernel.search_sysctlfile_dirs (subj))
+
+       (call .tmp.addname_fs_dirs (subj))
+
+       (call .tmpfile.create_logtmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_logtmpfile (subj)))

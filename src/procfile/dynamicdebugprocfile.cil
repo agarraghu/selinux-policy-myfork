@@ -1,0 +1,20 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block dynamicdebug
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "proc"
+        "/dynamic_debug"
+        procfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .procfile.obj_template))

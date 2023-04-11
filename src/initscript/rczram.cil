@@ -1,0 +1,56 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rczram.subj_type_transition (subj)))
+
+(in .file
+    (call .rczram.obj_type_transition_initscriptfile
+          (unconfined.subj_typeattr)))
+
+(block rczram
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/init\.d/zram"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "zram")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+
+       (allow subj self (capability (sys_admin)))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+
+       (call .block.read_sysfile_lnk_files (subj))
+       (call .block.search_sysfile_dirs (subj))
+
+       (call .dev.stor.readwrite.subj_type (subj))
+
+       (call .devices.search_sysfile_dirs (subj))
+
+       (call .meminfo.read_procfile_files (subj))
+
+       (call .swaps.read_procfile_files (subj))
+
+       (call .zram.readwrite_stordev_blk_files (subj))
+
+       (call .zram.manage_sysfile_files (subj))
+       (call .zram.readwrite_sysfile_dirs (subj)))

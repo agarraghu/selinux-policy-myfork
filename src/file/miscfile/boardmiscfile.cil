@@ -1,0 +1,45 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .board.conffile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .board.tmp_obj_type_transition_miscfile (unconfined.subj_typeattr)))
+
+(block board
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/board\.json"
+        file
+        miscfile_file_context)
+
+       (filecon
+        "/tmp/board\.json"
+        file
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro conffile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 miscfile file "board.json")))
+
+       (macro tmp_obj_type_transition_miscfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 miscfile file "board.json")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .tmp.associate_filesystems (miscfile))
+       (call .xattr.associate_filesystems (miscfile)))

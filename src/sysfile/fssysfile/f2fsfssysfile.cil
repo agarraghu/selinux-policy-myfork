@@ -1,0 +1,20 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block f2fs
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "sysfs"
+        "/fs/f2fs"
+        sysfile_file_context)
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .sysfile.fs.obj_template))

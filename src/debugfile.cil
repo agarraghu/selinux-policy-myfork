@@ -1,0 +1,435 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block debugfile
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.obj_all_macro_template)
+
+       (call .file.obj_type (obj_typeattr))
+
+       (call .debug.associate_filesystems (obj_typeattr))
+
+       (optional debugfile_opt_sandbox
+                 (call .file.sandboxexception.obj_type (obj_typeattr)))
+
+       ;;
+       ;; Templates
+       ;;
+
+       (block obj_base_template
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (context
+               debugfile_file_context
+               (.u
+                .r
+                debugfile
+                (systemlow
+                 systemlow)))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_base_template)
+
+              (type
+               debugfile)
+
+              (call .debugfile.obj_type (debugfile)))
+
+       (block obj_macro_template
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro addname_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile addname_dir))
+
+              (macro append_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile append_blk_file))
+
+              (macro append_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile append_chr_file))
+
+              (macro append_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile append_fifo_file))
+
+              (macro append_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile append_file))
+
+              (macro appendinherited_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile appendinherited_blk_file))
+
+              (macro appendinherited_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile appendinherited_chr_file))
+
+              (macro appendinherited_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile appendinherited_fifo_file))
+
+              (macro appendinherited_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile appendinherited_file))
+
+              (macro create_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (create))))
+
+              (macro create_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile create_blk_file))
+
+              (macro create_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile create_chr_file))
+
+              (macro create_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile create_dir))
+
+              (macro create_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile create_fifo_file))
+
+              (macro create_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile create_file))
+
+              (macro create_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile create_lnk_file))
+
+              (macro create_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile create_sock_file))
+
+              (macro debugfile_obj_type_transition
+                     ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                     (typetransition ARG1 debugfile ARG3 ARG4 ARG2)
+                     (call addname_debugfile_dirs (ARG1)))
+
+              (macro deletename_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile deletename_dir))
+
+              (macro delete_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (delete))))
+
+              (macro delete_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile delete_blk_file))
+
+              (macro delete_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile delete_chr_file))
+
+              (macro delete_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile delete_dir))
+
+              (macro delete_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile delete_fifo_file))
+
+              (macro delete_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile delete_file))
+
+              (macro delete_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile delete_lnk_file))
+
+              (macro delete_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile delete_sock_file))
+
+              (macro execute_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile execute_file))
+
+              (macro list_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile list_dir))
+
+              (macro listinherited_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile listinherited_dir))
+
+              (macro manage_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (manage))))
+
+              (macro manage_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile manage_blk_file))
+
+              (macro manage_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile manage_chr_file))
+
+              (macro manage_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile manage_dir))
+
+              (macro manage_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile manage_fifo_file))
+
+              (macro manage_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile manage_file))
+
+              (macro manage_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile manage_lnk_file))
+
+              (macro manage_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile manage_sock_file))
+
+              (macro mapexecute_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile mapexecute_chr_file))
+
+              (macro mapexecute_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile mapexecute_file))
+
+              (macro mounton_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (mounton))))
+
+              (macro mounton_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_blk_file))
+
+              (macro mounton_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_chr_file))
+
+              (macro mounton_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile mounton_dir))
+
+              (macro mounton_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_fifo_file))
+
+              (macro mounton_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_file))
+
+              (macro mounton_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_lnk_file))
+
+              (macro mounton_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile mounton_sock_file))
+
+              (macro read_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (read))))
+
+              (macro read_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile read_blk_file))
+
+              (macro read_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile read_chr_file))
+
+              (macro read_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile read_fifo_file))
+
+              (macro read_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile read_file))
+
+              (macro read_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile read_lnk_file))
+
+              (macro read_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile read_sock_file))
+
+              (macro readinherited_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile readinherited_blk_file))
+
+              (macro readinherited_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile readinherited_chr_file))
+
+              (macro readinherited_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile readinherited_fifo_file))
+
+              (macro readinherited_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile readinherited_file))
+
+              (macro readinherited_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile readinherited_sock_file))
+
+              (macro readwrite_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (readwrite))))
+
+              (macro readwrite_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_blk_file))
+
+              (macro readwrite_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_chr_file))
+
+              (macro readwrite_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile readwrite_dir))
+
+              (macro readwrite_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_fifo_file))
+
+              (macro readwrite_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_file))
+
+              (macro readwrite_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_lnk_file))
+
+              (macro readwrite_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile readwrite_sock_file))
+
+              (macro readwriteinherited_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_blk_file))
+
+              (macro readwriteinherited_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_chr_file))
+
+              (macro readwriteinherited_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_dir))
+
+              (macro readwriteinherited_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_fifo_file))
+
+              (macro readwriteinherited_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_file))
+
+              (macro readwriteinherited_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile readwriteinherited_sock_file))
+
+              (macro relabel_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (relabel))))
+
+              (macro relabel_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_blk_file))
+
+              (macro relabel_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_chr_file))
+
+              (macro relabel_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile relabel_dir))
+
+              (macro relabel_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_fifo_file))
+
+              (macro relabel_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_file))
+
+              (macro relabel_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_lnk_file))
+
+              (macro relabel_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile relabel_sock_file))
+
+              (macro relabelfrom_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (relabelfrom))))
+
+              (macro relabelfrom_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_blk_file))
+
+              (macro relabelfrom_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_chr_file))
+
+              (macro relabelfrom_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_dir))
+
+              (macro relabelfrom_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_fifo_file))
+
+              (macro relabelfrom_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_file))
+
+              (macro relabelfrom_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_lnk_file))
+
+              (macro relabelfrom_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile relabelfrom_sock_file))
+
+              (macro relabelto_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (relabelto))))
+
+              (macro relabelto_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_blk_file))
+
+              (macro relabelto_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_chr_file))
+
+              (macro relabelto_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile relabelto_dir))
+
+              (macro relabelto_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_fifo_file))
+
+              (macro relabelto_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_file))
+
+              (macro relabelto_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_lnk_file))
+
+              (macro relabelto_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile relabelto_sock_file))
+
+              (macro rename_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (rename))))
+
+              (macro rename_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile rename_blk_file))
+
+              (macro rename_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile rename_chr_file))
+
+              (macro rename_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile rename_dir))
+
+              (macro rename_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile rename_fifo_file))
+
+              (macro rename_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile rename_file))
+
+              (macro rename_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile rename_lnk_file))
+
+              (macro rename_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile rename_sock_file))
+
+              (macro search_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile search_dir))
+
+              (macro write_debugfile ((type ARG1))
+                     (allow ARG1 debugfile (allfiles (write))))
+
+              (macro write_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile write_blk_file))
+
+              (macro write_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile write_chr_file))
+
+              (macro write_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile write_dir))
+
+              (macro write_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile write_fifo_file))
+
+              (macro write_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile write_file))
+
+              (macro write_debugfile_lnk_files ((type ARG1))
+                     (allow ARG1 debugfile write_lnk_file))
+
+              (macro write_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile write_sock_file))
+
+              (macro writeinherited_debugfile_blk_files ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_blk_file))
+
+              (macro writeinherited_debugfile_chr_files ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_chr_file))
+
+              (macro writeinherited_debugfile_dirs ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_dir))
+
+              (macro writeinherited_debugfile_fifo_files ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_fifo_file))
+
+              (macro writeinherited_debugfile_files ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_file))
+
+              (macro writeinherited_debugfile_sock_files ((type ARG1))
+                     (allow ARG1 debugfile writeinherited_sock_file))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_macro_template))
+
+       (block obj_template
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockabstract obj_template)
+
+              (blockinherit .debugfile.obj_base_template)
+              (blockinherit .debugfile.obj_macro_template)))

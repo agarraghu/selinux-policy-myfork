@@ -1,0 +1,97 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(block mem
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/kmem"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/mem"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/port"
+        char
+        nodedev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_nodedev_chr_files ((type ARG1))
+              (allow ARG1 nodedev (chr_file (getattr))))
+
+       (macro obj_type_transition_nodedev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "kmem"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "mem"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "port")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.node.obj_template)
+
+       (call obj_type_transition_nodedev (unconfined.subj_typeattr))
+
+       (call readwrite.subj_type (unconfined.subj_typeattr))
+
+       (block read
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr nodedev (chr_file (read))))
+
+       (block readwrite
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (call read.subj_type (subj_typeattr))
+              (call write.subj_type (subj_typeattr))
+
+              (call subj_type (unconfined.subj_typeattr)))
+
+       (block write
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .subj.subj_all_macro_template)
+
+              (typeattribute
+               not_subj_typeattr)
+
+              (typeattributeset
+               not_subj_typeattr
+               (not
+                subj_typeattr))
+
+              (neverallow not_subj_typeattr nodedev
+                          (chr_file (append write)))))

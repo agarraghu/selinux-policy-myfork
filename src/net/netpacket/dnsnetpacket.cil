@@ -1,0 +1,35 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dns
+
+    (block client
+
+           (blockinherit .net.packet.obj_template)
+
+           (call .dns.packet.obj_type (netpacket)))
+
+    (block local
+
+           (block client
+
+                  (blockinherit .net.packet.obj_template)
+
+                  (call .dns.packet.obj_type (netpacket)))
+
+           (block server
+
+                  (blockinherit .net.packet.obj_template)
+
+                  (call .dns.packet.obj_type (netpacket))))
+
+    (block packet
+
+           (blockinherit .net.packet.obj_all_macro_template))
+
+    (block server
+
+           (blockinherit .net.packet.obj_template)
+
+           (call .dns.packet.obj_type (netpacket))))

@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .cron.obj_type_transition_runtimetmpfile (unconfined.subj_typeattr)))
+
+(in .cron
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/run/crond\.pid"
+     file
+     runtimetmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_runtimetmpfile ((type ARG1))
+           (call .tmpfile.runtimetmpfile_obj_type_transition
+                 (ARG1 runtimetmpfile file "crond.pid")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .tmpfile.runtime.obj_template))

@@ -1,0 +1,134 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .stubby.subj_type_transition (subj)))
+
+(in .file
+    (call .stubby.obj_type_transition_conffile (unconfined.subj_typeattr))
+    (call .stubby.obj_type_transition_conftmpfile (unconfined.subj_typeattr))
+    (call .stubby.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .stubby.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr))
+    (call .stubby.obj_type_transition_statetmpfile (unconfined.subj_typeattr)))
+
+(block stubby
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/etc/stubby"
+        dir
+        conffile_file_context)
+       (filecon
+        "/etc/stubby/.*"
+        any
+        conffile_file_context)
+
+       (filecon
+        "/tmp/etc/stubby"
+        dir
+        conftmpfile_file_context)
+       (filecon
+        "/tmp/etc/stubby/.*"
+        any
+        conftmpfile_file_context)
+
+       (filecon
+        "/tmp/lib/stubby"
+        dir
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/lib/stubby/.*"
+        any
+        statetmpfile_file_context)
+
+       (filecon
+        "/tmp/run/stubby\.pid"
+        file
+        runtimetmpfile_file_context)
+       (filecon
+        "/tmp/run/stubby\.pid\..*"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/stubby"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conffile ((type ARG1))
+              (call .file.conffile_obj_type_transition
+                    (ARG1 conffile dir "stubby")))
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile dir "stubby")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "stubby")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "stubby.pid")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile dir "stubby")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.conf.obj_template)
+       (blockinherit .tmpfile.conf.obj_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (call list_conffile_dirs (subj))
+       (call read_conffile_files (subj))
+
+       (call list_conftmpfile_dirs (subj))
+       (call read_conftmpfile_files (subj))
+
+       (call manage_statetmpfile_dirs (subj))
+       (call manage_statetmpfile_files (subj))
+
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .dns.tcp_connect_netports (subj))
+
+       (call .dnsstub.tcp_bind_netports (subj))
+       (call .dnsstub.udp_bind_netports (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .nameservice.read_miscfile_files (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.tcp_bind_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .resolv.read.subj_type (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (optional stubby_opt_dnsnetpacket
+                 (call .dns.client.recvsend_netpackets (subj)))
+
+       (optional stubby_opt_dnsstubnetpacket
+                 (call .dnsstub.server.recvsend_netpackets (subj)))
+
+       (optional stubby_opt_sslcertfile
+                 (call .ssl.read.subj_type (subj))))

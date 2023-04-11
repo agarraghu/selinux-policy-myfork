@@ -1,0 +1,34 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .hotplugcall
+
+    ;;
+    ;; installs a hotplug script that runs /etc/init.d/unbound
+    ;; these rules are needed when initscripts are not targeted
+    ;;
+
+    (allow subj self (capability (chown fowner fsetid sys_ptrace)))
+
+    (call .proc.list_fs_dirs (subj))
+
+    (call .resolv.manage_tmpfile_files (subj))
+    (call .resolv.obj_type_transition_tmpfile (subj))
+
+    (call .subj.read_state_all (subj))
+
+    (call .tmp.manage_fs_lnk_files (subj))
+    (call .tmp.deletename_fs_dirs (subj))
+
+    (call .tmpfile.search_conftmpfile_dirs (subj))
+
+    (call .unbound.execute_execfile_files (subj))
+    (call .unbound.list_conffile_dirs (subj))
+    (call .unbound.read_conffile_files (subj))
+    (call .unbound.read_miscfile_files (subj))
+    (call .unbound.search_miscfile_dirs (subj))
+    (call .unbound.setattr_statetmpfile_dirs (subj))
+
+    (optional unboundhotplug_opt_sslcertfile
+              (call .ssl.read.subj_type (subj))))

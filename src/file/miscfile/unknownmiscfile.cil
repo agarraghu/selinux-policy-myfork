@@ -1,0 +1,64 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr blk_file "*"))
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr chr_file "*"))
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr dir "*"))
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr fifo_file "*"))
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr file "*"))
+    (call .unknown.obj_type_transition_miscfile
+          (unconfined.subj_typeattr sock_file "*")))
+
+(block unknown
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/.*"
+        block
+        miscfile_file_context)
+       (filecon
+        "/.*"
+        char
+        miscfile_file_context)
+       (filecon
+        "/.*"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/.*"
+        file
+        miscfile_file_context)
+       (filecon
+        "/.*"
+        pipe
+        miscfile_file_context)
+       (filecon
+        "/.*"
+        socket
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_miscfile ((type ARG1)(class ARG2)(name ARG3))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 miscfile ARG2 ARG3)))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

@@ -1,0 +1,55 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .dos.obj_type_transition_fs (unconfined.subj_typeattr)))
+
+(block dos
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/boot"
+        dir
+        fs_context)
+       (filecon
+        "/boot/.*"
+        any
+        fs_context)
+
+       (genfscon
+        "exfat"
+        "/"
+        fs_context)
+       (genfscon
+        "ntfs-3g"
+        "/"
+        fs_context)
+       (genfscon
+        "vfat"
+        "/"
+        fs_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_fs ((type ARG1))
+              (call .sys.rootfile_obj_type_transition
+                    (ARG1 fs dir "boot")))
+
+       (macro setattr_fs_dirs ((type ARG1))
+              (allow ARG1 fs (dir (setattr))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .fs.noseclabel.obj_template)
+
+       (call .sys.mountpoint.obj_type (fs))
+
+       (call .xattr.associate_filesystems (fs)))

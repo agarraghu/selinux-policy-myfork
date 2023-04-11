@@ -1,0 +1,31 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .openssl.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block openssl
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/openssl"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "openssl")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.exec.obj_template))

@@ -1,0 +1,99 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .net
+
+    ;;
+    ;; Policy
+    ;;
+
+    (call pkey.access_all_netpkeys (unconfined.subj_typeattr))
+
+    (call .access_invalid_netpkeys (unconfined.subj_typeattr))
+
+    (block pkey
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (call .sys.type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   netpkey_context
+                   (.u
+                    .r
+                    netpkey
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   netpkey)
+
+                  (call .net.pkey.obj_type (netpkey)))
+
+           (block obj_all_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro access_all_netpkeys ((type ARG1))
+                         (allow ARG1 obj_typeattr (infiniband_pkey (access))))
+
+                  (macro obj_type ((type ARG1))
+                         (typeattributeset obj_typeattr ARG1))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_all_macro_template)
+
+                  (typeattribute
+                   obj_typeattr))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro access_netpkeys ((type ARG1))
+                         (allow ARG1 netpkey (infiniband_pkey (access))))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .net.pkey.obj_base_template)
+                  (blockinherit .net.pkey.obj_macro_template))))

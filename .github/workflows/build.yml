@@ -1,0 +1,50 @@
+name: Build tests
+
+on: [push, pull_request]
+
+env:
+  SELINUX_USERSPACE_VERSION: secilc-3.3
+  TOOLCHAIN_PATH: /tmp/selinux
+  TOOLCHAIN_SRC_PATH: /tmp/selinux-src
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache toolchain
+        id: cache-toolchain
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ env.TOOLCHAIN_PATH }}
+            ${{ env.TOOLCHAIN_SRC_PATH }}
+          key: ${{ env.SELINUX_USERSPACE_VERSION }}
+
+      - name: Install dependencies
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --no-install-recommends -qq \
+            bison \
+            flex \
+            libpcre3-dev \
+            xmlto
+      - name: Build toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/SELinuxProject/selinux.git ${TOOLCHAIN_SRC_PATH} -b ${SELINUX_USERSPACE_VERSION}
+          make DESTDIR=${TOOLCHAIN_PATH} -C ${TOOLCHAIN_SRC_PATH}/libsepol -j"$(nproc)" install
+          make DESTDIR=${TOOLCHAIN_PATH} LIBSEPOLA=${TOOLCHAIN_PATH}/usr/lib/libsepol.a CFLAGS+="-I${TOOLCHAIN_PATH}/usr/include" LDFLAGS+="-L${TOOLCHAIN_PATH}/usr/lib" -C ${TOOLCHAIN_SRC_PATH}/libselinux -j"$(nproc)" install
+          make DESTDIR=${TOOLCHAIN_PATH} LIBSEPOLA=${TOOLCHAIN_PATH}/usr/lib/libsepol.a CFLAGS+="-I${TOOLCHAIN_PATH}/usr/include" LDFLAGS+="-L${TOOLCHAIN_PATH}/usr/lib" -C ${TOOLCHAIN_SRC_PATH}/policycoreutils/setfiles -j"$(nproc)" install
+          make DESTDIR=${TOOLCHAIN_PATH} LIBSEPOLA=${TOOLCHAIN_PATH}/usr/lib/libsepol.a CFLAGS+="-I${TOOLCHAIN_PATH}/usr/include" LDFLAGS+="-L${TOOLCHAIN_PATH}/usr/lib" -C ${TOOLCHAIN_SRC_PATH}/secilc -j"$(nproc)" install
+      - name: Build default selinux-policy
+        run: LD_LIBRARY_PATH="${TOOLCHAIN_PATH}/lib:${TOOLCHAIN_PATH}/usr/lib" PATH="$PATH:${TOOLCHAIN_PATH}/usr/bin:${TOOLCHAIN_PATH}/sbin" make
+
+      - name: Build selinux-policy without LuCI
+        run: LD_LIBRARY_PATH="${TOOLCHAIN_PATH}/lib:${TOOLCHAIN_PATH}/usr/lib" PATH="$PATH:${TOOLCHAIN_PATH}/usr/bin:${TOOLCHAIN_PATH}/sbin" make noluci

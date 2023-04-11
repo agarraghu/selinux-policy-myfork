@@ -1,0 +1,49 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .random.obj_type_transition_nodedev (unconfined.subj_typeattr)))
+
+(block random
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/hw_random"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/hwrng"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/random"
+        char
+        nodedev_file_context)
+       (filecon
+        "/dev/urandom"
+        char
+        nodedev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_nodedev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "hw_random"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "hwrng"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "random"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "urandom")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.node.obj_template))

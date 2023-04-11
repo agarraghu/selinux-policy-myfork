@@ -1,0 +1,66 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .igmpproxy.subj_type_transition (subj)))
+
+(in .file
+    (call .igmpproxy.obj_type_transition_conftmpfile
+          (unconfined.subj_typeattr))
+    (call .igmpproxy.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block igmpproxy
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/etc/igmpproxy\.conf"
+        file
+        conftmpfile_file_context)
+
+       (filecon
+        "/usr/bin/igmpproxy"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_conftmpfile ((type ARG1))
+              (call .tmpfile.conftmpfile_obj_type_transition
+                    (ARG1 conftmpfile file "igmpproxy.conf")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "igmpproxy")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.conf.obj_template)
+
+       (allow subj self (capability (net_raw)))
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+
+       (call read_conftmpfile_files (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.sendto_netnodes (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+
+       (optional igmpproxy_opt_igmpnetpacket
+                 (call .igmp.server.recv_netpackets (subj))
+                 (call .igmp.client.send_netpackets (subj))))

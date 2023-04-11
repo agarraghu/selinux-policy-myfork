@@ -1,0 +1,34 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .noxs.obj_type_transition_tmpfile (unconfined.subj_typeattr)))
+
+(block noxs
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/\.ujailnoafile"
+        file
+        tmpfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro dontaudit_getattr_tmpfile_files ((type ARG1))
+	      (dontaudit ARG1 tmpfile (file (getattr))))
+
+       (macro obj_type_transition_tmpfile ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 tmpfile file ".ujailnoafile")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .tmpfile.obj_template))

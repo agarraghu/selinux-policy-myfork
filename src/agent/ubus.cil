@@ -1,0 +1,92 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .ubus.subj_type_transition (subj)))
+
+(in .file
+    (call .ubus.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block ubus
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/ubus"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ubus")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+
+       (allow subj self create_unix_stream_socket)
+
+       (call .sys.readwriteinherited_fifo_files (subj))
+       (call .sys.dontaudit_readwrite_udp_sockets (subj))
+
+       (call .devstatus.use_fds (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .hotplugcall.writeinherited_fifo_files (subj))
+
+       (call .ifup.writeinherited_fifo_files (subj))
+
+       ;; might be a leak
+       (call .net.readinherited_procfile_files (subj))
+
+       (call .netifd.readwriteinherited_fifo_files (subj))
+       (call .netifd.dontaudit_readwrite_netlink_kobject_uevent_sockets (subj))
+       (call .netifd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .ntpdhotplug.use_fds (subj))
+
+       (call .odhcp6c.use_fds (subj))
+
+       (call .odhcpd.use_fds (subj))
+       (call .odhcpd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+       (call .odhcpd.update.use_fds (subj))
+
+       (call .pppd.use_fds (subj))
+       (call .pppd.dontaudit_readwrite_packet_sockets (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       (call .tmpfile.search_conftmpfile_dirs (subj))
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+       (call .tmpfile.search_statetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .wifi.use_fds (subj))
+
+       (optional ubus_opt_cgiio
+                 (call .cgiio.use_fds (subj)))
+
+       (optional ubus_opt_dnsmasq
+                 (call .dnsmasq.writeinherited_fifo_files (subj)))
+
+       (optional ubus_opt_initscript
+                 (call .initscript.writeinherited_all_fifo_files (subj)))
+
+       (optional ubus_opt_luci
+                 (call .luci.cgi.writeinherited_fifo_files (subj))
+                 (call .luci.peeraddr.writeinherited_fifo_files (subj)))
+
+       (optional ubus_opt_uhttpd
+                 (call .uhttpd.readinherited_fifo_files (subj))))

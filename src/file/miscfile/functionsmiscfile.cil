@@ -1,0 +1,54 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .functions.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr)))
+
+(block functions
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/lib/config"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/config/.*"
+        any
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/functions"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/functions/.*"
+        any
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/functions\.sh"
+        file
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "config"))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "functions"))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile file "functions.sh")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit file.misc.obj_template)
+
+       (call .xattr.associate_filesystems (miscfile)))

@@ -1,0 +1,462 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .tmpfile.obj_type_transition_locktmpfile (unconfined.subj_typeattr)))
+
+(in .tmpfile
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/tmp/lock"
+     dir
+     locktmpfile_file_context)
+    (filecon
+     "/tmp/lock/.*"
+     any
+     locktmpfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro obj_type_transition_locktmpfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 locktmpfile dir "lock")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit lock.obj_template)
+
+    (block lock
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit .file.obj_all_macro_template)
+
+           (call tmpfile.obj_type (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   locktmpfile_file_context
+                   (.u
+                    .r
+                    locktmpfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   locktmpfile)
+
+                  (call .tmpfile.lock.obj_type (locktmpfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile addname_dir))
+
+                  (macro append_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile append_blk_file))
+
+                  (macro append_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile append_chr_file))
+
+                  (macro append_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile append_fifo_file))
+
+                  (macro append_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile append_file))
+
+                  (macro appendinherited_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile appendinherited_blk_file))
+
+                  (macro appendinherited_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile appendinherited_chr_file))
+
+                  (macro appendinherited_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile appendinherited_fifo_file))
+
+                  (macro appendinherited_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile appendinherited_file))
+
+                  (macro create_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (create))))
+
+                  (macro create_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_blk_file))
+
+                  (macro create_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_chr_file))
+
+                  (macro create_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile create_dir))
+
+                  (macro create_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_fifo_file))
+
+                  (macro create_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_file))
+
+                  (macro create_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_lnk_file))
+
+                  (macro create_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile create_sock_file))
+
+                  (macro deletename_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile deletename_dir))
+
+                  (macro delete_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (delete))))
+
+                  (macro delete_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_blk_file))
+
+                  (macro delete_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_chr_file))
+
+                  (macro delete_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile delete_dir))
+
+                  (macro delete_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_fifo_file))
+
+                  (macro delete_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_file))
+
+                  (macro delete_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_lnk_file))
+
+                  (macro delete_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile delete_sock_file))
+
+                  (macro execute_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile execute_file))
+
+                  (macro list_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile list_dir))
+
+                  (macro listinherited_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile listinherited_dir))
+
+                  (macro locktmpfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 locktmpfile ARG3 ARG4 ARG2)
+                         (call addname_locktmpfile_dirs (ARG1)))
+
+                  (macro manage_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (manage))))
+
+                  (macro manage_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_blk_file))
+
+                  (macro manage_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_chr_file))
+
+                  (macro manage_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile manage_dir))
+
+                  (macro manage_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_fifo_file))
+
+                  (macro manage_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_file))
+
+                  (macro manage_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_lnk_file))
+
+                  (macro manage_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile manage_sock_file))
+
+                  (macro mapexecute_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile mapexecute_chr_file))
+
+                  (macro mapexecute_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile mapexecute_file))
+
+                  (macro mounton_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (mounton))))
+
+                  (macro mounton_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_blk_file))
+
+                  (macro mounton_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_chr_file))
+
+                  (macro mounton_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_dir))
+
+                  (macro mounton_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_fifo_file))
+
+                  (macro mounton_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_file))
+
+                  (macro mounton_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_lnk_file))
+
+                  (macro mounton_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile mounton_sock_file))
+
+                  (macro read_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (read))))
+
+                  (macro read_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_blk_file))
+
+                  (macro read_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_chr_file))
+
+                  (macro read_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_fifo_file))
+
+                  (macro read_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_file))
+
+                  (macro readinherited_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile readinherited_blk_file))
+
+                  (macro readinherited_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile readinherited_chr_file))
+
+                  (macro readinherited_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile readinherited_fifo_file))
+
+                  (macro readinherited_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile readinherited_file))
+
+                  (macro readinherited_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile readinherited_sock_file))
+
+                  (macro read_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_lnk_file))
+
+                  (macro read_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile read_sock_file))
+
+                  (macro readwrite_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (readwrite))))
+
+                  (macro readwrite_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_blk_file))
+
+                  (macro readwrite_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_chr_file))
+
+                  (macro readwrite_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_dir))
+
+                  (macro readwrite_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_fifo_file))
+
+                  (macro readwrite_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_file))
+
+                  (macro readwriteinherited_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_file))
+
+                  (macro readwriteinherited_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwriteinherited_sock_file))
+
+                  (macro readwrite_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_lnk_file))
+
+                  (macro readwrite_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile readwrite_sock_file))
+
+                  (macro relabel_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (relabel))))
+
+                  (macro relabel_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_blk_file))
+
+                  (macro relabel_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_chr_file))
+
+                  (macro relabel_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_dir))
+
+                  (macro relabel_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_fifo_file))
+
+                  (macro relabel_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_file))
+
+                  (macro relabel_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_lnk_file))
+
+                  (macro relabel_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabel_sock_file))
+
+                  (macro relabelfrom_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_dir))
+
+                  (macro relabelfrom_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_file))
+
+                  (macro relabelfrom_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelfrom_sock_file))
+
+                  (macro relabelto_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (relabelto))))
+
+                  (macro relabelto_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_blk_file))
+
+                  (macro relabelto_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_chr_file))
+
+                  (macro relabelto_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_dir))
+
+                  (macro relabelto_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_fifo_file))
+
+                  (macro relabelto_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_file))
+
+                  (macro relabelto_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_lnk_file))
+
+                  (macro relabelto_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile relabelto_sock_file))
+
+                  (macro rename_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (rename))))
+
+                  (macro rename_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_blk_file))
+
+                  (macro rename_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_chr_file))
+
+                  (macro rename_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile rename_dir))
+
+                  (macro rename_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_fifo_file))
+
+                  (macro rename_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_file))
+
+                  (macro rename_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_lnk_file))
+
+                  (macro rename_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile rename_sock_file))
+
+                  (macro search_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile search_dir))
+
+                  (macro write_locktmpfile ((type ARG1))
+                         (allow ARG1 locktmpfile (allfiles (write))))
+
+                  (macro write_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_blk_file))
+
+                  (macro write_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_chr_file))
+
+                  (macro write_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile write_dir))
+
+                  (macro write_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_fifo_file))
+
+                  (macro write_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_file))
+
+                  (macro writeinherited_locktmpfile_blk_files ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_blk_file))
+
+                  (macro writeinherited_locktmpfile_chr_files ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_chr_file))
+
+                  (macro writeinherited_locktmpfile_dirs ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_dir))
+
+                  (macro writeinherited_locktmpfile_fifo_files ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_fifo_file))
+
+                  (macro writeinherited_locktmpfile_files ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_file))
+
+                  (macro writeinherited_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile writeinherited_sock_file))
+
+                  (macro write_locktmpfile_lnk_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_lnk_file))
+
+                  (macro write_locktmpfile_sock_files ((type ARG1))
+                         (allow ARG1 locktmpfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .tmpfile.lock.obj_base_template)
+                  (blockinherit .tmpfile.lock.obj_macro_template))))

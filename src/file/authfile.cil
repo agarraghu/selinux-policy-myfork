@@ -1,0 +1,491 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+
+    (block auth
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit file.obj_all_macro_template)
+
+           (call exception.obj_type (obj_typeattr))
+
+           (call .xattr.associate_filesystems (obj_typeattr))
+
+           ;;
+           ;; Templates
+           ;;
+
+           (block obj_base_template
+
+                  ;;
+                  ;; Contexts
+                  ;;
+
+                  (context
+                   authfile_file_context
+                   (.u
+                    .r
+                    authfile
+                    (systemlow
+                     systemlow)))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_base_template)
+
+                  (type
+                   authfile)
+
+                  (call .file.auth.obj_type (authfile)))
+
+           (block obj_macro_template
+
+                  ;;
+                  ;; Macros
+                  ;;
+
+                  (macro addname_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile addname_dir))
+
+                  (macro append_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile append_blk_file))
+
+                  (macro append_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile append_chr_file))
+
+                  (macro append_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile append_fifo_file))
+
+                  (macro append_authfile_files ((type ARG1))
+                         (allow ARG1 authfile append_file))
+
+                  (macro appendinherited_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile appendinherited_blk_file))
+
+                  (macro appendinherited_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile appendinherited_chr_file))
+
+                  (macro appendinherited_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile appendinherited_fifo_file))
+
+                  (macro appendinherited_authfile_files ((type ARG1))
+                         (allow ARG1 authfile appendinherited_file))
+
+                  (macro authfile_obj_type_transition
+                         ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+                         (typetransition ARG1 authfile ARG3 ARG4 ARG2)
+                         (call addname_authfile_dirs (ARG1)))
+
+                  (macro create_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (create))))
+
+                  (macro create_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile create_blk_file))
+
+                  (macro create_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile create_chr_file))
+
+                  (macro create_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile create_dir))
+
+                  (macro create_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile create_fifo_file))
+
+                  (macro create_authfile_files ((type ARG1))
+                         (allow ARG1 authfile create_file))
+
+                  (macro create_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile create_lnk_file))
+
+                  (macro create_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile create_sock_file))
+
+                  (macro deletename_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile deletename_dir))
+
+                  (macro delete_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (delete))))
+
+                  (macro delete_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile delete_blk_file))
+
+                  (macro delete_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile delete_chr_file))
+
+                  (macro delete_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile delete_dir))
+
+                  (macro delete_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile delete_fifo_file))
+
+                  (macro delete_authfile_files ((type ARG1))
+                         (allow ARG1 authfile delete_file))
+
+                  (macro delete_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile delete_lnk_file))
+
+                  (macro delete_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile delete_sock_file))
+
+                  (macro execute_authfile_files ((type ARG1))
+                         (allow ARG1 authfile execute_file))
+
+                  (macro list_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile list_dir))
+
+                  (macro listinherited_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile listinherited_dir))
+
+                  (macro manage_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (manage))))
+
+                  (macro manage_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile manage_blk_file))
+
+                  (macro manage_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile manage_chr_file))
+
+                  (macro manage_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile manage_dir))
+
+                  (macro manage_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile manage_fifo_file))
+
+                  (macro manage_authfile_files ((type ARG1))
+                         (allow ARG1 authfile manage_file))
+
+                  (macro manage_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile manage_lnk_file))
+
+                  (macro manage_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile manage_sock_file))
+
+                  (macro mapexecute_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile mapexecute_chr_file))
+
+                  (macro mapexecute_authfile_files ((type ARG1))
+                         (allow ARG1 authfile mapexecute_file))
+
+                  (macro mounton_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (mounton))))
+
+                  (macro mounton_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile mounton_blk_file))
+
+                  (macro mounton_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile mounton_chr_file))
+
+                  (macro mounton_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile mounton_dir))
+
+                  (macro mounton_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile mounton_fifo_file))
+
+                  (macro mounton_authfile_files ((type ARG1))
+                         (allow ARG1 authfile mounton_file))
+
+                  (macro mounton_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile mounton_lnk_file))
+
+                  (macro mounton_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile mounton_sock_file))
+
+                  (macro read_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (read))))
+
+                  (macro read_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile read_blk_file))
+
+                  (macro read_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile read_chr_file))
+
+                  (macro read_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile read_fifo_file))
+
+                  (macro read_authfile_files ((type ARG1))
+                         (allow ARG1 authfile read_file))
+
+                  (macro readinherited_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile readinherited_blk_file))
+
+                  (macro readinherited_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile readinherited_chr_file))
+
+                  (macro readinherited_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile readinherited_fifo_file))
+
+                  (macro readinherited_authfile_files ((type ARG1))
+                         (allow ARG1 authfile readinherited_file))
+
+                  (macro readinherited_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile readinherited_sock_file))
+
+                  (macro read_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile read_lnk_file))
+
+                  (macro read_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile read_sock_file))
+
+                  (macro readwrite_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (readwrite))))
+
+                  (macro readwrite_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_blk_file))
+
+                  (macro readwrite_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_chr_file))
+
+                  (macro readwrite_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile readwrite_dir))
+
+                  (macro readwrite_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_fifo_file))
+
+                  (macro readwrite_authfile_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_file))
+
+                  (macro readwriteinherited_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_blk_file))
+
+                  (macro readwriteinherited_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_chr_file))
+
+                  (macro readwriteinherited_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_dir))
+
+                  (macro readwriteinherited_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_fifo_file))
+
+                  (macro readwriteinherited_authfile_files ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_file))
+
+                  (macro readwriteinherited_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile readwriteinherited_sock_file))
+
+                  (macro readwrite_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_lnk_file))
+
+                  (macro readwrite_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile readwrite_sock_file))
+
+                  (macro relabel_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (relabel))))
+
+                  (macro relabel_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile relabel_blk_file))
+
+                  (macro relabel_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile relabel_chr_file))
+
+                  (macro relabel_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile relabel_dir))
+
+                  (macro relabel_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile relabel_fifo_file))
+
+                  (macro relabel_authfile_files ((type ARG1))
+                         (allow ARG1 authfile relabel_file))
+
+                  (macro relabel_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile relabel_lnk_file))
+
+                  (macro relabel_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile relabel_sock_file))
+
+                  (macro relabelfrom_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (relabelfrom))))
+
+                  (macro relabelfrom_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_blk_file))
+
+                  (macro relabelfrom_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_chr_file))
+
+                  (macro relabelfrom_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_dir))
+
+                  (macro relabelfrom_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_fifo_file))
+
+                  (macro relabelfrom_authfile_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_file))
+
+                  (macro relabelfrom_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_lnk_file))
+
+                  (macro relabelfrom_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile relabelfrom_sock_file))
+
+                  (macro relabelto_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (relabelto))))
+
+                  (macro relabelto_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_blk_file))
+
+                  (macro relabelto_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_chr_file))
+
+                  (macro relabelto_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile relabelto_dir))
+
+                  (macro relabelto_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_fifo_file))
+
+                  (macro relabelto_authfile_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_file))
+
+                  (macro relabelto_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_lnk_file))
+
+                  (macro relabelto_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile relabelto_sock_file))
+
+                  (macro rename_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (rename))))
+
+                  (macro rename_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile rename_blk_file))
+
+                  (macro rename_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile rename_chr_file))
+
+                  (macro rename_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile rename_dir))
+
+                  (macro rename_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile rename_fifo_file))
+
+                  (macro rename_authfile_files ((type ARG1))
+                         (allow ARG1 authfile rename_file))
+
+                  (macro rename_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile rename_lnk_file))
+
+                  (macro rename_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile rename_sock_file))
+
+                  (macro search_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile search_dir))
+
+                  (macro write_authfile ((type ARG1))
+                         (allow ARG1 authfile (allfiles (write))))
+
+                  (macro write_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile write_blk_file))
+
+                  (macro write_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile write_chr_file))
+
+                  (macro write_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile write_dir))
+
+                  (macro write_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile write_fifo_file))
+
+                  (macro write_authfile_files ((type ARG1))
+                         (allow ARG1 authfile write_file))
+
+                  (macro writeinherited_authfile_blk_files ((type ARG1))
+                         (allow ARG1 authfile writeinherited_blk_file))
+
+                  (macro writeinherited_authfile_chr_files ((type ARG1))
+                         (allow ARG1 authfile writeinherited_chr_file))
+
+                  (macro writeinherited_authfile_dirs ((type ARG1))
+                         (allow ARG1 authfile writeinherited_dir))
+
+                  (macro writeinherited_authfile_fifo_files ((type ARG1))
+                         (allow ARG1 authfile writeinherited_fifo_file))
+
+                  (macro writeinherited_authfile_files ((type ARG1))
+                         (allow ARG1 authfile writeinherited_file))
+
+                  (macro writeinherited_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile writeinherited_sock_file))
+
+                  (macro write_authfile_lnk_files ((type ARG1))
+                         (allow ARG1 authfile write_lnk_file))
+
+                  (macro write_authfile_sock_files ((type ARG1))
+                         (allow ARG1 authfile write_sock_file))
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_macro_template))
+
+           (block obj_template
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockabstract obj_template)
+
+                  (blockinherit .file.auth.obj_base_template)
+                  (blockinherit .file.auth.obj_macro_template))
+
+           (block relabelto
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (file (relabelto)))
+
+                  (call subj_type (unconfined.subj_typeattr)))
+
+           (block write
+
+                  ;;
+                  ;; Policy
+                  ;;
+
+                  (blockinherit .subj.subj_all_macro_template)
+
+                  (typeattribute
+                   not_subj_typeattr)
+
+                  (typeattributeset
+                   not_subj_typeattr
+                   (not
+                    subj_typeattr))
+
+                  (neverallow not_subj_typeattr obj_typeattr
+                              (file (append write)))
+
+                  (call subj_type (unconfined.subj_typeattr))))
+
+    (block exceptauth
+
+           ;;
+           ;; Policy
+           ;;
+
+           (blockinherit obj_all_macro_template)
+
+           (typeattributeset
+            obj_typeattr
+            (and
+             file.obj_typeattr
+             (not
+              (auth.obj_typeattr))))))

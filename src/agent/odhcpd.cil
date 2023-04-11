@@ -1,0 +1,199 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .odhcpd.subj_type_transition (subj))
+    (call .odhcpd.update.subj_type_transition (subj)))
+
+(in .file
+    (call .odhcpd.obj_type_transition_execfile (unconfined.subj_typeattr))
+    (call .odhcpd.obj_type_transition_hoststmpfile (unconfined.subj_typeattr))
+    (call .odhcpd.obj_type_transition_statetmpfile (unconfined.subj_typeattr))
+    (call .odhcpd.update.obj_type_transition_execfile
+          (unconfined.subj_typeattr)))
+
+(in .uci
+    (call .odhcpd.use_fds (subj))
+    (call .odhcpd.dontaudit_readwrite_netlink_route_sockets (subj)))
+
+(block odhcpd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/hosts/\.odhcpd"
+        file
+        hoststmpfile_file_context)
+
+        (filecon
+        "/tmp/hosts/odhcpd"
+        file
+        hoststmpfile_file_context)
+
+       (filecon
+        "/tmp/lib/odhcpd"
+        dir
+        statetmpfile_file_context)
+       (filecon
+        "/tmp/lib/odhcpd/.*"
+        any
+        statetmpfile_file_context)
+
+       (filecon
+        "/usr/bin/odhcpd"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro getattr_statetmpfile_dirs ((type ARG1))
+              (allow ARG1 statetmpfile (dir (getattr))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "odhcpd")))
+
+       (macro obj_type_transition_hoststmpfile ((type ARG1))
+              (call .tmpfile.hoststmpfile_obj_type_transition
+                    (ARG1 hoststmpfile file ".odhcpd"))
+              (call .tmpfile.hoststmpfile_obj_type_transition
+                    (ARG1 hoststmpfile file "odhcpd"))
+              (call .tmpfile.hoststmpfile_obj_type_transition
+                    (ARG1 hoststmpfile file "odhcpd.tmp")))
+
+       (macro obj_type_transition_statetmpfile ((type ARG1))
+              (call .tmpfile.statetmpfile_obj_type_transition
+                    (ARG1 statetmpfile dir "odhcpd")))
+
+       (macro dontaudit_readwrite_netlink_route_sockets ((type ARG1))
+              (dontaudit ARG1 subj (netlink_route_socket (read write))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .tmpfile.hosts.obj_template)
+       (blockinherit .tmpfile.state.obj_template)
+
+       (allow subj self (capability (net_admin net_raw)))
+       (allow subj self create_netlink_route_socket)
+       (allow subj self create_rawip_socket)
+       (allow subj self create_udp_socket)
+       (allow subj self create_unix_dgram_socket)
+       (allow subj self create_unix_stream_socket)
+       (allow subj self (netlink_route_socket (nlmsg_read nlmsg_write)))
+
+       (call manage_hoststmpfile_files (subj))
+       (call obj_type_transition_hoststmpfile (subj))
+
+       (call manage_statetmpfile_dirs (subj))
+       (call manage_statetmpfile_files (subj))
+       (call obj_type_transition_statetmpfile (subj))
+
+       (call update.subj_type_transition (subj))
+
+       (call .sys.loadkernelmodule.subj_type (subj))
+       (call .sys.requestmodule (subj))
+       (call .sys.search_sysctlfile_dirs (subj))
+
+       (call .dhcp.udp_bind_netports (subj))
+
+       (call .file.search_conffile_dirs (subj))
+
+       (call .ipv6.readwrite_sysctlfile_files (subj))
+       (call .ipv6.search_sysctlfile_dirs (subj))
+
+       (call .logd.unix_dgram_send (subj))
+
+       (call .net.egress_netifs (subj))
+       (call .net.read_procfile_files (subj))
+       (call .net.read_procfile_lnk_files (subj))
+       (call .net.search_sysctlfile_dirs (subj))
+       (call .net.sendto_netnodes (subj))
+       (call .net.udp_bind_netnodes (subj))
+
+       (call .random.read_nodedev_chr_files (subj))
+
+       ;; rawip socket packets cannot be labeled (used for dhcpv6 relay etc)
+       (call .recvsend_invalid_netpackets (subj))
+
+       (call .shell.mapexecute_execfile_files (subj))
+       (call .shell.read_execfile_files (subj))
+
+       (call .tmpfile.manage_hoststmpfile_dirs (subj))
+       (call .tmpfile.manage_statetmpfile_dirs (subj))
+       (call .tmpfile.obj_type_transition_hoststmpfile (subj))
+       (call .tmpfile.obj_type_transition_statetmpfile (subj))
+       (call .tmpfile.search_runtimetmpfile_dirs (subj))
+
+       (call .ubusd.unix_stream_connect (subj))
+
+       (call .uci.read_conffile_files (subj))
+       (call .uci.read_tmpfile_files (subj))
+       (call .uci.search_conffile_dirs (subj))
+       (call .uci.search_tmpfile_dirs (subj))
+
+       (optional odhcpd_opt_dhcpnetpacket
+                 (call .dhcp.client.recvsend_netpackets (subj))
+                 (call .dhcp.server.recvsend_netpackets (subj)))
+
+       (optional odhcpd_opt_unbound
+                 (call .unbound.odhcpd.subj_type_transition (subj))
+                 (call .unbound.search_miscfile_dirs (subj)))
+
+       (block update
+
+              ;;
+              ;; Contexts
+              ;;
+
+              (filecon
+               "/usr/bin/odhcpd-update"
+               file
+               execfile_file_context)
+
+              ;;
+              ;; Macros
+              ;;
+
+              (macro obj_type_transition_execfile ((type ARG1))
+                     (call .file.execfile_obj_type_transition
+                           (ARG1 execfile file "odhcpd-update")))
+
+              ;;
+              ;; Policy
+              ;;
+
+              (blockinherit .agent.base_template)
+
+              (call odhcpd.use_fds (subj))
+              (call odhcpd.dontaudit_readwrite_netlink_route_sockets (subj))
+
+              (call .functions.read_miscfile_files (subj))
+              (call .functions.search_miscfile_dirs (subj))
+
+              (call .jshn.subj_type_transition (subj))
+
+              (call .libubox.read_datafile_files (subj))
+              (call .libubox.search_datafile_dirs (subj))
+
+              (call .net.read_procfile_files (subj))
+              (call .net.read_procfile_lnk_files (subj))
+
+              (call .selinux.linked.subj_type (subj))
+
+              (call .shell.execute_execfile_files (subj))
+
+              (call .tmpfile.addname_locktmpfile_dirs (subj))
+              (call .tmpfile.manage_locktmpfile_files (subj))
+
+              (call .ubus.subj_type_transition (subj))))

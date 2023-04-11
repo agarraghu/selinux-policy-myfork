@@ -1,0 +1,99 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .wifi.subj_type_transition (subj)))
+
+(in .file
+    (call .wifi.libfile_obj_type_transition_miscfile
+          (unconfined.subj_typeattr))
+    (call .wifi.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block wifi
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/wifi"
+        file
+        execfile_file_context)
+
+       (filecon
+        "/usr/lib/wifi"
+        dir
+        miscfile_file_context)
+       (filecon
+        "/usr/lib/wifi/.*"
+        any
+        miscfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro libfile_obj_type_transition_miscfile ((type ARG1))
+              (call .file.libfile_obj_type_transition
+                    (ARG1 miscfile dir "wifi")))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "wifi")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .agent.base_template)
+       (blockinherit .file.misc.obj_template)
+
+       (call list_miscfile_dirs (subj))
+       (call read_miscfile_files (subj))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+       (call .sys.writeinherited_fifo_files (subj))
+
+       (call .class.list_sysfile_dirs (subj))
+       (call .class.read_sysfile_lnk_files (subj))
+
+       (call .devices.list_sysfile_dirs (subj))
+       (call .devices.read_sysfile_files (subj))
+       (call .devices.read_sysfile_lnk_files (subj))
+
+       (call .functions.read_miscfile_files (subj))
+       (call .functions.search_miscfile_dirs (subj))
+
+       (call .hotplugcall.use_fds (subj))
+
+       (call .ifup.use_fds (subj))
+
+       (call .iw.subj_type_transition (subj))
+
+       (call .iwinfo.subj_type_transition (subj))
+
+       (call .jshn.subj_type_transition (subj))
+
+       (call .libubox.read_datafile_files (subj))
+       (call .libubox.search_datafile_dirs (subj))
+
+       (call .netifd.read_miscfile_files (subj))
+       (call .netifd.search_miscfile_dirs (subj))
+
+       (call .selinux.linked.subj_type (subj))
+
+       (call .shell.execute_execfile_files (subj))
+
+       (call .ubus.subj_type_transition (subj))
+
+       (call .uci.addname_conffile_dirs (subj))
+       (call .uci.create_conffile_files (subj))
+       (call .uci.readwrite_conffile_files (subj))
+       (call .uci.subj_type_transition (subj))
+
+       (call .xattr.associate_filesystems (miscfile))
+
+       (optional wifi_opt_rcnetwork
+                 (call .rcnetwork.use_fds (subj))))

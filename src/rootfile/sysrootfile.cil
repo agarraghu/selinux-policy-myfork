@@ -1,0 +1,51 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .sys.overlaymiscfile_obj_type_transition_rootfile
+          (unconfined.subj_typeattr))
+    (call .sys.tmp_obj_type_transition_rootfile
+          (unconfined.subj_typeattr)))
+
+(in .sys
+
+    ;;
+    ;; Contexts
+    ;;
+
+    (filecon
+     "/"
+     dir
+     rootfile_file_context)
+    (filecon
+     "/rom"
+     dir
+     rootfile_file_context)
+
+    (filecon
+     "/.*"
+     symlink
+     rootfile_file_context)
+
+    ;;
+    ;; Macros
+    ;;
+
+    (macro overlaymiscfile_obj_type_transition_rootfile ((type ARG1))
+           (call .overlay.miscfile_obj_type_transition
+                 (ARG1 rootfile dir "upper")))
+
+    (macro tmp_obj_type_transition_rootfile ((type ARG1))
+           (call .tmp.fs_obj_type_transition
+                 (ARG1 rootfile dir "upper")))
+
+    ;;
+    ;; Policy
+    ;;
+
+    (blockinherit .rootfile.obj_template)
+
+    (call .sys.mountpoint.obj_type (rootfile))
+
+    (call .xattr.associate_filesystems (rootfile)))

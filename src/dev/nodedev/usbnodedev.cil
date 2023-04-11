@@ -1,0 +1,80 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .dev
+    (call .usb.obj_type_transition_nodedev (unconfined.subj_typeattr)))
+
+(block usb
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/dev/bus/usb/.+"
+        char
+        nodedev_file_context)
+
+       (filecon
+        "/dev/usb([0-9]+)?"
+        char
+        nodedev_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_nodedev ((type ARG1))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "001"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "002"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "003"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "004"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "005"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "006"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "007"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "008"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "009"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "010"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "011"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "012"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "013"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "014"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "015"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "016"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "017"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "018"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "019"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "020"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "usb1"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "usb2"))
+              (call .tmp.fs_obj_type_transition
+                    (ARG1 nodedev chr_file "usb3")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .dev.node.obj_template))

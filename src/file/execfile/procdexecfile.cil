@@ -1,0 +1,70 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .file
+    (call .procd.obj_type_transition_execfile (unconfined.subj_typeattr)))
+
+(block procd
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/usr/bin/askfirst"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/procd"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/upgraded"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/init"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/service"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/ujail"
+        file
+        execfile_file_context)
+       (filecon
+        "/usr/bin/utrace"
+        file
+        execfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro getattr_execfile_files ((type ARG1))
+              (allow ARG1 execfile (file (getattr))))
+
+       (macro obj_type_transition_execfile ((type ARG1))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "askfirst"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "procd"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "upgraded"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "init"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "service"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "ujail"))
+              (call .file.execfile_obj_type_transition
+                    (ARG1 execfile file "utrace")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .file.exec.obj_template))

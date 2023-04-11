@@ -1,0 +1,48 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(tunable load_policy true)
+
+(tunableif .load_policy
+           (true
+            (allow .selinux.setenforce.subj_typeattr .selinux
+                   (security (setenforce)))
+            (allow .selinux.loadpolicy.subj_typeattr .selinux
+                   (security (load_policy)))))
+
+(block load_policy
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (genfscon
+        "selinuxfs"
+        "/booleans/load_policy"
+        selinuxbool_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro get_selinuxbools ((type ARG1))
+              (call read_selinuxbool_files (ARG1))
+              (call .selinux.list_fs_dirs (ARG1)))
+
+       (macro set_selinuxbools ((type ARG1))
+              (allow ARG1 .selinux (security (setbool)))
+
+              (call .selinux.list_fs_dirs (ARG1))
+              (call .selinux.readwrite_fs_files (ARG1))
+
+              (tunableif
+               .load_policy
+               (true
+                (call readwrite_selinuxbool_files (ARG1)))))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .selinux.bool.obj_template))

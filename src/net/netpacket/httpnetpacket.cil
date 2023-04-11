@@ -1,0 +1,9 @@
+(in .http
+
+    (block client
+
+           (blockinherit .net.packet.obj_template))
+
+    (block server
+
+           (blockinherit .net.packet.obj_template)))

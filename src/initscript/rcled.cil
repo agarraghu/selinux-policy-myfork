@@ -1,0 +1,64 @@
+;; -*- mode: CIL; fill-column: 79; indent-tabs-mode: nil; -*-
+;; SPDX-FileCopyrightText: © 2021 Dominick Grift <dominick.grift@defensec.nl>
+;; SPDX-License-Identifier: Unlicense
+
+(in .sys
+    (call .rcled.subj_type_transition (subj)))
+
+(in .file
+    (call .rcled.obj_type_transition_initscriptfile (unconfined.subj_typeattr))
+    (call .rcled.obj_type_transition_runtimetmpfile
+          (unconfined.subj_typeattr)))
+
+(block rcled
+
+       ;;
+       ;; Contexts
+       ;;
+
+       (filecon
+        "/tmp/run/led\.state"
+        file
+        runtimetmpfile_file_context)
+
+       (filecon
+        "/etc/init\.d/led"
+        file
+        initscriptfile_file_context)
+
+       ;;
+       ;; Macros
+       ;;
+
+       (macro obj_type_transition_initscriptfile ((type ARG1))
+              (call .file.initscriptfile_obj_type_transition
+                    (ARG1 initscriptfile file "led")))
+
+       (macro obj_type_transition_runtimetmpfile ((type ARG1))
+              (call .tmpfile.runtimetmpfile_obj_type_transition
+                    (ARG1 runtimetmpfile file "led.state")))
+
+       ;;
+       ;; Policy
+       ;;
+
+       (blockinherit .initscript.base_template)
+       (blockinherit .tmpfile.runtime.obj_template)
+
+       (call manage_runtimetmpfile_files (subj))
+       (call obj_type_transition_runtimetmpfile (subj))
+
+       ;; compat with genfs_seclabel_symlinks=0
+       (call .sys.read_fs_lnk_files (subj))
+
+       (call .class.search_sysfile_dirs (subj))
+
+       (call .devices.addname_sysfile_dirs (subj))
+       (call .devices.create_sysfile_files (subj))
+       (call .devices.readwrite_sysfile_files (subj))
+
+       (call .leds.read_sysfile_lnk_files (subj))
+       (call .leds.search_sysfile_dirs (subj))
+       (call .leds.write_sysfile_files (subj))
+
+       (call .tmpfile.deletename_runtimetmpfile_dirs (subj)))
