@@ -1,0 +1,15 @@
+(block helloworld ;; declare a new container
+(blockinherit .agent.base_template) ;; this will declare types for both the process and executable file and associate some basic rules with them
+(filecon "/root/helloworld" file execfile_file_context)) ;; this will associate the file context with /root/helloworld and close container
+(in .sys (call .helloworld.subj_type_transition (subj))) ;; this macro was made available when we inherited the agent.base_template inside the helloworld container
+;; it will cause selinux to automatically transition the context of any process associated with u:r:sys.subj to u:r:helloworld.subj when files with the u:r:helloworld.execfile context are executed
+(in .helloworld ;; insert into existing helloworld container
+(call .shell.execute_execfile_files (subj)) ;; executes /bin/sh which leads to busybox shell
+(call .selinux.linked.subj_type (subj)) ;; busybox links with libselinux which needs some access to determine selinux state
+(call .sys.readwriteinherited_ptydev_chr_files (subj)) ;; operate on pty, this was silently blocked
+(call .dev.readwriteinherited_ttydev_chr_files (subj))) ;; operate on tty. this was silently blocked
+;;(allow helloworld_t helloworld_exec_t (file ( open write read getattr ioctl lock map execute ))))
+;; close helloworld container
+
+
+

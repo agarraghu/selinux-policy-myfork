@@ -34,12 +34,12 @@
        (optional agent_opt_luci
                  (call .luci.writeinherited_fifo_files (subj_typeattr)))
 
-       (optional agent_opt_rpcd
-                 (call .rpcd.readwriteinherited_fifo_files (subj_typeattr)))
+       ;;(optional agent_opt_rpcd
+         ;;        (call .rpcd.readwriteinherited_fifo_files (subj_typeattr)))
 
-       (optional agent_opt_rpcd
-                 (call .rpcd.dontaudit_readinherited_datafile_files
-                       (subj_typeattr)))
+       ;;(optional agent_opt_rpcd
+         ;;        (call .rpcd.dontaudit_readinherited_datafile_files
+           ;;            (subj_typeattr)))
 
        (optional agent_opt_ucode
                  (call .ucode.dontaudit_readinherited_datafile_files
